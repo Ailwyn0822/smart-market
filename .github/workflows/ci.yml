@@ -2,9 +2,9 @@ name: CI Check
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   # 1. 檢查後端 (Backend)
