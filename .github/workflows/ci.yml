@@ -1,0 +1,41 @@
+name: CI Check
+
+# 觸發條件：當推送到 main 分支，或發起 Pull Request 時
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # 1. 檢查後端 (Backend)
+  backend-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend # 指定在 backend 資料夾執行
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 暫時用 echo 假裝檢查成功 (Day 2 初始化 NestJS 後我們再來改真的)
+      - name: Backend Placeholder Check
+        run: echo "Backend structure is ready for NestJS!"
+
+  # 2. 檢查前台 (Frontend Client)
+  client-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend-client
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Frontend Placeholder Check
+        run: echo "Client structure is ready for Nuxt 4!"
