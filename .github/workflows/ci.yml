@@ -1,6 +1,5 @@
 name: CI Check
 
-# 觸發條件：當推送到 main 分支，或發起 Pull Request 時
 on:
   push:
     branches: [ main ]
@@ -13,17 +12,14 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./backend # 指定在 backend 資料夾執行
+        working-directory: ./backend
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      # 暫時用 echo 假裝檢查成功 (Day 2 初始化 NestJS 後我們再來改真的)
       - name: Backend Placeholder Check
         run: echo "Backend structure is ready for NestJS!"
 
@@ -36,6 +32,30 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
       - name: Frontend Placeholder Check
         run: echo "Client structure is ready for Nuxt 4!"
+
+  # ==========================================
+  # 3. [新增] 檢查後台 (Frontend Admin)
+  # ==========================================
+  admin-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend-admin # 指定在 admin 資料夾執行
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      # 雖然只是 echo，但為了之後跑 npm install，Node 環境還是要裝一下比較保險
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Admin Placeholder Check
+        run: echo "Admin structure is ready for Vue 3!"
