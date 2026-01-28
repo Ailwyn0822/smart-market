@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
 
 @tailwind base;
 @tailwind components;
@@ -25,23 +25,23 @@ body {
 }
 
 .crayon-border-red {
-    border: 4px solid #ff6b6b;
-    box-shadow: 4px 4px 0px #ff6b6b;
+    border: 4px solid theme('colors.accent-red');
+    box-shadow: 4px 4px 0px theme('colors.accent-red');
 }
 
 .crayon-border-blue {
-    border: 4px solid #4ecdc4;
-    box-shadow: 4px 4px 0px #4ecdc4;
+    border: 4px solid theme('colors.accent-blue');
+    box-shadow: 4px 4px 0px theme('colors.accent-blue');
 }
 
 .crayon-border-yellow {
-    border: 4px solid #f4c025;
-    box-shadow: 4px 4px 0px #f4c025;
+    border: 4px solid theme('colors.primary');
+    box-shadow: 4px 4px 0px theme('colors.primary');
 }
 
 .crayon-border-purple {
-    border: 4px solid #a78bfa;
-    box-shadow: 4px 4px 0px #a78bfa;
+    border: 4px solid theme('colors.accent-purple');
+    box-shadow: 4px 4px 0px theme('colors.accent-purple');
 }
 
 .folder-tab {

@@ -20,6 +20,8 @@ export default {
         'paper': '#fcfbf8',
         'line': '#06C755',
         'content': '#1c180d',
+        'cream': '#fefce8',
+        'accent-line': '#06c755',
       },
       fontFamily: {
         sans: ['"Spline Sans"', '"Noto Sans TC"', 'sans-serif'],
