@@ -1,0 +1,47 @@
+<template>
+    <div class="text-[#1c180d] min-h-screen flex flex-col overflow-x-hidden">
+        <header class="relative w-full z-50 pt-6 px-4 sm:px-8 lg:px-12 pb-4">
+            <div
+                class="layout-container max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6">
+                <HeaderLogo />
+                <nav class="flex flex-wrap justify-center gap-4 sm:gap-6">
+                    <a class="sticker-nav-item bg-white px-5 py-2 rounded-lg border-2 border-[#1c180d] text-[#1c180d] font-bold text-sm rotate-1"
+                        href="#">
+                        Shop
+                    </a>
+                    <a class="sticker-nav-item bg-accent-blue px-5 py-2 rounded-lg border-2 border-[#1c180d] text-white font-bold text-sm -rotate-2"
+                        href="#">
+                        Sell
+                    </a>
+                    <a class="sticker-nav-item bg-accent-red px-5 py-2 rounded-lg border-2 border-[#1c180d] text-white font-bold text-sm rotate-2"
+                        href="#">
+                        About
+                    </a>
+                    <a class="sticker-nav-item bg-white px-4 py-2 rounded-lg border-2 border-[#1c180d] text-[#1c180d] font-bold text-sm -rotate-1 flex items-center gap-2"
+                        href="#">
+                        <span class="material-symbols-outlined text-lg">shopping_cart</span>
+                        Cart
+                    </a>
+                </nav>
+                <div class="flex items-center gap-4 w-full lg:w-auto justify-center lg:justify-end">
+                    <div class="relative w-full max-w-[280px]">
+                        <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                            <span class="material-symbols-outlined text-gray-400">search</span>
+                        </div>
+                        <input
+                            class="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-dashed border-gray-400 focus:border-[#1c180d] focus:ring-0 text-sm font-medium placeholder-gray-400 shadow-sm"
+                            placeholder="Search for toys, books..." type="text" />
+                    </div>
+                    <button
+                        class="size-10 bg-accent-purple rounded-full border-2 border-[#1c180d] flex items-center justify-center shadow-[2px_2px_0px_#1c180d] hover:translate-y-0.5 hover:shadow-none transition-all">
+                        <div class="size-full rounded-full bg-cover bg-center" data-alt="User profile picture"
+                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBVTrN5eP8gddcGv3gNQ4e7vvxUhjjaUpzVICx4u-gJwsma-Kl9Ws97LOwtsAn53AZgHfiAKG4kbIbKCqKt4r7-IYl2QBBWfClDNHNQ0jnOpNnq9YHw0-3CoTmABdq3VqtcZ1cJUvOWPnv7M_X_MmKdbq67CVO79muQekcpL3Ys3_GGw_Zrk726FsAA35wRHVKQowWsHJsm7MBN6ZkJEUJfHuaynrhEeYBoyLQDMK35yQJsm2Yq3lcut1432TRfnqzsLOengwIpgRHO');">
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <NuxtPage />
+        <Footer />
+    </div>
+</template>
