@@ -118,10 +118,6 @@
                 </div>
             </div>
         </div>
-        <div
-            class="absolute -bottom-4 -left-4 w-12 h-12 rounded-full border-4 border-[#e5e7eb] bg-white z-20 flex items-center justify-center rotate-45 shadow-sm">
-            <div class="w-2 h-8 bg-gray-300 rounded-full"></div>
-        </div>
     </main>
 </template>
 

@@ -14,7 +14,7 @@
                 </div>
                 <div class="hidden md:block w-px h-8 bg-white/20"></div>
                 <p class="text-xs text-gray-400 font-medium text-center md:text-left">
-                    © 2024 Creative Corner Marketplace. <br class="md:hidden" /> All rights reserved.
+                    © 2026 JianHao Chen. <br class="md:hidden" /> All rights reserved.
                 </p>
             </div>
             <div class="flex items-center gap-4">
