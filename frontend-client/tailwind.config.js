@@ -19,6 +19,7 @@ export default {
         'background-dark': '#221e10',
         'paper': '#fcfbf8',
         'line': '#06C755',
+        'content': '#1c180d',
       },
       fontFamily: {
         sans: ['"Spline Sans"', '"Noto Sans TC"', 'sans-serif'],
