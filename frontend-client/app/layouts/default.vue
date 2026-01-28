@@ -40,7 +40,7 @@
                 </div>
             </div>
         </header>
-        <NuxtPage />
+        <slot  />
         <Footer />
     </div>
 </template>

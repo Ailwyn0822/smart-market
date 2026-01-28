@@ -55,8 +55,8 @@
                                     <NuxtImg
                                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXLcieLcgLm6DKGq9M-t4SdKUmyFKVce_mrJ0Ks00z8qJMrinJtppYKN6QNCyHLeBN7i8hwsKIseQbT9AF6fItEf43UejpuirKEF_vy6M8nAoKhSxQ2rsewKiwyYHG3coQsZDXplbk0Bv56G7y5467HZFxwpBMUNeXKfZu8qU20gbziRKA2Iovf9ZLPQ_ljuHY0B82waI3FqKNyZ0Yx_xvc9JpEXR9YPQt1y5IoaAx6MYkjaNu-pOk5PLj8OWeSWiz01YYoOj6K0kt"
                                         alt="Children playing with colorful wooden building blocks"
-                                        class="absolute inset-0 w-full h-full object-cover" loading="lazy"
-                                        format="webp" />
+                                        class="absolute inset-0 w-full h-full object-cover" format="webp" preload
+                                        fetchpriority="high" width="800" height="600" sizes="xs:100vw sm:600px" />
                                 </div>
                                 <div class="flex justify-between items-center px-4 pt-3">
                                     <div class="flex -space-x-2">
@@ -64,12 +64,12 @@
                                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGuylDdNXyTomGyZko_jva0JQnFgn0J0cOZgmjLsqvKv4CfeModPpMZNSONwIH716RxGlEM9iYtLCfZv_AB4hRGjDb9rehOYFw7RABgSla2I6y1_3KTyss-V5yR86JfO_Wx2RcW3xnJ4AofOWjiEadTao62DcRL1qpRSl5mqaVP6eWxGnMHIduRMm73ohotDs9pZyXskntHffuJb2Wr_lFOEiXYd7vgJqh23r3OZiLn4k4SnS5j-OyNAPyw62kycedcU_H7YkCEDiw"
                                             alt="Child face 1"
                                             class="size-8 rounded-full border-2 border-white bg-gray-200 object-cover"
-                                            loading="lazy" format="webp" />
+                                            loading="lazy" format="webp" width="32" height="32" sizes="32px" />
                                         <NuxtImg
                                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGFdWS0oiH5tnUEbqbrWW76rU_M2jIl-PZYTq0QbSluAXUjCuBJCWI_IpzdNDvalbfABog_hPHBVSdbCB35dkGh3IDCmczab6NMaYBZlTUIq6XX5GcfI4AmaQVAeE7sXzU0K_YSxq2WbVLodlSjBna3VzLoKP9aiKduvYITF8iftGKrTbhxBVLnidrtpjdcIfGqpvo2egfxWVcj5WS_ONgWbcpA3KTdQPHykHut-ybctSJZdlqTYRvsCG45RrjsfFRtvRL2UMY8cjC"
                                             alt="Child face 2"
                                             class="size-8 rounded-full border-2 border-white bg-gray-200 object-cover"
-                                            loading="lazy" format="webp" />
+                                            loading="lazy" format="webp" width="32" height="32" sizes="32px" />
                                         <div
                                             class="size-8 rounded-full border-2 border-white bg-accent-red flex items-center justify-center text-[10px] text-white font-bold">
                                             +2k</div>
