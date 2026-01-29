@@ -7,20 +7,20 @@
                 <nav class="flex flex-wrap justify-center gap-4 sm:gap-6">
                     <a class="sticker-nav-item bg-white px-5 py-2 rounded-lg border-2 border-content text-content font-bold text-sm rotate-1"
                         href="#">
-                        Shop
+                        {{ $t('nav.shop') }}
                     </a>
                     <a class="sticker-nav-item bg-accent-blue px-5 py-2 rounded-lg border-2 border-content text-white font-bold text-sm -rotate-2"
                         href="#">
-                        Sell
+                        {{ $t('nav.sell') }}
                     </a>
                     <a class="sticker-nav-item bg-accent-red px-5 py-2 rounded-lg border-2 border-content text-white font-bold text-sm rotate-2"
                         href="#">
-                        About
+                        {{ $t('nav.about') }}
                     </a>
                     <a class="sticker-nav-item bg-white px-4 py-2 rounded-lg border-2 border-content text-content font-bold text-sm -rotate-1 flex items-center gap-2"
                         href="#">
                         <Icon name="material-symbols:shopping-cart" class="text-lg" />
-                        Cart
+                        {{ $t('nav.cart') }}
                     </a>
                 </nav>
                 <div class="flex items-center gap-4 w-full lg:w-auto justify-center lg:justify-end">
@@ -30,17 +30,18 @@
                         </div>
                         <input
                             class="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-dashed border-gray-400 focus:border-content focus:ring-0 text-sm font-medium placeholder-gray-400 shadow-sm"
-                            placeholder="Search for toys, books..." type="text" />
+                            :placeholder="$t('nav.search_placeholder')" type="text" />
                     </div>
-                    <NuxtLink v-if="!authStore.isAuthenticated" to="/login" 
+                    <LanguageSwitcher />
+                    <NuxtLink v-if="!authStore.isAuthenticated" to="/login"
                         class="bg-primary px-5 py-2 rounded-lg border-2 border-content text-content font-bold text-sm shadow-stitch-sm hover:translate-y-0.5 hover:shadow-none transition-all flex items-center gap-2">
                         <Icon name="material-symbols:login" class="text-lg" />
-                        Login
+                        {{ $t('auth.login') }}
                     </NuxtLink>
                     <button v-else @click="authStore.logout()"
                         class="bg-primary px-5 py-2 rounded-lg border-2 border-content text-content font-bold text-sm shadow-stitch-sm hover:translate-y-0.5 hover:shadow-none transition-all flex items-center gap-2">
                         <Icon name="material-symbols:logout" class="text-lg" />
-                        Logout
+                        {{ $t('auth.logout') }}
                     </button>
                 </div>
             </div>

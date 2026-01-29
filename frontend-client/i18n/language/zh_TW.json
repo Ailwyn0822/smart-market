@@ -1,0 +1,88 @@
+{
+  "nav": {
+    "shop": "店鋪",
+    "sell": "出售",
+    "about": "關於",
+    "cart": "購物車",
+    "search_placeholder": "搜尋玩具、書籍..."
+  },
+  "auth": {
+    "login": "登入",
+    "logout": "登出",
+    "new_here": "新用戶？",
+    "join_club": "加入俱樂部！"
+  },
+  "home": {
+    "verified": "經認證對兒童安全",
+    "hero_title_1": "捐贈舊玩具",
+    "hero_title_2": "新冒險",
+    "subtitle": "一個有趣的市場，用於買賣二手玩具、衣服和裝備。加入重複使用和回收的創意圈子！",
+    "start_exploring": "開始探索",
+    "how_it_works": "運作方式",
+    "happy_kids": "快樂的兒童！",
+    "discount": "五折",
+    "search_title": "你在找什麼？",
+    "view_all_categories": "查看所有類別",
+    "featured_finds": "特色發現",
+    "categories": {
+      "toys": "玩具",
+      "clothes": "衣服",
+      "books": "書籍",
+      "art": "藝術",
+      "gear": "裝備",
+      "outdoor": "戶外"
+    },
+    "products": {
+      "red_racer": {
+        "title": "經典紅色賽車",
+        "condition": "二手 - 良好",
+        "description": "復古風格的金屬踏板車，輕微刮傷但跑得很快！"
+      },
+      "block_set": {
+        "title": "木製積木組",
+        "condition": "像新的一樣",
+        "description": "完整的 50 塊積木組。非常適合建造城堡。"
+      },
+      "bear": {
+        "title": "抱抱熊先生",
+        "condition": "二手 - 一般",
+        "description": "正在尋找新家。非常柔軟，只需要清洗一下。"
+      },
+      "art_kit": {
+        "title": "藝術家入門套件",
+        "condition": "新",
+        "description": "從未打開。包括畫布、畫架和壓克力顏料。"
+      }
+    },
+    "illustrate": {
+      "verified": {
+        "title": "家長認證",
+        "description": "所有賣家都經過檢查"
+      },
+      "eco": {
+        "title": "環保",
+        "description": "對地球有益"
+      },
+      "secure": {
+        "title": "安全支付",
+        "description": "資金安全保證"
+      },
+      "happiness": {
+        "title": "幸福",
+        "description": "輕鬆退貨"
+      }
+    }
+  },
+  "login": {
+    "student_id": "學生證",
+    "hi": "嗨！",
+    "welcome_back": "歡迎回來！",
+    "sign_in_subtitle": "登入查看班上有什麼新事物。",
+    "username_label": "用戶名或電子郵件",
+    "username_placeholder": "coolkid123",
+    "password_label": "秘密密碼",
+    "password_placeholder": "••••••••",
+    "submit_btn": "打開我的文件夾",
+    "or_stick_with": "或堅持使用"
+  }
+}

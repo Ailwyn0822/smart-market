@@ -1,7 +1,7 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ['@nuxtjs/tailwindcss', '@nuxt/image', '@nuxt/icon','@pinia/nuxt'],
+  modules: ['@nuxtjs/tailwindcss', '@nuxt/image', '@nuxt/icon', '@pinia/nuxt', '@nuxtjs/i18n'],
   css: ['~/assets/css/main.css'],
   image: {
     domains: ['lh3.googleusercontent.com']
@@ -9,6 +9,21 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBase: 'http://localhost:8080'
+    }
+  },
+  i18n: {
+    strategy: 'no_prefix',
+    locales: [
+      { code: 'en', file: 'en.json' },
+      { code: 'zh-TW', file: 'zh_TW.json' },
+      { code: 'vi', file: 'vi.json' }
+    ],
+    langDir: './language',
+    defaultLocale: 'zh-TW',
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'smart_market_lang',
+      redirectOn: 'root'
     }
   },
   app: {

@@ -14,13 +14,13 @@
                         <div
                             class="inline-flex items-center gap-2 px-3 py-1 bg-cream border border-primary rounded-full text-xs font-bold text-[#854d0e] uppercase tracking-wide">
                             <Icon name="material-symbols:verified" class="text-sm" />
-                            Verified Safe for Kids
+                            {{ $t('home.verified') }}
                         </div>
                         <h1 class="text-5xl sm:text-6xl font-black text-content leading-[1.1] tracking-tight">
-                            Give Old Toys <br />
+                            {{ $t('home.hero_title_1') }} <br />
                             <span
                                 class="text-transparent bg-clip-text bg-gradient-to-r from-accent-red to-primary relative inline-block">
-                                New Adventures
+                                {{ $t('home.hero_title_2') }}
                                 <svg class="absolute w-full h-3 -bottom-1 left-0 text-primary opacity-50"
                                     preserveAspectRatio="none" viewBox="0 0 100 10">
                                     <path d="M0 5 Q 50 10 100 5" fill="none" stroke="currentColor" stroke-width="8">
@@ -29,19 +29,17 @@
                             </span>
                         </h1>
                         <p class="text-lg text-gray-600 font-medium leading-relaxed">
-                            A playful marketplace for buying and selling pre-loved toys, clothes, and gear. Join the
-                            creative circle of reusing
-                            and recycling!
+                            {{ $t('home.subtitle') }}
                         </p>
                         <div class="flex flex-wrap gap-4 pt-2">
                             <button
                                 class="bg-primary hover:bg-[#eab308] text-content text-base font-bold px-8 py-3.5 rounded-full shadow-[4px_4px_0px_#1c180d] border-2 border-content active:shadow-none active:translate-y-1 transition-all flex items-center gap-2">
-                                Start Exploring
+                                {{ $t('home.start_exploring') }}
                                 <Icon name="material-symbols:arrow-forward" />
                             </button>
                             <button
                                 class="bg-white hover:bg-gray-50 text-content text-base font-bold px-8 py-3.5 rounded-full border-2 border-content shadow-[4px_4px_0px_rgba(0,0,0,0.1)] active:shadow-none active:translate-y-1 transition-all">
-                                How it Works
+                                {{ $t('home.how_it_works') }}
                             </button>
                         </div>
                     </div>
@@ -74,8 +72,8 @@
                                             class="size-8 rounded-full border-2 border-white bg-accent-red flex items-center justify-center text-[10px] text-white font-bold">
                                             +2k</div>
                                     </div>
-                                    <span class="font-handwriting text-gray-500 text-sm font-bold rotate-[-2deg]">Happy
-                                        Kids!</span>
+                                    <span class="font-handwriting text-gray-500 text-sm font-bold rotate-[-2deg]">{{
+                                        $t('home.happy_kids') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -85,7 +83,7 @@
                         </div>
                         <div
                             class="absolute -bottom-8 -left-2 bg-white px-4 py-2 rounded-lg border-2 border-content rotate-[-6deg] shadow-lg z-20">
-                            <span class="font-bold text-accent-red">50% OFF</span>
+                            <span class="font-bold text-accent-red">{{ $t('home.discount') }}</span>
                         </div>
                     </div>
                 </div>
@@ -97,11 +95,11 @@
             <div class="flex items-end justify-between mb-8 px-2">
                 <h2 class="text-3xl font-black text-content tracking-tight flex items-center gap-3">
                     <Icon name="material-symbols:brush" class="text-4xl text-accent-blue" />
-                    What are you looking for?
+                    {{ $t('home.search_title') }}
                 </h2>
-                <a class="text-sm font-bold text-gray-500 underline decoration-2 hover:text-accent-blue" href="#">View
-                    All
-                    Categories</a>
+                <a class="text-sm font-bold text-gray-500 underline decoration-2 hover:text-accent-blue" href="#">
+                    {{ $t('home.view_all_categories') }}
+                </a>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
                 <a v-for="category in categories" :key="category.name" class="group flex flex-col items-center gap-3"
@@ -122,7 +120,8 @@
         <section>
             <div class="flex items-center justify-center mb-10 relative">
                 <div class="absolute h-1 w-full bg-content top-1/2 -z-10 rounded-full opacity-10"></div>
-                <h2 class="bg-background-light px-6 text-3xl font-black text-content tracking-tight">Featured Finds</h2>
+                <h2 class="bg-background-light px-6 text-3xl font-black text-content tracking-tight">{{
+                    $t('home.featured_finds') }}</h2>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 <ProductCard v-for="item in featuredItems" :key="item.title" :item="item" />

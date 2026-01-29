@@ -1,0 +1,88 @@
+{
+    "nav": {
+        "shop": "Shop",
+        "sell": "Sell",
+        "about": "About",
+        "cart": "Cart",
+        "search_placeholder": "Search for toys, books..."
+    },
+    "auth": {
+        "login": "Login",
+        "logout": "Logout",
+        "new_here": "New here?",
+        "join_club": "Join the Club!"
+    },
+    "home": {
+        "verified": "Verified Safe for Kids",
+        "hero_title_1": "Give Old Toys",
+        "hero_title_2": "New Adventures",
+        "subtitle": "A playful marketplace for buying and selling pre-loved toys, clothes, and gear. Join the creative circle of reusing and recycling!",
+        "start_exploring": "Start Exploring",
+        "how_it_works": "How it Works",
+        "happy_kids": "Happy Kids!",
+        "discount": "50% OFF",
+        "search_title": "What are you looking for?",
+        "view_all_categories": "View All Categories",
+        "featured_finds": "Featured Finds",
+        "categories": {
+            "toys": "Toys",
+            "clothes": "Clothes",
+            "books": "Books",
+            "art": "Art",
+            "gear": "Gear",
+            "outdoor": "Outdoor"
+        },
+        "products": {
+            "red_racer": {
+                "title": "Classic Red Racer",
+                "condition": "Used - Good",
+                "description": "Vintage style metal pedal car, slightly scratched but runs fast!"
+            },
+            "block_set": {
+                "title": "Wooden Block Set",
+                "condition": "Like New",
+                "description": "Complete set of 50 blocks. Great for building castles."
+            },
+            "bear": {
+                "title": "Mr. Cuddles Bear",
+                "condition": "Used - Fair",
+                "description": "Looking for a new home. Very soft, just needs a wash."
+            },
+            "art_kit": {
+                "title": "Artist Starter Kit",
+                "condition": "New",
+                "description": "Never opened. Includes canvas, easel, and acrylics."
+            }
+        },
+        "illustrate": {
+            "verified": {
+                "title": "Parent Verified",
+                "description": "All sellers are checked"
+            },
+            "eco": {
+                "title": "Eco-Friendly",
+                "description": "Good for the planet"
+            },
+            "secure": {
+                "title": "Secure Pay",
+                "description": "Money safe guarantee"
+            },
+            "happiness": {
+                "title": "Happiness",
+                "description": "Returns made easy"
+            }
+        }
+    },
+    "login": {
+        "student_id": "Student ID",
+        "hi": "Hi!",
+        "welcome_back": "Welcome Back!",
+        "sign_in_subtitle": "Sign in to see what's new in class.",
+        "username_label": "Username or Email",
+        "username_placeholder": "coolkid123",
+        "password_label": "Secret Password",
+        "password_placeholder": "••••••••",
+        "submit_btn": "Open My Folder",
+        "or_stick_with": "or stick with"
+    }
+}

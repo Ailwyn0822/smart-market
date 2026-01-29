@@ -1,0 +1,88 @@
+{
+  "nav": {
+    "shop": "Cửa hàng",
+    "sell": "Bán",
+    "about": "Giới thiệu",
+    "cart": "Giỏ hàng",
+    "search_placeholder": "Tìm kiếm đồ chơi, sách..."
+  },
+  "auth": {
+    "login": "Đăng nhập",
+    "logout": "Đăng xuất",
+    "new_here": "Mới đến?",
+    "join_club": "Tham gia Câu lạc bộ!"
+  },
+  "home": {
+    "verified": "Đã xác minh an toàn cho trẻ em",
+    "hero_title_1": "Tặng đồ chơi cũ",
+    "hero_title_2": "Những cuộc phiêu lưu mới",
+    "subtitle": "Một thị trường vui vẻ để mua bán đồ chơi, quần áo và thiết bị đã qua sử dụng. Tham gia vào vòng sáng tạo của việc tái sử dụng và tái chế!",
+    "start_exploring": "Bắt đầu khám phá",
+    "how_it_works": "Cách hoạt động",
+    "happy_kids": "Trẻ em hạnh phúc!",
+    "discount": "Giảm 50%",
+    "search_title": "Bạn đang tìm gì?",
+    "view_all_categories": "Xem tất cả danh mục",
+    "featured_finds": "Đồ tìm thấy nổi bật",
+    "categories": {
+      "toys": "Đồ chơi",
+      "clothes": "Quần áo",
+      "books": "Sách",
+      "art": "Nghệ thuật",
+      "gear": "Thiết bị",
+      "outdoor": "Ngoài trời"
+    },
+    "products": {
+      "red_racer": {
+        "title": "Xe đua cổ điển màu đỏ",
+        "condition": "Đã qua sử dụng - Tốt",
+        "description": "Xe đạp kim loại kiểu cổ điển, hơi trầy xước nhưng chạy nhanh!"
+      },
+      "block_set": {
+        "title": "Bộ khối gỗ",
+        "condition": "Như mới",
+        "description": "Bộ đầy đủ 50 khối. Tuyệt vời để xây lâu đài."
+      },
+      "bear": {
+        "title": "Gấu Mr. Cuddles",
+        "condition": "Đã qua sử dụng - Khá",
+        "description": "Đang tìm một ngôi nhà mới. Rất mềm, chỉ cần giặt."
+      },
+      "art_kit": {
+        "title": "Bộ dụng cụ khởi đầu nghệ sĩ",
+        "condition": "Mới",
+        "description": "Chưa mở. Bao gồm vải vẽ, giá vẽ và màu acrylic."
+      }
+    },
+    "illustrate": {
+      "verified": {
+        "title": "Cha mẹ đã xác minh",
+        "description": "Tất cả người bán đều được kiểm tra"
+      },
+      "eco": {
+        "title": "Thân thiện với môi trường",
+        "description": "Tốt cho hành tinh"
+      },
+      "secure": {
+        "title": "Thanh toán an toàn",
+        "description": "Đảm bảo tiền an toàn"
+      },
+      "happiness": {
+        "title": "Hạnh phúc",
+        "description": "Đổi trả dễ dàng"
+      }
+    }
+  },
+  "login": {
+    "student_id": "ID học sinh",
+    "hi": "Xin chào!",
+    "welcome_back": "Chào mừng trở lại!",
+    "sign_in_subtitle": "Đăng nhập để xem có gì mới trong lớp.",
+    "username_label": "Tên người dùng hoặc Email",
+    "username_placeholder": "coolkid123",
+    "password_label": "Mật khẩu bí mật",
+    "password_placeholder": "••••••••",
+    "submit_btn": "Mở Thư mục của tôi",
+    "or_stick_with": "hoặc gắn bó với"
+  }
+}
