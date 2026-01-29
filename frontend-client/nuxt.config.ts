@@ -1,7 +1,7 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ['@nuxtjs/tailwindcss', '@nuxt/image', '@nuxt/icon'],
+  modules: ['@nuxtjs/tailwindcss', '@nuxt/image', '@nuxt/icon','@pinia/nuxt'],
   css: ['~/assets/css/main.css'],
   image: {
     domains: ['lh3.googleusercontent.com']

@@ -150,4 +150,32 @@
 <script setup>
 const { categories, featuredItems, illustrate } = useHomeData()
 
+import { useAuthStore } from '~/stores/auth';
+
+onMounted(() => {
+
+    // 1. 引入 Store
+
+    const route = useRoute();
+    const authStore = useAuthStore(); // 啟用 Store
+
+    // 2. 監聽網址參數 (只在剛登入回來時觸發)
+    const tokenParam = route.query.token;
+    const userParam = route.query.user;
+
+    if (tokenParam && userParam) {
+        try {
+            const userData = JSON.parse(userParam);
+
+            // 3. 呼叫 Store 的 login 動作 (存入 Cookie)
+            authStore.login(tokenParam, userData);
+
+            // 4. 清除網址列 (變乾淨)
+            window.history.replaceState({}, document.title, "/");
+        } catch (e) {
+            console.error('登入解析失敗', e);
+        }
+    }
+})
+
 </script>
