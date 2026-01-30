@@ -12,10 +12,13 @@ export class AiService {
   }
 
   async analyzeProductImage(imageBuffer: Buffer, mimeType: string) {
-    // 使用支援圖片的模型 (gemini-1.5-flash 或 gemini-pro-vision)
-    const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    try {
+      console.log('Initializing Gemini model...');
+      // 使用支援圖片的模型 (Fallback to gemini-pro-vision if 1.5 is not available)
+      const model = this.genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+      console.log('Gemini model initialized.');
 
-    const prompt = `
+      const prompt = `
       你是一個專業的電商管理員。請分析這張圖片，並回傳以下 JSON 格式的資訊 (不要 Markdown，只要純 JSON)：
       {
         "name": "商品繁體中文名稱 (簡短有力)",
@@ -25,21 +28,25 @@ export class AiService {
       }
     `;
 
-    // 將圖片轉為 Gemini 看得懂的格式
-    const imagePart = {
-      inlineData: {
-        data: imageBuffer.toString('base64'),
-        mimeType: mimeType,
-      },
-    };
+      // 將圖片轉為 Gemini 看得懂的格式
+      const imagePart = {
+        inlineData: {
+          data: imageBuffer.toString('base64'),
+          mimeType: mimeType,
+        },
+      };
 
-    const result = await model.generateContent([prompt, imagePart]);
-    const response = await result.response;
-    const text = response.text();
+      const result = await model.generateContent([prompt, imagePart]);
+      const response = await result.response;
+      const text = response.text();
 
-    // 清理回應 (有時候 AI 會包 ```json ... ```)
-    const cleanText = text.replace(/```json|```/g, '').trim();
+      // 清理回應 (有時候 AI 會包 ```json ... ```)
+      const cleanText = text.replace(/```json|```/g, '').trim();
 
-    return JSON.parse(cleanText);
+      return JSON.parse(cleanText);
+    } catch (error) {
+      console.error('AI Service Error:', error);
+      throw error;
+    }
   }
 }

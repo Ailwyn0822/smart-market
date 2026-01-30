@@ -84,5 +84,29 @@
     "password_placeholder": "••••••••",
     "submit_btn": "打開我的文件夾",
     "or_stick_with": "或堅持使用"
+  },
+  "upload": {
+    "title": "新作品",
+    "subtitle": "將您的物品釘在板上開始販售。",
+    "snap_pic": "拍張照！",
+    "drop_here": "或拖放到這裡",
+    "form": {
+      "name_label": "它是什麼？",
+      "name_placeholder": "例如：復古玩具卡車",
+      "category_label": "哪一堆？",
+      "category_placeholder": "選擇類別",
+      "categories": {
+        "toys": "玩具與遊戲",
+        "clothing": "服裝",
+        "books": "書籍",
+        "art": "美術用品"
+      },
+      "description_label": "說說它的故事",
+      "description_placeholder": "這曾經是我最喜歡的玩具，但現在...",
+      "price_label": "價值",
+      "price_placeholder": "0",
+      "submit": "完成！",
+      "photo_caption": "我的酷東東..."
+    }
   }
 }

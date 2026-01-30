@@ -84,5 +84,29 @@
     "password_placeholder": "••••••••",
     "submit_btn": "Mở Thư mục của tôi",
     "or_stick_with": "hoặc gắn bó với"
+  },
+  "upload": {
+    "title": "Tác phẩm mới",
+    "subtitle": "Ghim vật phẩm của bạn lên bảng để bắt đầu bán.",
+    "snap_pic": "Chụp ảnh!",
+    "drop_here": "Hoặc kéo thả vào đây",
+    "form": {
+      "name_label": "What is it?",
+      "name_placeholder": "e.g. Vintage Toy Truck",
+      "category_label": "Which pile?",
+      "category_placeholder": "Choose a Category",
+      "categories": {
+        "toys": "Toys & Games",
+        "clothing": "Clothing",
+        "books": "Books",
+        "art": "Art Supplies"
+      },
+      "description_label": "Tell its story",
+      "description_placeholder": "This used to be my favorite toy, but now...",
+      "price_label": "Value",
+      "price_placeholder": "0",
+      "submit": "Done!",
+      "photo_caption": "My cool stuff..."
+    }
   }
 }

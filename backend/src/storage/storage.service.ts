@@ -30,6 +30,21 @@ export class StorageService implements OnModuleInit {
       await this.minioClient.makeBucket(this.bucketName, 'us-east-1');
       this.logger.log(`Bucket '${this.bucketName}' created successfully.`);
     }
+
+    // Set bucket policy to public read
+    const policy = {
+      Version: '2012-10-17',
+      Statement: [
+        {
+          Effect: 'Allow',
+          Principal: { AWS: ['*'] },
+          Action: ['s3:GetObject'],
+          Resource: [`arn:aws:s3:::${this.bucketName}/*`],
+        },
+      ],
+    };
+    await this.minioClient.setBucketPolicy(this.bucketName, JSON.stringify(policy));
+    this.logger.log(`Bucket policy set to public read for '${this.bucketName}'.`);
   }
 
   async upload(file: Express.Multer.File): Promise<string> {

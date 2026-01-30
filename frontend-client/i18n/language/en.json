@@ -84,5 +84,29 @@
     "password_placeholder": "••••••••",
     "submit_btn": "Open My Folder",
     "or_stick_with": "or stick with"
+  },
+  "upload": {
+    "title": "New Work",
+    "subtitle": "Pin your items to a board to start selling.",
+    "snap_pic": "Snap a photo!",
+    "drop_here": "Or drag and drop here",
+    "form": {
+      "name_label": "Nó là cái gì?",
+      "name_placeholder": "Ví dụ: Xe tải đồ chơi cổ điển",
+      "category_label": "Đống nào?",
+      "category_placeholder": "Chọn một danh mục",
+      "categories": {
+        "toys": "Đồ chơi & Trò chơi",
+        "clothing": "Quần áo",
+        "books": "Sách",
+        "art": "Vật dụng Mỹ thuật"
+      },
+      "description_label": "Kể câu chuyện của nó",
+      "description_placeholder": "Đây từng là món đồ chơi yêu thích của tôi, nhưng giờ...",
+      "price_label": "Giá trị",
+      "price_placeholder": "0",
+      "submit": "Hoàn thành!",
+      "photo_caption": "Món đồ tuyệt vời của tôi..."
+    }
   }
 }

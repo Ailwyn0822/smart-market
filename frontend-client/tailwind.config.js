@@ -22,6 +22,10 @@ export default {
         'content': '#1c180d',
         'cream': '#fefce8',
         'accent-line': '#06c755',
+        'paper-blue': '#e0f2fe',
+        'paper-green': '#dcfce7',
+        'paper-pink': '#fce7f3',
+        'paper-yellow': '#fef9c3',
       },
       fontFamily: {
         sans: ['"Spline Sans"', '"Noto Sans TC"', 'sans-serif'],
@@ -30,6 +34,12 @@ export default {
       boxShadow: {
         'stitch': '4px 4px 0px rgba(0,0,0,1)',
         'stitch-sm': '2px 2px 0px rgba(0,0,0,1)',
+        'paper': '2px 4px 12px -2px rgba(0, 0, 0, 0.1)',
+        'polaroid': '4px 6px 15px -3px rgba(0, 0, 0, 0.15)',
+        'sticker': '0px 4px 0px 0px rgba(180, 140, 0, 1)',
+      },
+      backgroundImage: {
+        'tape': 'linear-gradient(-45deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 100%)',
       }
     },
   },

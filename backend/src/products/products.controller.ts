@@ -10,23 +10,32 @@ export class ProductsController {
   constructor(
     private storageService: StorageService,
     private aiService: AiService,
-  ) {}
+  ) { }
 
   @Post('analyze')
   @UseGuards(JwtAuthGuard) // 需要登入才能用
   @UseInterceptors(FileInterceptor('file')) // 'file' 是前端上傳時的欄位名稱
   async analyze(@UploadedFile() file: Express.Multer.File) {
-    // 1. 上傳到 MinIO
-    const fileName = await this.storageService.upload(file);
-    const fileUrl = this.storageService.getFileUrl(fileName);
+    try {
+      console.log('Starting analysis for file:', file.originalname);
 
-    // 2. 呼叫 AI 分析
-    const aiResult = await this.aiService.analyzeProductImage(file.buffer, file.mimetype);
+      // 1. 上傳到 MinIO
+      const fileName = await this.storageService.upload(file);
+      console.log('Use StorageService.upload success:', fileName);
+      const fileUrl = this.storageService.getFileUrl(fileName);
 
-    // 3. 回傳整合結果
-    return {
-      imageUrl: fileUrl,
-      aiAnalysis: aiResult,
-    };
+      // 2. 呼叫 AI 分析
+      const aiResult = await this.aiService.analyzeProductImage(file.buffer, file.mimetype);
+      console.log('AI Analysis result:', aiResult);
+
+      // 3. 回傳整合結果
+      return {
+        imageUrl: fileUrl,
+        aiAnalysis: aiResult,
+      };
+    } catch (error) {
+      console.error('Error in analyze endpoint:', error);
+      throw error;
+    }
   }
 }
