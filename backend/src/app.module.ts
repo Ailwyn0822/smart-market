@@ -9,6 +9,10 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 
+import { StorageModule } from './storage/storage.module';
+import { AiModule } from './ai/ai.module';
+import { ProductsModule } from './products/products.module';
+
 // --------------------------------------------------------
 // 2. @Module 裝飾器：這是 NestJS 定義「模組」的方式
 // --------------------------------------------------------
@@ -52,6 +56,10 @@ import { AuthModule } from './auth/auth.module';
     UsersModule,
 
     AuthModule,
+
+    StorageModule,
+    AiModule,
+    ProductsModule,
   ],
   controllers: [AppController], // 路由控制器 (處理網址請求的)
   providers: [AppService], // 服務提供者 (寫邏輯的)

@@ -4,7 +4,7 @@ import { LineOAuthGuard } from './line-oauth.guard'; // 1. 引入
 import { AuthService } from './auth.service'; // 1. 引入 Service
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   @Get('google')
   @UseGuards(GoogleOAuthGuard)
@@ -24,7 +24,7 @@ export class AuthController {
   // 🟢 LINE 出發門
   @Get('line')
   @UseGuards(LineOAuthGuard)
-  async lineAuth() { }
+  async lineAuth() {}
 
   // 🟢 LINE 回歸門
   @Get('line/callback')

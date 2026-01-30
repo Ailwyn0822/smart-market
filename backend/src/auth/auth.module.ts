@@ -31,5 +31,6 @@ import { JwtModule } from '@nestjs/jwt';
     LineStrategy,
     JwtStrategy,
   ],
+  exports: [PassportModule, JwtModule],
 })
-export class AuthModule { }
+export class AuthModule {}

@@ -23,7 +23,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     refreshToken: string,
     profile: Profile,
     done: VerifyCallback,
-  ): Promise<any> { // 這裡改成 Promise<any> 因為是 async
+  ): Promise<any> {
+    // 這裡改成 Promise<any> 因為是 async
     const { name, emails, photos } = profile;
 
     // 1. 修正：這裡改名叫 details，不要叫 user，避免跟下面衝突

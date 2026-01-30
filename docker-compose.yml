@@ -21,6 +21,7 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     container_name: sm_pgadmin
+    restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: root

@@ -5,7 +5,10 @@ import { JwtService } from '@nestjs/jwt'; // 1. 引入
 @Injectable()
 export class AuthService {
   // 注入 UsersService，這樣我們才能操作資料庫
-  constructor(private usersService: UsersService, private jwtService: JwtService) { }
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
+  ) {}
 
   async validateOAuthLogin(details: any) {
     // 1. 先去資料庫查，這個 Email 註冊過了嗎？
@@ -36,7 +39,7 @@ export class AuthService {
     const payload = {
       email: user.email,
       sub: user.id,
-      role: 'USER' // 暫時寫死，之後從資料庫讀
+      role: 'USER', // 暫時寫死，之後從資料庫讀
     };
 
     return {
@@ -47,7 +50,7 @@ export class AuthService {
         name: user.name,
         email: user.email,
         avatar: user.avatar,
-      }
+      },
     };
   }
 }

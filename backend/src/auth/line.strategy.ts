@@ -21,7 +21,7 @@ export class LineStrategy extends PassportStrategy(Strategy, 'line') {
 
   async validate(accessToken: string, refreshToken: string, profile: any, done: any): Promise<any> {
     const { displayName, id, pictureUrl, email } = profile;
-    
+
     // 💡 LINE 的坑：
     // 如果你沒有在 Console 申請 Email 權限，這裡的 email 會是 undefined。
     // 為了不讓資料庫報錯，我們做一個「備用方案」：
