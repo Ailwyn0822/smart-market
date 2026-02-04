@@ -11,17 +11,17 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    vue(),
-    vueDevTools(),
-    AutoImport({
-      imports: ['vue', 'vue-router'], // 自動引入 ref, reactive, useRoute 等
-      resolvers: [ElementPlusResolver()], // 自動引入 Element Plus 的 API (如 ElMessage)
-      dts: 'src/auto-imports.d.ts', // 自動產生型別宣告檔
-    }),
     Components({
-      resolvers: [ElementPlusResolver()], // 自動引入 Element Plus 元件 (如 <el-button>)
+      resolvers: [ElementPlusResolver()],
       dts: 'src/components.d.ts',
     }),
+    AutoImport({
+      imports: ['vue', 'vue-router'],
+      resolvers: [ElementPlusResolver()],
+      dts: 'src/auto-imports.d.ts',
+    }),
+    vue(),
+    vueDevTools(),
   ],
   resolve: {
     alias: {
