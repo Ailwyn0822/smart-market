@@ -3,6 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
+export interface AiAnalysisResult {
+  name: string;
+  description: string;
+  category: string;
+  price: number;
+}
+
 @Injectable()
 export class AiService {
   private genAI: GoogleGenerativeAI;
@@ -11,7 +18,7 @@ export class AiService {
     this.genAI = new GoogleGenerativeAI(this.configService.getOrThrow<string>('GEMINI_API_KEY'));
   }
 
-  async analyzeProductImage(imageBuffer: Buffer, mimeType: string) {
+  async analyzeProductImage(imageBuffer: Buffer, mimeType: string): Promise<AiAnalysisResult> {
     try {
       console.log('Initializing Gemini model...');
       // 使用支援圖片的模型 (Fallback to gemini-pro-vision if 1.5 is not available)
@@ -40,10 +47,10 @@ export class AiService {
       const response = await result.response;
       const text = response.text();
 
-      // 清理回應 (有時候 AI 會包 ```json ... ```)
+      // 清理回應 (有時候 AI 會包 \`\`\`json ... \`\`\`)
       const cleanText = text.replace(/```json|```/g, '').trim();
 
-      return JSON.parse(cleanText);
+      return JSON.parse(cleanText) as AiAnalysisResult;
     } catch (error) {
       console.error('AI Service Error:', error);
       throw error;

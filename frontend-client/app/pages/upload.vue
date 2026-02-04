@@ -129,7 +129,7 @@
 
                     <!-- Submit Button Sticker -->
                     <div class="lg:absolute lg:bottom-10 lg:right-10 mt-8 lg:mt-0 flex justify-center lg:block z-50">
-                        <button class="group relative flex items-center justify-center">
+                        <button @click="submitForm" class="group relative flex items-center justify-center">
                             <div
                                 class="absolute inset-0 bg-yellow-600 rounded-full translate-y-1 group-hover:translate-y-1.5 transition-transform duration-100">
                             </div>
@@ -235,6 +235,54 @@ const processFile = async (file: File) => {
     } catch (error) {
         console.error('Failed to analyze image:', error);
         alert('Failed to analyze the image. Please try again.');
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+const submitForm = async () => {
+    if (!formData.name || !formData.description || !formData.category || !formData.price || !formData.imageUrl) {
+        alert('Please fill in all fields.');
+        return;
+    }
+
+    isLoading.value = true;
+
+    try {
+        const token = authStore.token;
+        if (!token) {
+            alert('Please login first!');
+            return;
+        }
+
+        const response = await $fetch(`${config.public.apiBase}/products`, {
+            method: 'POST',
+            body: {
+                name: formData.name,
+                description: formData.description,
+                category: formData.category,
+                price: formData.price,
+                imageUrl: formData.imageUrl
+            },
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response) {
+            alert('Product uploaded successfully!');
+            formData = {
+                name: '',
+                description: '',
+                category: '',
+                price: '',
+                imageUrl: ''
+            };
+            isLoading.value = false;
+        }
+    } catch (error) {
+        console.error('Failed to upload product:', error);
+        alert('Failed to upload the product. Please try again.');
     } finally {
         isLoading.value = false;
     }

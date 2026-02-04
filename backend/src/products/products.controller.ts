@@ -1,16 +1,27 @@
 // apps/backend/src/products/products.controller.ts
-import { Controller, Post, UseInterceptors, UploadedFile, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UseInterceptors,
+  UploadedFile,
+  UseGuards,
+  Get,
+  Body,
+} from '@nestjs/common';
+import { CreateProductDto } from './dto/create-product.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { StorageService } from '../storage/storage.service';
 import { AiService } from '../ai/ai.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard'; // 記得保護這個 API
+import { ProductsService } from './products.service';
 
 @Controller('products')
 export class ProductsController {
   constructor(
     private storageService: StorageService,
     private aiService: AiService,
-  ) { }
+    private productsService: ProductsService,
+  ) {}
 
   @Post('analyze')
   @UseGuards(JwtAuthGuard) // 需要登入才能用
@@ -37,5 +48,18 @@ export class ProductsController {
       console.error('Error in analyze endpoint:', error);
       throw error;
     }
+  }
+
+  // 👇 新增：存檔 API
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  async create(@Body() body: CreateProductDto) {
+    return this.productsService.create(body);
+  }
+
+  // 👇 新增：列表 API (之後用)
+  @Get()
+  async findAll() {
+    return this.productsService.findAll();
   }
 }

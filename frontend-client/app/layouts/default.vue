@@ -5,17 +5,13 @@
                 class="layout-container max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6">
                 <HeaderLogo />
                 <nav class="flex flex-wrap justify-center gap-4 sm:gap-6">
-                    <a class="sticker-nav-item bg-white px-5 py-2 rounded-lg border-2 border-content text-content font-bold text-sm rotate-1"
+                    <a class="sticker-nav-item bg-accent-red px-5 py-2 rounded-lg border-2 border-content text-white font-bold text-sm rotate-2"
                         href="#">
                         {{ $t('nav.shop') }}
                     </a>
                     <a class="sticker-nav-item bg-accent-blue px-5 py-2 rounded-lg border-2 border-content text-white font-bold text-sm -rotate-2"
                         href="#">
                         {{ $t('nav.sell') }}
-                    </a>
-                    <a class="sticker-nav-item bg-accent-red px-5 py-2 rounded-lg border-2 border-content text-white font-bold text-sm rotate-2"
-                        href="#">
-                        {{ $t('nav.about') }}
                     </a>
                     <a class="sticker-nav-item bg-white px-4 py-2 rounded-lg border-2 border-content text-content font-bold text-sm -rotate-1 flex items-center gap-2"
                         href="#">
