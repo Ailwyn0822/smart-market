@@ -63,3 +63,97 @@ body {
     -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'20\' height=\'10\' viewBox=\'0 0 20 10\' preserveAspectRatio=\'none\'><path d=\'M0,10 Q5,0 10,10 T20,10\' fill=\'black\'/></svg>');
     -webkit-mask-size: 20px 100%;
 }
+
+
+/* 字體定義在 tailwind.config.js 中，但這裡保留基礎樣式 */
+.font-marker {
+    font-family: "Permanent Marker", cursive;
+}
+.font-mono-card {
+    font-family: "Courier Prime", monospace;
+}
+
+/* 筆記本側邊欄 */
+.notebook-sidebar {
+    background-color: #fff;
+    background-image:
+        linear-gradient(90deg, transparent 39px, #ef4444 39px, #ef4444 41px, transparent 41px),
+        linear-gradient(#e5e7eb 1px, transparent 1px);
+    background-size: 100% 100%, 100% 2rem;
+    background-attachment: local;
+}
+
+.lined-paper {
+    background-image: linear-gradient(#9ca3af 1px, transparent 1px);
+    background-size: 100% 2.0rem;
+    background-position: 0 1rem;
+    background-color: #fff;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+}
+
+.washi-tape {
+    opacity: 0.9;
+    mix-blend-mode: multiply;
+    box-shadow: 2px 2px 3px rgba(0,0,0,0.15);
+}
+.filter-checkbox:checked + label {
+    transform: rotate(-2deg) scale(1.05);
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+    border-color: #1c180d;
+}
+
+/* 價格滑桿 */
+input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    background: transparent;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 24px;
+    width: 24px;
+    border-radius: 50%;
+    background: #f4c025;
+    border: 2px solid #1c180d;
+    cursor: pointer;
+    margin-top: -8px;
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    background: #fef08a;
+    border: 2px solid #1c180d;
+    border-radius: 4px;
+}
+
+input[type=range]::-moz-range-thumb {
+    height: 24px;
+    width: 24px;
+    border-radius: 50%;
+    background: #f4c025;
+    border: 2px solid #1c180d;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+}
+
+input[type=range]::-moz-range-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    background: #fef08a;
+    border: 2px solid #1c180d;
+    border-radius: 4px;
+}
+
+/* 動畫延遲 */
+.delay-100 {
+    animation-delay: 100ms;
+}
+
+.delay-200 {
+    animation-delay: 200ms;
+}

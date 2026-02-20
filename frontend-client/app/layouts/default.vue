@@ -14,7 +14,7 @@
                         {{ $t('nav.sell') }}
                     </a>
                     <a class="sticker-nav-item bg-white px-4 py-2 rounded-lg border-2 border-content text-content font-bold text-sm -rotate-1 flex items-center gap-2"
-                        href="#">
+                        @click="navigateTo('/cart')">
                         <Icon name="material-symbols:shopping-cart" class="text-lg" />
                         {{ $t('nav.cart') }}
                     </a>

@@ -1,5 +1,9 @@
 {
   "nav": {
+    "title": {
+      "play": "玩轉",
+      "market": "市集"
+    },
     "shop": "店鋪",
     "sell": "出售",
     "about": "關於",
@@ -108,5 +112,44 @@
       "submit": "完成！",
       "photo_caption": "我的酷東東..."
     }
+  },
+  "products": {
+    "all_treasures": "所有寶藏",
+    "items": "件商品",
+    "sort_by": "排序：",
+    "sort_newest": "最新優先",
+    "sort_price_low": "價格由低到高",
+    "sort_price_high": "價格由高到低",
+    "back_to_gallery": "返回商品列表",
+    "price": "價格",
+    "description": "商品描述",
+    "add_to_cart": "加入購物車",
+    "filter_title": "篩選",
+    "condition": "狀況",
+    "price_range": "價格範圍",
+    "condition_new": "全新 ✨",
+    "condition_like_new": "近全新 👌",
+    "condition_used_good": "二手良好 👍",
+    "view": "查看"
+  },
+  "cart": {
+    "title": "我的購物車",
+    "items_in_folder": "資料夾中的商品",
+    "empty": "購物車是空的",
+    "go_shopping": "去逛逛吧！",
+    "condition": "狀況",
+    "last_one": "最後一件！",
+    "in_stock": "有庫存",
+    "continue_shopping": "繼續購物",
+    "summary": "摘要",
+    "discount_code": "學生折扣碼",
+    "name_tag": "名牌",
+    "apply": "套用",
+    "subtotal": "小計",
+    "shipping": "運費",
+    "discount": "折扣",
+    "total": "總計",
+    "checkout_now": "立即結帳",
+    "secure_checkout": "安全結帳，家長放心"
   }
 }

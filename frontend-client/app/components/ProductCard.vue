@@ -18,8 +18,8 @@
         </div>
         <button
             :class="`mt-auto w-full bg-background-light hover:${item.btnHoverBg} hover:${item.btnHoverText} border-2 border-transparent hover:border-content py-2 rounded-lg font-bold text-sm transition-colors flex items-center justify-center gap-2 group-hover:shadow-md`">
-            Add to Cart
-            <Icon name="material-symbols:add-shopping-cart" class="text-sm" />
+            {{ $t('products.view') }}
+            <Icon name="material-symbols:visibility" class="text-sm" />
         </button>
     </div>
 </template>
@@ -30,4 +30,5 @@ import type { ProductItem } from '~/types'
 defineProps<{
     item: ProductItem
 }>()
+
 </script>

@@ -30,6 +30,8 @@ export default {
       fontFamily: {
         sans: ['"Spline Sans"', '"Noto Sans TC"', 'sans-serif'],
         display: ['"Spline Sans"', 'sans-serif'],
+        marker: ['"Permanent Marker"', 'cursive'],
+        "mono-card": ['"Courier Prime"', 'monospace'],
       },
       boxShadow: {
         'stitch': '4px 4px 0px rgba(0,0,0,1)',

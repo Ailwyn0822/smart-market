@@ -1,5 +1,9 @@
 {
   "nav": {
+    "title": {
+      "play": "Trao đổi",
+      "market": "Phiên chợ"
+    },
     "shop": "Cửa hàng",
     "sell": "Bán",
     "about": "Giới thiệu",
@@ -108,5 +112,44 @@
       "submit": "Done!",
       "photo_caption": "My cool stuff..."
     }
+  },
+  "products": {
+    "all_treasures": "Tất cả kho báu",
+    "items": "mặt hàng",
+    "sort_by": "Sắp xếp:",
+    "sort_newest": "Mới nhất",
+    "sort_price_low": "Giá tăng dần",
+    "sort_price_high": "Giá giảm dần",
+    "back_to_gallery": "Quay lại thư viện",
+    "price": "Giá",
+    "description": "Mô tả",
+    "add_to_cart": "Thêm vào giỏ",
+    "filter_title": "Bộ lọc",
+    "condition": "Tình trạng",
+    "price_range": "Khoảng giá",
+    "condition_new": "Mới tinh ✨",
+    "condition_like_new": "Như mới 👌",
+    "condition_used_good": "Đã dùng - Tốt 👍",
+    "view": "Xem"
+  },
+  "cart": {
+    "title": "Giỏ hàng của tôi",
+    "items_in_folder": "Mặt hàng trong thư mục",
+    "empty": "Giỏ hàng trống",
+    "go_shopping": "Mua sắm nào!",
+    "condition": "Tình trạng",
+    "last_one": "Cuối cùng!",
+    "in_stock": "Còn hàng",
+    "continue_shopping": "Tiếp tục mua sắm",
+    "summary": "Tóm tắt",
+    "discount_code": "Mã giảm giá học sinh",
+    "name_tag": "TÊN THẺ",
+    "apply": "Áp dụng",
+    "subtotal": "Tạm tính",
+    "shipping": "Phí vận chuyển",
+    "discount": "Giảm giá",
+    "total": "Tổng cộng",
+    "checkout_now": "Thanh toán ngay",
+    "secure_checkout": "Thanh toán an toàn cho phụ huynh"
   }
 }

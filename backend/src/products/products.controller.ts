@@ -7,6 +7,7 @@ import {
   UseGuards,
   Get,
   Body,
+  Param,
 } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -21,7 +22,7 @@ export class ProductsController {
     private storageService: StorageService,
     private aiService: AiService,
     private productsService: ProductsService,
-  ) {}
+  ) { }
 
   @Post('analyze')
   @UseGuards(JwtAuthGuard) // 需要登入才能用
@@ -61,5 +62,10 @@ export class ProductsController {
   @Get()
   async findAll() {
     return this.productsService.findAll();
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return this.productsService.findOne(+id); // +id 把字串轉數字
   }
 }

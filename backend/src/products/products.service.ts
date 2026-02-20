@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
@@ -8,7 +8,7 @@ export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private productRepo: Repository<Product>,
-  ) {}
+  ) { }
 
   // 建立商品
   async create(data: Partial<Product>): Promise<Product> {
@@ -19,5 +19,14 @@ export class ProductsService {
   // 取得所有商品 (之後列表頁會用到)
   async findAll(): Promise<Product[]> {
     return this.productRepo.find({ order: { createdAt: 'DESC' } });
+  }
+
+  // 取得單一商品
+  async findOne(id: number): Promise<Product> {
+    const product = await this.productRepo.findOneBy({ id });
+    if (!product) {
+      throw new NotFoundException(`找不到 ID 為 ${id} 的商品`);
+    }
+    return product;
   }
 }

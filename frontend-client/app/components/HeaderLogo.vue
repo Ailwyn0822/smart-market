@@ -6,7 +6,7 @@
                 <Icon name="material-symbols:palette" class="text-content text-3xl" />
             </div>
             <h1 class="text-content text-2xl font-black tracking-tight group-hover:scale-105 transition-transform">
-                Creative<span class="text-primary">Corner</span>
+                {{ $t('nav.title.play') }}<span class="text-primary">{{ $t('nav.title.market') }}</span>
             </h1>
         </div>
     </NuxtLink>

@@ -33,7 +33,8 @@
                         </p>
                         <div class="flex flex-wrap gap-4 pt-2">
                             <button
-                                class="bg-primary hover:bg-[#eab308] text-content text-base font-bold px-8 py-3.5 rounded-full shadow-[4px_4px_0px_#1c180d] border-2 border-content active:shadow-none active:translate-y-1 transition-all flex items-center gap-2">
+                                class="bg-primary hover:bg-[#eab308] text-content text-base font-bold px-8 py-3.5 rounded-full shadow-[4px_4px_0px_#1c180d] border-2 border-content active:shadow-none active:translate-y-1 transition-all flex items-center gap-2"
+                                @click="navigateTo('/products')">
                                 {{ $t('home.start_exploring') }}
                                 <Icon name="material-symbols:arrow-forward" />
                             </button>

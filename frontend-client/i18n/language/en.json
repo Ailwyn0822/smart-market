@@ -1,5 +1,9 @@
 {
   "nav": {
+    "title": {
+      "play": "Play & Swap",
+      "market": "Market"
+    },
     "shop": "Shop",
     "sell": "Sell",
     "about": "About",
@@ -108,5 +112,44 @@
       "submit": "Hoàn thành!",
       "photo_caption": "Món đồ tuyệt vời của tôi..."
     }
+  },
+  "products": {
+    "all_treasures": "All Treasures",
+    "items": "items",
+    "sort_by": "Sort by:",
+    "sort_newest": "Newest First",
+    "sort_price_low": "Price: Low to High",
+    "sort_price_high": "Price: High to Low",
+    "back_to_gallery": "Back to Gallery",
+    "price": "Price",
+    "description": "Description",
+    "add_to_cart": "Add to Cart",
+    "filter_title": "Filter Stuff",
+    "condition": "Condition",
+    "price_range": "Price Range",
+    "condition_new": "Brand New ✨",
+    "condition_like_new": "Like New 👌",
+    "condition_used_good": "Used - Good 👍",
+    "view": "View"
+  },
+  "cart": {
+    "title": "My Cart",
+    "items_in_folder": "Items in your folder",
+    "empty": "Your cart is empty",
+    "go_shopping": "Go Shopping!",
+    "condition": "Condition",
+    "last_one": "Last one!",
+    "in_stock": "In Stock",
+    "continue_shopping": "Continue Shopping",
+    "summary": "Summary",
+    "discount_code": "Student Discount Code",
+    "name_tag": "NAME TAG",
+    "apply": "Apply",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "discount": "Discount",
+    "total": "Total",
+    "checkout_now": "Checkout Now",
+    "secure_checkout": "Secure checkout for happy parents"
   }
 }

@@ -10,7 +10,7 @@
                         class="size-10 bg-primary rounded-full flex items-center justify-center border-2 border-white rotate-3">
                         <Icon name="material-symbols:palette" class="text-content text-xl" />
                     </div>
-                    <h2 class="text-xl font-black">CreativeCorner</h2>
+                    <h2 class="text-xl font-black">{{ $t('nav.title.play') }}{{ $t('nav.title.market') }}</h2>
                 </div>
                 <div class="hidden md:block w-px h-8 bg-white/20"></div>
                 <p class="text-xs text-gray-400 font-medium text-center md:text-left">
