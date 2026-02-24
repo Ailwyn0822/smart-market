@@ -1,4 +1,4 @@
-import type { CategoryItem, ProductItem, IllustrationItem } from '~/types'
+import type { CategoryItem, IllustrationItem } from '~/types'
 
 export const useHomeData = () => {
     const { t } = useI18n()
@@ -12,53 +12,6 @@ export const useHomeData = () => {
         { name: t('home.categories.outdoor'), icon: 'pedal-bike', bgColor: 'bg-green-400' },
     ])
 
-    const featuredItems = computed<ProductItem[]>(() => [
-        {
-            title: t('home.products.red_racer.title'),
-            price: '$15',
-            condition: t('home.products.red_racer.condition'),
-            description: t('home.products.red_racer.description'),
-            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAPB3dGs-oKxc75etMaToQGn0skAAjAeBZnWv5T5HwOeTHYcZ-gXZMNAdHDsCt48KIPL9ZMYQ9Q8I9gmdfU14ROgReXqaHiR8CJuY59CjOQs6j-lp94D8dxZtBFTKYZM4xE7Jtn0-4NIbaVOXJRN0DN-IE-DuNHh6xPVDydKCiCt85nC9TWQa0Ijxrp0kcYZuqYAvEddxq_vlrsPTuvfR-zmOPg86fU4LkTzJ9vM4pThtlE_lICxatASb8O2_duSXHuZX6gxOkJPOuQ',
-            borderColorClass: 'crayon-border-red',
-            priceColor: 'text-accent-red',
-            btnHoverBg: 'bg-accent-red',
-            btnHoverText: 'text-white'
-        },
-        {
-            title: t('home.products.block_set.title'),
-            price: '$24',
-            condition: t('home.products.block_set.condition'),
-            description: t('home.products.block_set.description'),
-            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD7Gb6q0aM6_Jn46xxTtF07VC8s9kY2NQ55MVDqfqcR1WRTr__E1Yn7eo9jQcEeeve0VrjcNHnPcK4QROkPBXnA07HHOhDf1nPOz9Nxle82uKW0epPYTcm2m-00BAV5tEdC00124Zq4ZuOPAHecaTddJSfaJmBxz86hx4gj8-JAZH7jv6HbOiSRrnaAFA6uVkpwtR7AflAIKr3RfDOHmuYBpZqW2w1rBkY-nVP4iNOvLUyMkjeyfFHg-_lzjHZ7_N7SBhNDoJa66QDP',
-            borderColorClass: 'crayon-border-blue',
-            priceColor: 'text-accent-blue',
-            btnHoverBg: 'bg-accent-blue',
-            btnHoverText: 'text-white'
-        },
-        {
-            title: t('home.products.bear.title'),
-            price: '$8',
-            condition: t('home.products.bear.condition'),
-            description: t('home.products.bear.description'),
-            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCTd1ik66Od35XTgQfdYh2vHG2rRP2Q_ffVtYApvmOgGQtkw6nmZ7z7ILo1qddTQQgErO0PgC1pMdlsrXdxXunxySlqJ_EecKCrVrGWJWNOis2NDDa6PeSWW71iLhPWGDvXk37DjlyjBCbV4mcsNydgqcVTDlS9J7dmgExOMguko9yflrdbAgG1G3V946vzyua4M2csQSx3mc3raqd74CsYFmz2wi5DlVcoOWP0s06O2PPHkCb5NR70UtK9TeZ7XcFQf5sTkYZ22A5x',
-            borderColorClass: 'crayon-border-yellow',
-            priceColor: 'text-primary',
-            btnHoverBg: 'bg-primary',
-            btnHoverText: 'text-content'
-        },
-        {
-            title: t('home.products.art_kit.title'),
-            price: '$30',
-            condition: t('home.products.art_kit.condition'),
-            description: t('home.products.art_kit.description'),
-            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD2BqY4axIOd2zsQ0sXt702dJjPyc2uW61HdaIrnz7GQWvAE07wwmVEo6ZLgqC3p8oXeX2htk2TvIuMQDOSBmnzh9NDKghVHuaHNQJaHcC8LpJV4oXVe6PaAuMlyyP8GbNXksjIZuyYxbt80zGREEITHsQn0M_GIW160ynsSuSepavdT4JPZr5dznyJIfO0uJ4obBSxNx_LaQeX1X3HII50qoChfxSdyjepE3S7ZNKyREI8hHeP8n4QoV7SUIcPERI_H2yRYtg97aH7',
-            borderColorClass: 'crayon-border-purple',
-            priceColor: 'text-accent-purple',
-            btnHoverBg: 'bg-accent-purple',
-            btnHoverText: 'text-white'
-        }
-    ])
-
     const illustrate = computed<IllustrationItem[]>(() => [
         { icon: 'verified-user', title: t('home.illustrate.verified.title'), description: t('home.illustrate.verified.description'), bgColor: 'bg-amber-100', borderColor: 'border-amber-600', shadowColor: 'shadow-[2px_2px_0_theme("colors.amber.600")]', textColor: 'text-amber-600' },
         { icon: 'recycling', title: t('home.illustrate.eco.title'), description: t('home.illustrate.eco.description'), bgColor: 'bg-green-100', borderColor: 'border-green-600', shadowColor: 'shadow-[2px_2px_0_theme("colors.green.600")]', textColor: 'text-green-600' },
@@ -68,7 +21,6 @@ export const useHomeData = () => {
 
     return {
         categories,
-        featuredItems,
         illustrate
     }
 }
