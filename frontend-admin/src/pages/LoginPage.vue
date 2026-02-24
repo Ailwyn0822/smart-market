@@ -6,11 +6,11 @@
           <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4H6zM16 10a4 4 0 1 1-8 0" />
         </svg>
       </div>
-      <h1>登入 Smart Market</h1>
+      <h1>Smart Market 後台</h1>
 
       <el-form ref="formRef" :model="form" :rules="rules" @submit.prevent="login">
-        <el-form-item prop="username">
-          <el-input v-model="form.username" placeholder="帳號" size="large" />
+        <el-form-item prop="email">
+          <el-input v-model="form.email" placeholder="管理員 Email" size="large" />
         </el-form-item>
         <el-form-item prop="password">
           <el-input v-model="form.password" placeholder="密碼" type="password" size="large" show-password
@@ -29,21 +29,27 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import axios from 'axios'
+import { useAuthStore } from '@/stores/auth'
+
+const router = useRouter()
+const authStore = useAuthStore()
 
 const formRef = ref<FormInstance>()
-const form = reactive({ username: '', password: '' })
+const form = reactive({ email: '', password: '' })
 const loading = ref(false)
 
 const rules: FormRules = {
-  username: [
-    { required: true, message: '請輸入帳號', trigger: 'blur' },
-    { min: 3, max: 20, message: '帳號長度 3-20 字元', trigger: 'blur' }
+  email: [
+    { required: true, message: '請輸入 Email', trigger: 'blur' },
+    { type: 'email', message: '請輸入有效的 Email', trigger: 'blur' },
   ],
   password: [
     { required: true, message: '請輸入密碼', trigger: 'blur' },
-    { min: 6, message: '密碼至少 6 字元', trigger: 'blur' }
-  ]
+    { min: 6, message: '密碼至少 6 字元', trigger: 'blur' },
+  ],
 }
 
 const login = async () => {
@@ -51,13 +57,29 @@ const login = async () => {
   try {
     await formRef.value.validate()
     loading.value = true
-    // TODO: 串接登入 API
-    await new Promise(r => setTimeout(r, 1500))
-    ElMessage.success('登入成功')
-    ElMessage.success('登入成功')
 
-  } catch {
-    ElMessage.error('請確認輸入資料')
+    const apiBase = import.meta.env.VITE_API_BASE || 'http://localhost:8080'
+    const res = await axios.post(`${apiBase}/auth/login`, {
+      email: form.email,
+      password: form.password,
+    })
+
+    const { access_token, user } = res.data
+
+    if (user?.role !== 'admin') {
+      ElMessage.error('此帳號沒有管理員權限')
+      return
+    }
+
+    authStore.login(access_token, user)
+    ElMessage.success(`歡迎回來，${user.name}！`)
+    router.push('/admin/dashboard')
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      ElMessage.error('帳號或密碼錯誤')
+    } else {
+      ElMessage.error('登入失敗，請稍後再試')
+    }
   } finally {
     loading.value = false
   }

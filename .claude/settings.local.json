@@ -7,7 +7,19 @@
       "Bash(xargs grep -h \"@Get\\\\|@Post\\\\|@Patch\\\\|@Delete\\\\|@Controller\")",
       "Bash(xargs ls -la)",
       "Bash(npm install @vueuse/core)",
-      "Bash(wc -l c:/Users/asd66/Documents/GitHub/smart-market/frontend-client/app/pages/**/*.vue c:/Users/asd66/Documents/GitHub/smart-market/frontend-client/app/pages/*.vue)"
+      "Bash(wc -l c:/Users/asd66/Documents/GitHub/smart-market/frontend-client/app/pages/**/*.vue c:/Users/asd66/Documents/GitHub/smart-market/frontend-client/app/pages/*.vue)",
+      "Bash(npm install)",
+      "Bash(npm view @nestjs/swagger versions --json)",
+      "Bash(ls \"c:\\\\Users\\\\asd66\\\\Documents\\\\GitHub\\\\smart-market\\\\node_modules\\\\@smart-market\"\" 2>&1 && echo \"symlink exists \")",
+      "Bash(npm install --prefix frontend-client)",
+      "Bash(npm install --workspace=frontend-client)",
+      "Bash(npx vitest run src/__tests__/stores/auth.spec.ts)",
+      "Bash(npx vitest run src/__tests__/LoginPage.spec.ts)",
+      "Bash(npx vitest run)",
+      "Bash(netstat -ano)",
+      "Bash(ls /c/Users/asd66/Documents/GitHub/smart-market/backend/.env*)",
+      "Bash(dir /c/Users/asd66/Documents/GitHub/smart-market/backend/dist)",
+      "Bash(npm run build)"
     ]
   }
 }

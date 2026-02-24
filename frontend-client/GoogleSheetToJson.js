@@ -13,7 +13,7 @@ const { extractSheets } = require("spreadsheet-to-json");
 // ── 設定區（需要改的只有這裡）────────────────────────────────
 const SPREADSHEET_KEY = "1WoTNVP1HIADTQbczdolRqgykGvHnCANOwuL2Kl637Q8";
 const OUTPUT_DIR = path.resolve(__dirname, "./i18n/language");
-const credentials = require("./google/smart-market-485510-a9b47ada97ac.json");
+const credentials = require("./google/smart-market-485510-49b9dbb94ff8.json");
 // ─────────────────────────────────────────────────────────────
 
 // 將 callback 包成 Promise，方便 async/await 使用

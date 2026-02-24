@@ -132,6 +132,15 @@ useHead({
     ]
 })
 
+useSeoMeta({
+    title: () => product.value ? `${product.value.name} - Smart Market` : 'Smart Market',
+    ogTitle: () => product.value?.name,
+    description: () => product.value?.description?.slice(0, 160),
+    ogDescription: () => product.value?.description?.slice(0, 160),
+    ogImage: () => product.value?.imageUrl || product.value?.image,
+    ogType: 'website',
+})
+
 const config = useRuntimeConfig()
 const route = useRoute()
 const router = useRouter()

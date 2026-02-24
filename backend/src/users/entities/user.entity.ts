@@ -7,13 +7,10 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Favorite } from '../../favorites/entities/favorite.entity';
+import { UserProvider, UserRole } from '@smart-market/shared';
 
-// 定義登入來源：Google、LINE 或 Local (傳統帳密)
-export enum UserProvider {
-  GOOGLE = 'google',
-  LINE = 'line',
-  LOCAL = 'local',
-}
+// 重新匯出，供此模組內其他檔案使用（向後相容）
+export { UserProvider, UserRole };
 
 @Entity('users')
 export class User {
@@ -49,6 +46,14 @@ export class User {
 
   @Column({ nullable: true })
   providerId: string; // 存 Google/LINE 給的 ID
+
+  // --- 角色權限 ---
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.USER,
+  })
+  role: UserRole;
 
   // --- 系統自動記錄 ---
   @CreateDateColumn()

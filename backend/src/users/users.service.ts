@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { UserRole } from '@smart-market/shared';
 import { Product } from '../products/entities/product.entity';
 import { Review } from '../reviews/entities/review.entity';
 
@@ -76,6 +77,19 @@ export class UsersService {
       },
       products,
     };
+  }
+
+  // --- Admin 專用 ---
+
+  async findAll(): Promise<User[]> {
+    return this.usersRepository.find({ order: { createdAt: 'DESC' } });
+  }
+
+  async updateRole(id: string, role: UserRole): Promise<User> {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) throw new NotFoundException(`找不到用戶 ${id}`);
+    await this.usersRepository.update(id, { role });
+    return this.usersRepository.findOne({ where: { id } }) as Promise<User>;
   }
 
   // --- 搜尋使用者 (給聊天功能用) ---

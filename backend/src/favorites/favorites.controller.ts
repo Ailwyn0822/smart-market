@@ -1,8 +1,11 @@
 import { Controller, Get, Post, Delete, Param, UseGuards, Req } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import type { Request } from 'express';
 import { FavoritesService } from './favorites.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
+@ApiTags('favorites')
+@ApiBearerAuth('JWT-auth')
 @Controller('favorites')
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) { }

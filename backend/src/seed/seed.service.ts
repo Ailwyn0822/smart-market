@@ -2,7 +2,7 @@ import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { User, UserProvider } from '../users/entities/user.entity';
+import { User, UserProvider, UserRole } from '../users/entities/user.entity';
 import { Product } from '../products/entities/product.entity';
 import { Category } from '../categories/entities/category.entity';
 import { DiscountCode } from '../discount-codes/entities/discount-code.entity';
@@ -103,9 +103,15 @@ export class SeedService implements OnApplicationBootstrap {
                 name: '管理員',
                 password: hashed,
                 provider: UserProvider.LOCAL,
+                role: UserRole.ADMIN,
                 avatar: 'https://api.dicebear.com/7.x/notionists/svg?seed=admin',
             }));
-            console.log('🌱 Seeded admin account: admin@smartmarket.com / password123');
+            console.log('🌱 Seeded admin account: admin@smartmarket.com / password123 (role: ADMIN)');
+        } else if (admin.role !== UserRole.ADMIN) {
+            // 確保現有的 admin 帳號有 ADMIN 角色
+            await this.userRepo.update(admin.id, { role: UserRole.ADMIN });
+            admin.role = UserRole.ADMIN;
+            console.log('🔄 Updated admin account role to ADMIN');
         }
         return admin;
     }

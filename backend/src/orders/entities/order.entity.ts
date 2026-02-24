@@ -6,18 +6,10 @@ import {
     OneToMany,
 } from 'typeorm';
 import { OrderItem } from './order-item.entity';
+import { OrderStatus, PaymentMethod } from '@smart-market/shared';
 
-export enum OrderStatus {
-    PROCESSING = 'processing',
-    SHIPPED = 'shipped',
-    OUT_FOR_DELIVERY = 'out_for_delivery',
-    DELIVERED = 'delivered',
-}
-
-export enum PaymentMethod {
-    COD = 'cod',
-    ONLINE = 'online',
-}
+// 重新匯出，供此模組內其他檔案使用（向後相容）
+export { OrderStatus, PaymentMethod };
 
 @Entity('orders')
 export class Order {

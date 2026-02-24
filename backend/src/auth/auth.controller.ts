@@ -1,17 +1,26 @@
 import { Controller, Get, Post, Req, Res, Body, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { GoogleOAuthGuard } from './google-oauth.guard';
 import { LineOAuthGuard } from './line-oauth.guard';
 import { AuthService } from './auth.service';
+
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('register')
+  @ApiOperation({ summary: '本地帳號註冊', description: '使用 email/password 建立新帳號，成功後自動登入' })
+  @ApiResponse({ status: 201, description: '註冊成功，回傳 access_token 和用戶資訊' })
+  @ApiResponse({ status: 409, description: '此 Email 已被使用' })
   async localRegister(@Body() body: { username: string; email: string; password: string }) {
     return this.authService.registerLocal(body.username, body.email, body.password);
   }
 
   @Post('login')
+  @ApiOperation({ summary: '本地帳密登入' })
+  @ApiResponse({ status: 200, description: '登入成功，回傳 access_token 和用戶資訊' })
+  @ApiResponse({ status: 401, description: '帳號或密碼錯誤' })
   async localLogin(@Body() body: { email: string; password: string }) {
     return this.authService.loginWithCredentials(body.email, body.password);
   }

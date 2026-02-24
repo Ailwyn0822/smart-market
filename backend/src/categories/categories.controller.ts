@@ -9,17 +9,20 @@ import {
     Post,
     UseGuards,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
+@ApiTags('categories')
 @Controller('categories')
 export class CategoriesController {
     constructor(private readonly categoriesService: CategoriesService) { }
 
-    /** 公開取得所有類別 */
     @Get()
+    @ApiOperation({ summary: '取得所有分類' })
+    @ApiResponse({ status: 200, description: '分類列表' })
     findAll() {
         return this.categoriesService.findAll();
     }
@@ -29,9 +32,11 @@ export class CategoriesController {
         return this.categoriesService.findTop(6);
     }
 
-    /** 需要 JWT（管理員用） */
     @Post()
     @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: '建立分類（管理員）' })
+    @ApiResponse({ status: 201, description: '分類建立成功' })
     create(@Body() dto: CreateCategoryDto) {
         return this.categoriesService.create(dto);
     }
@@ -44,6 +49,10 @@ export class CategoriesController {
 
     @Delete(':id')
     @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: '刪除分類（管理員）' })
+    @ApiParam({ name: 'id', description: '分類 ID' })
+    @ApiResponse({ status: 200, description: '刪除成功' })
     remove(@Param('id', ParseIntPipe) id: number) {
         return this.categoriesService.remove(id);
     }

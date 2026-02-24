@@ -1,15 +1,7 @@
-export interface ApiProduct {
-    id: number
-    name: string
-    price: string | number
-    imageUrl?: string
-    image?: string
-    description?: string
-    condition?: string
-    category?: string
-    stock?: number
-    sellerId?: string
-}
+// ApiProduct 從 shared 套件匯出（前後端共用型別）
+export type { ApiProduct } from '@smart-market/shared'
+
+// 以下為前端 UI 專用型別，不放入 shared
 
 export interface ProductItem {
     id?: number | string;

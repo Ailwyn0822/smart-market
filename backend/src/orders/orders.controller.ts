@@ -10,16 +10,21 @@ import {
     UseGuards,
     Patch,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 
+@ApiTags('orders')
+@ApiBearerAuth('JWT-auth')
 @Controller('orders')
 export class OrdersController {
     constructor(private readonly ordersService: OrdersService) { }
 
     @UseGuards(JwtAuthGuard)
     @Post()
+    @ApiOperation({ summary: '建立訂單' })
+    @ApiResponse({ status: 201, description: '訂單建立成功' })
     createOrder(@Body() dto: CreateOrderDto, @Req() req: any) {
         const userId: string = req.user.sub || req.user.id || req.user.userId;
         return this.ordersService.createOrder(userId, dto);
@@ -27,6 +32,8 @@ export class OrdersController {
 
     @UseGuards(JwtAuthGuard)
     @Get('my')
+    @ApiOperation({ summary: '我的購買訂單' })
+    @ApiResponse({ status: 200, description: '訂單清單' })
     getMyOrders(@Req() req: any) {
         const userId: string = req.user.sub || req.user.id || req.user.userId;
         return this.ordersService.getMyOrders(userId);
@@ -34,6 +41,8 @@ export class OrdersController {
 
     @UseGuards(JwtAuthGuard)
     @Get('selling')
+    @ApiOperation({ summary: '我的銷售訂單' })
+    @ApiResponse({ status: 200, description: '銷售訂單清單' })
     getSellingOrders(@Req() req: any) {
         const userId: string = req.user.sub || req.user.id || req.user.userId;
         return this.ordersService.getSellingOrders(userId);
@@ -52,6 +61,8 @@ export class OrdersController {
 
     @UseGuards(JwtAuthGuard)
     @Get('seller/dashboard')
+    @ApiOperation({ summary: '賣家儀表板統計' })
+    @ApiResponse({ status: 200, description: '銷售統計資料' })
     getSellerDashboard(@Req() req: any) {
         const userId: string = req.user.sub || req.user.id || req.user.userId;
         return this.ordersService.getSellerDashboard(userId);

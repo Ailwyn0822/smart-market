@@ -153,6 +153,14 @@
 </template>
 
 <script setup lang="ts">
+useSeoMeta({
+    title: 'Smart Market — 二手好物市集',
+    description: '安全、環保的二手玩具、衣物與裝備交易平台。',
+    ogTitle: 'Smart Market — 二手好物市集',
+    ogDescription: '安全、環保的二手玩具、衣物與裝備交易平台。',
+    ogType: 'website',
+})
+
 const { illustrate } = useHomeData()
 const config = useRuntimeConfig()
 const route = useRoute()
