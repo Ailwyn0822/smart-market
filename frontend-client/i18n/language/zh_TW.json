@@ -256,6 +256,30 @@
       "later": "稍後再說"
     }
   },
+  "sell_order": {
+    "title": "賣家訂單",
+    "loading": "載入中...",
+    "login_required": "請先登入",
+    "empty": "目前沒有銷售訂單",
+    "go_home": "回首頁",
+    "order_time": "下單時間",
+    "confirm_shipment": "確認出貨"
+  },
+  "seller": {
+    "loading": "載入賣家資訊中...",
+    "not_found": "找不到該賣家資訊",
+    "verified": "認證賣家",
+    "product_count": "商品數",
+    "joined_at": "加入時間",
+    "follow": "關注賣家",
+    "following": "已關注",
+    "chat": "聊聊",
+    "all_products": "所有刊登商品",
+    "no_products": "該賣家目前沒有上架商品",
+    "reviews_title": "來自買家的評價",
+    "no_reviews": "目前沒有評價喔！",
+    "reviews_end": "已經到底囉 🎉"
+  },
   "favorite": {
     "title": "我的收藏",
     "loading": "載入中...",

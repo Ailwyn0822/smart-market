@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { UserProvider, User } from '../users/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
@@ -33,6 +33,23 @@ export class AuthService {
     });
 
     return newUser;
+  }
+
+  // 本地帳號註冊
+  async registerLocal(name: string, email: string, password: string) {
+    const existing = await this.usersService.findOneByEmail(email);
+    if (existing) {
+      throw new ConflictException('此 Email 已被使用');
+    }
+    const hashed = await bcrypt.hash(password, 10);
+    const user = await this.usersService.createOAuthUser({
+      name,
+      email,
+      password: hashed,
+      provider: UserProvider.LOCAL,
+      avatar: `https://api.dicebear.com/7.x/notionists/svg?seed=${encodeURIComponent(email)}`,
+    });
+    return this.login(user);
   }
 
   // 本地帳密登入

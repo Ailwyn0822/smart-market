@@ -172,9 +172,9 @@
     "codes_loading": "Loading...",
     "codes_empty": "No discount codes available",
     "codes_expires": "Expires",
-    "codes_no_limit": "Unlimited",
-    "codes_use": "Use This",
-    "codes_off": "Off"
+    "codes_no_limit": "No limit",
+    "codes_use": "Use this code",
+    "codes_off": "off"
   },
   "register": {
     "new_member": "New Member",
@@ -256,6 +256,30 @@
       "later": "Maybe Later"
     }
   },
+  "sell_order": {
+    "title": "Sales Orders",
+    "loading": "Loading...",
+    "login_required": "Please log in",
+    "empty": "No sales orders yet",
+    "go_home": "Go Home",
+    "order_time": "Order Date",
+    "confirm_shipment": "Confirm Shipment"
+  },
+  "seller": {
+    "loading": "Loading seller info...",
+    "not_found": "Seller not found",
+    "verified": "Verified Seller",
+    "product_count": "Products",
+    "joined_at": "Joined",
+    "follow": "Follow Seller",
+    "following": "Following",
+    "chat": "Chat",
+    "all_products": "All Listed Products",
+    "no_products": "No products listed yet",
+    "reviews_title": "Buyer Reviews",
+    "no_reviews": "No reviews yet!",
+    "reviews_end": "That's all! 🎉"
+  },
   "favorite": {
     "title": "My Favorites",
     "loading": "Loading...",
@@ -312,29 +336,29 @@
     "contact_support": "Contact Support",
     "answers": {
       "general": {
-        "title": "",
-        "p1": "",
-        "p2": ""
+        "title": "How does the platform work?",
+        "p1": "Think of it as a giant online swap market! You can list your unused toys or clothes for sale, or find treasures from other sellers.",
+        "p2": "All transactions are protected by the platform to ensure safe trading for both buyers and sellers. Just register an account to get started."
       },
       "buying": {
-        "title": "",
-        "p1": "",
-        "p2": ""
+        "title": "How to buy items?",
+        "p1": "When you see an item you like on the homepage or item list, click into the detail page. If it's in stock and not listed by you, you can add it to your cart.",
+        "p2": "Go to the cart and click checkout. You can choose secure online ECPay or Cash on Delivery. After payment, just wait for the seller to ship!"
       },
       "selling": {
-        "title": "",
-        "p1": "",
-        "p2": ""
+        "title": "How do I start selling?",
+        "p1": "Click 'Post Item' in the account menu, upload clear pictures, fill in the condition, price, and description, and the system will list it for you immediately.",
+        "p2": "When a buyer places an order, you will see it in 'My Orders (Seller)'. Click 'Confirm Shipment' after sending the item to let the buyer track the shipping status."
       },
       "safety": {
-        "title": "",
-        "p1": "",
-        "p2": ""
+        "title": "Are transactions safe?",
+        "p1": "Absolutely safe! We use certified third-party payment gateways (like ECPay) to protect your credit card and account information.",
+        "p2": "Funds are held in escrow by the system until the buyer clicks 'Confirm Receipt'. If the item doesn't match the description, contact customer support for a refund."
       },
       "shipping": {
-        "title": "",
-        "p1": "",
-        "p2": ""
+        "title": "Shipping fees and methods?",
+        "p1": "The platform currently provides standard home delivery service. Shipping fees will be automatically calculated on the checkout page based on the order total.",
+        "p2": "Sellers should securely package and ship the item using a trusted logistics provider within three working days after the buyer's payment, then click ship on the platform."
       }
     }
   }

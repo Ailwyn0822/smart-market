@@ -6,7 +6,8 @@
       "Bash(xargs grep -l \"profile\\\\|me\\\\|current\")",
       "Bash(xargs grep -h \"@Get\\\\|@Post\\\\|@Patch\\\\|@Delete\\\\|@Controller\")",
       "Bash(xargs ls -la)",
-      "Bash(npm install @vueuse/core)"
+      "Bash(npm install @vueuse/core)",
+      "Bash(wc -l c:/Users/asd66/Documents/GitHub/smart-market/frontend-client/app/pages/**/*.vue c:/Users/asd66/Documents/GitHub/smart-market/frontend-client/app/pages/*.vue)"
     ]
   }
 }

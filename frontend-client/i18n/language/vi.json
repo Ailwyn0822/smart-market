@@ -167,14 +167,14 @@
     "order_complete_desc": "Thật tuyệt vời! Chúng tôi đã nhận được đơn đặt hàng kiệt tác của bạn. Bạn sẽ nhận được email xác nhận sau khi sơn khô (và chúng tôi giao hàng).",
     "view_my_orders": "Xem đơn hàng của tôi",
     "fragile": "Hàng dễ vỡ",
-    "view_codes": "Xem mã khuyến mãi",
+    "view_codes": "Xem mã giảm giá có sẵn",
     "codes_modal_title": "Mã giảm giá có sẵn",
     "codes_loading": "Đang tải...",
-    "codes_empty": "Không có mã giảm giá",
-    "codes_expires": "Hết hạn",
+    "codes_empty": "Không có mã giảm giá nào",
+    "codes_expires": "Hạn sử dụng",
     "codes_no_limit": "Không giới hạn",
-    "codes_use": "Sử dụng",
-    "codes_off": "Giảm"
+    "codes_use": "Dùng mã này",
+    "codes_off": "giảm"
   },
   "register": {
     "new_member": "Thành viên mới",
@@ -256,6 +256,30 @@
       "later": "Để sau"
     }
   },
+  "sell_order": {
+    "title": "Đơn hàng bán",
+    "loading": "Đang tải...",
+    "login_required": "Vui lòng đăng nhập",
+    "empty": "Chưa có đơn hàng bán",
+    "go_home": "Về trang chủ",
+    "order_time": "Thời gian đặt hàng",
+    "confirm_shipment": "Xác nhận giao hàng"
+  },
+  "seller": {
+    "loading": "Đang tải thông tin người bán...",
+    "not_found": "Không tìm thấy người bán",
+    "verified": "Người bán đã xác minh",
+    "product_count": "Số sản phẩm",
+    "joined_at": "Tham gia",
+    "follow": "Theo dõi người bán",
+    "following": "Đang theo dõi",
+    "chat": "Nhắn tin",
+    "all_products": "Tất cả sản phẩm",
+    "no_products": "Chưa có sản phẩm nào",
+    "reviews_title": "Đánh giá từ người mua",
+    "no_reviews": "Chưa có đánh giá!",
+    "reviews_end": "Đã hết! 🎉"
+  },
   "favorite": {
     "title": "Yêu thích của tôi",
     "loading": "Đang tải...",
@@ -312,29 +336,29 @@
     "contact_support": "Liên hệ hỗ trợ",
     "answers": {
       "general": {
-        "title": "How does the platform work?",
-        "p1": "Think of it as a giant online swap market! You can list your unused toys or clothes for sale, or find treasures from other sellers.",
-        "p2": "All transactions are protected by the platform to ensure safe trading for both buyers and sellers. Just register an account to get started."
+        "title": "Nền tảng này hoạt động như thế nào?",
+        "p1": "Hãy coi đây như một chợ trao đổi trực tuyến khổng lồ! Bạn có thể đăng bán đồ chơi hoặc quần áo không dùng đến, hoặc tìm kiếm những món bảo vật yêu thích từ các người bán khác.",
+        "p2": "Mọi giao dịch đều được nền tảng bảo vệ, đảm bảo cả người mua và người bán có thể hoàn thành giao dịch một cách an toàn. Chỉ cần đăng ký tài khoản là có thể bắt đầu ngay."
       },
       "buying": {
-        "title": "How to buy items?",
-        "p1": "When you see an item you like on the homepage or item list, click into the detail page. If it's in stock and not listed by you, you can add it to your cart.",
-        "p2": "Go to the cart and click checkout. You can choose secure online ECPay or Cash on Delivery. After payment, just wait for the seller to ship!"
+        "title": "Làm thế nào để mua hàng?",
+        "p1": "Khi thấy món đồ yêu thích trên trang chủ hoặc danh sách sản phẩm, hãy nhấn vào để xem trang chi tiết. Nếu là hàng có sẵn và không phải sản phẩm do bạn đăng bán, bạn có thể thêm vào giỏ hàng.",
+        "p2": "Truy cập vào giỏ hàng và chọn thanh toán. Bạn có thể chọn thanh toán trực tuyến an toàn qua ECPay hoặc thanh toán khi nhận hàng. Sau khi hoàn tất thanh toán, chỉ cần chờ người bán giao hàng!"
       },
       "selling": {
-        "title": "How do I start selling?",
-        "p1": "Click 'Post Item' in the account menu, upload clear pictures, fill in the condition, price, and description, and the system will list it for you immediately.",
-        "p2": "When a buyer places an order, you will see it in 'My Orders (Seller)'. Click 'Confirm Shipment' after sending the item to let the buyer track the shipping status."
+        "title": "Làm thế nào để bắt đầu bán hàng?",
+        "p1": "Nhấn vào \"Đăng sản phẩm\" trong menu tài khoản, tải lên hình ảnh rõ nét và điền tình trạng, giá cả cũng như mô tả sản phẩm, hệ thống sẽ ngay lập tức đăng bán cho bạn.",
+        "p2": "Khi người mua đặt hàng, bạn sẽ thấy bản ghi trong \"Đơn hàng của tôi (Người bán)\". Sau khi gửi hàng, vui lòng nhấn \"Xác nhận giao hàng\" để người mua nắm bắt tình trạng vận chuyển. Bạn cũng có thể quản lý tại \"Trang sản phẩm của người bán\"."
       },
       "safety": {
-        "title": "Are transactions safe?",
-        "p1": "Absolutely safe! We use certified third-party payment gateways (like ECPay) to protect your credit card and account information.",
-        "p2": "Funds are held in escrow by the system until the buyer clicks 'Confirm Receipt'. If the item doesn't match the description, contact customer support for a refund."
+        "title": "Giao dịch có được đảm bảo an toàn không?",
+        "p1": "Tuyệt đối an toàn! Chúng tôi sử dụng cổng thanh toán của bên thứ ba đã được chứng nhận (như ECPay) để đảm bảo thông tin thẻ tín dụng và tài khoản của bạn không bị ròỉ.",
+        "p2": "Trước khi người mua nhấn \"Xác nhận đã nhận hàng\", khoản thanh toán sẽ do hệ thống tạm giữ. Nếu phát hiện sản phẩm không đúng với mô tả, bạn có thể liên hệ với bộ phận chăm sóc khách hàng bất cứ lúc nào để được hỗ trợ hoàn tiền."
       },
       "shipping": {
-        "title": "Shipping fees and methods?",
-        "p1": "The platform currently provides standard home delivery service. Shipping fees will be automatically calculated on the checkout page based on the order total.",
-        "p2": "Sellers should securely package and ship the item using a trusted logistics provider within three working days after the buyer's payment, then click ship on the platform."
+        "title": "Phí vận chuyển và phương thức giao hàng?",
+        "p1": "Hiện tại nền tảng cung cấp dịch vụ giao hàng tận nơi tiêu chuẩn. Phí vận chuyển sẽ được tự động tính toán tại trang thanh toán dựa trên tổng giá trị đơn hàng.",
+        "p2": "Người bán vui lòng đóng gói sản phẩm cẩn thận và gửi qua đơn vị vận chuyển tin cậy trong vòng 3 ngày làm việc sau khi người mua thanh toán, sau đó nhấn giao hàng trên nền tảng để đảm bảo trải nghiệm mua sắm tốt nhất cho cả hai bên."
       }
     }
   }

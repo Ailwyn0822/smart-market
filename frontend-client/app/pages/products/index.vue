@@ -45,8 +45,8 @@
 
                 <!-- 產品網格 -->
                 <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <ProductCard v-for="(product, index) in sortedProducts" :key="product.id || product.title"
-                        :item="mapProduct(product, index)" />
+                    <ProductCard v-for="product in displayProducts" :key="product.id || product.title"
+                        :item="product" />
                 </div>
 
                 <!-- 載入動畫 -->
@@ -63,20 +63,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 
 const config = useRuntimeConfig()
 const route = useRoute()
 const sortBy = ref('newest')
 const searchQuery = ref('')
-const debouncedKeyword = ref('')
 
-// 防抖：300ms 後才更新查詢關鍵字
-let debounceTimer: ReturnType<typeof setTimeout> | null = null
-watch(searchQuery, (val) => {
-    if (debounceTimer) clearTimeout(debounceTimer)
-    debounceTimer = setTimeout(() => { debouncedKeyword.value = val.trim() }, 300)
-})
+// 防抖：300ms 後才更新查詢關鍵字（composable 內自動在 onUnmounted 清理）
+const debouncedKeyword = useDebounce(() => searchQuery.value.trim(), 300)
 
 const categoryParam = computed(() => (route.query.category as string) || undefined)
 const keywordParam = computed(() => debouncedKeyword.value || undefined)
@@ -123,4 +118,9 @@ const sortedProducts = computed(() => {
     }
     return sorted
 })
+
+// 映射後的顯示資料，避免在模板 v-for 中重複呼叫函式
+const displayProducts = computed(() =>
+    sortedProducts.value.map((p: any, index: number) => mapProduct(p, index))
+)
 </script>

@@ -105,7 +105,7 @@ const login = async () => {
                 body: { email: loginForm.value.username, password: loginForm.value.password }
             }
         )
-        authStore.setAuth(res.access_token, res.user)
+        authStore.login(res.access_token, res.user)
         toast.success('登入成功！')
         await navigateTo('/')
     } catch (e: any) {

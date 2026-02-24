@@ -26,7 +26,7 @@ export const useChatStore = defineStore('chat', () => {
     const authStore = useAuthStore()
     const config = useRuntimeConfig()
 
-    const socket = ref<Socket | null>(null)
+    const socket = shallowRef<Socket | null>(null)
     const isConnected = shallowRef(false)
     const isOpen = shallowRef(false)
     const activeContactId = shallowRef<string | null>(null)

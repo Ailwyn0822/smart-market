@@ -129,8 +129,8 @@
                     $t('home.featured_finds') }}</h2>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                <ProductCard v-for="(product, index) in productsData" :key="product.id"
-                    :item="mapProduct(product, index)" />
+                <ProductCard v-for="product in displayProducts" :key="product.id"
+                    :item="product" />
             </div>
         </section>
 
@@ -152,60 +152,59 @@
     </main>
 </template>
 
-<script setup>
-import { useAuthStore } from '~/stores/auth';
-
+<script setup lang="ts">
 const { illustrate } = useHomeData()
 const config = useRuntimeConfig()
+const route = useRoute()
+const authStore = useAuthStore()
 
 // 串接類別 API (取前六個)
 const { data: categoriesData } = await useFetch(`${config.public.apiBase}/categories/top`)
 
 // 串接最新商品 API (取前四個)
-const { data: productsData } = await useFetch(`${config.public.apiBase}/products/latest`)
+const { data: productsData } = await useFetch<any[]>(`${config.public.apiBase}/products/latest`)
 
-// 將 API 商品對應至 ProductCard 所需格式
-function mapProduct(p, index) {
-    const colorStyles = [
-        { border: 'crayon-border-red', price: 'text-accent-red', hover: 'hover:bg-accent-red' },
-        { border: 'crayon-border-blue', price: 'text-accent-blue', hover: 'hover:bg-accent-blue' },
-        { border: 'crayon-border-yellow', price: 'text-primary', hover: 'hover:bg-primary' },
-        { border: 'crayon-border-purple', price: 'text-accent-purple', hover: 'hover:bg-accent-purple' }
-    ]
-    const style = colorStyles[index % colorStyles.length]
+const colorStyles = [
+    { border: 'crayon-border-red', price: 'text-accent-red', hover: 'hover:bg-accent-red' },
+    { border: 'crayon-border-blue', price: 'text-accent-blue', hover: 'hover:bg-accent-blue' },
+    { border: 'crayon-border-yellow', price: 'text-primary', hover: 'hover:bg-primary' },
+    { border: 'crayon-border-purple', price: 'text-accent-purple', hover: 'hover:bg-accent-purple' }
+]
 
-    return {
-        id: p.id,
-        title: p.name,
-        price: `$${parseFloat(p.price).toFixed(0)}`,
-        condition: p.condition === 'New' || !p.condition ? '全新' : p.condition,
-        description: p.description,
-        image: p.imageUrl,
-        borderColorClass: style.border,
-        priceColor: style.price,
-        btnHoverBg: style.hover,
-        btnHoverText: 'text-white',
-        category: typeof p.category === 'object' && p.category !== null
-            ? p.category
-            : { name: p.category || '' }
-    }
-}
+// 映射至 ProductCard 格式（computed 避免模板中重複運算）
+const displayProducts = computed(() =>
+    (productsData.value || []).map((p: any, index: number) => {
+        const style = colorStyles[index % colorStyles.length]
+        return {
+            id: p.id,
+            title: p.name,
+            price: `$${parseFloat(p.price).toFixed(0)}`,
+            condition: p.condition === 'New' || !p.condition ? '全新' : p.condition,
+            description: p.description,
+            image: p.imageUrl,
+            borderColorClass: style.border,
+            priceColor: style.price,
+            btnHoverBg: style.hover,
+            btnHoverText: 'text-white',
+            category: typeof p.category === 'object' && p.category !== null
+                ? p.category
+                : { name: p.category || '' }
+        }
+    })
+)
 
 onMounted(() => {
-    const route = useRoute();
-    const authStore = useAuthStore();
-
     // 監聽 OAuth 登入回傳
-    const tokenParam = route.query.token;
-    const userParam = route.query.user;
+    const tokenParam = route.query.token
+    const userParam = route.query.user
 
     if (tokenParam && userParam) {
         try {
-            const userData = JSON.parse(userParam);
-            authStore.login(tokenParam, userData);
-            window.history.replaceState({}, document.title, "/");
+            const userData = JSON.parse(userParam as string)
+            authStore.login(tokenParam as string, userData)
+            window.history.replaceState({}, document.title, '/')
         } catch (e) {
-            console.error('登入解析失敗', e);
+            console.error('登入解析失敗', e)
         }
     }
 })

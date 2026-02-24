@@ -6,6 +6,11 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Post('register')
+  async localRegister(@Body() body: { username: string; email: string; password: string }) {
+    return this.authService.registerLocal(body.username, body.email, body.password);
+  }
+
   @Post('login')
   async localLogin(@Body() body: { email: string; password: string }) {
     return this.authService.loginWithCredentials(body.email, body.password);

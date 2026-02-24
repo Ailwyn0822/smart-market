@@ -121,13 +121,15 @@
     </main>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({
     layout: 'auth'
 })
 
 const router = useRouter()
 const config = useRuntimeConfig()
+const authStore = useAuthStore()
+const toast = useToast()
 
 const registerForm = ref({
     username: '',
@@ -154,22 +156,27 @@ const register = async () => {
 
     isLoading.value = true
     try {
-        await $fetch(`${config.public.apiBase}/users/register`, {
-            method: 'POST',
-            body: {
-                username: registerForm.value.username,
-                email: registerForm.value.email,
-                password: registerForm.value.password
+        const res = await $fetch<{ access_token: string; user: any }>(
+            `${config.public.apiBase}/auth/register`,
+            {
+                method: 'POST',
+                body: {
+                    username: registerForm.value.username,
+                    email: registerForm.value.email,
+                    password: registerForm.value.password
+                }
             }
-        })
-
-        await router.push('/login')
-    } catch (err) {
-        const statusCode = err?.response?.status
+        )
+        // 註冊後直接登入
+        authStore.login(res.access_token, res.user)
+        toast.success('帳號建立成功，歡迎加入！')
+        await navigateTo('/')
+    } catch (err: any) {
+        const statusCode = err?.response?.status || err?.status
         if (statusCode === 409) {
             errorMessage.value = err?.data?.message || '此帳號或 Email 已被使用'
         } else {
-            errorMessage.value = '註冊失敗，請稍後再試'
+            errorMessage.value = err?.data?.message || '註冊失敗，請稍後再試'
         }
     } finally {
         isLoading.value = false
