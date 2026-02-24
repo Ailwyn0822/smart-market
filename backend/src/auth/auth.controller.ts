@@ -1,10 +1,15 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res, Body, UseGuards } from '@nestjs/common';
 import { GoogleOAuthGuard } from './google-oauth.guard';
-import { LineOAuthGuard } from './line-oauth.guard'; // 1. 引入
-import { AuthService } from './auth.service'; // 1. 引入 Service
+import { LineOAuthGuard } from './line-oauth.guard';
+import { AuthService } from './auth.service';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @Post('login')
+  async localLogin(@Body() body: { email: string; password: string }) {
+    return this.authService.loginWithCredentials(body.email, body.password);
+  }
 
   @Get('google')
   @UseGuards(GoogleOAuthGuard)

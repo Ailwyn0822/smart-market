@@ -129,6 +129,12 @@ export class OrdersService {
         return saved;
     }
 
+    async clearAll() {
+        await this.orderItemsRepo.delete({});
+        await this.ordersRepo.delete({});
+        return { success: true, message: '所有訂單已清空' };
+    }
+
     async getSellerDashboard(sellerId: string) {
         // 設定本月區間
         const now = new Date();

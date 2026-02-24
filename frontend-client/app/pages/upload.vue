@@ -94,11 +94,7 @@
                             <select v-model="formData.category"
                                 class="w-full bg-white/80 border-0 rounded-lg px-4 py-3 text-gray-800 focus:ring-2 focus:ring-primary focus:bg-white transition-all shadow-sm appearance-none cursor-pointer">
                                 <option value="">{{ $t('upload.form.category_placeholder') }}</option>
-                                <option>Toys & Games</option>
-                                <option>Clothing</option>
-                                <option>Books</option>
-                                <option>Art Supplies</option>
-                                <option>3C周邊</option>
+                                <option v-for="cat in categories" :key="cat.id" :value="cat.name">{{ cat.icon }} {{ cat.name }}</option>
                             </select>
                             <Icon name="material-symbols:expand-more"
                                 class="absolute right-3 top-1/2 -translate-y-1/2 text-pink-400 pointer-events-none" />
@@ -168,6 +164,11 @@ const authStore = useAuthStore();
 const toast = useToast();
 const isLoading = ref(false);
 const fileInput = ref<HTMLInputElement | null>(null);
+
+const { data: categories } = await useFetch<{ id: number; name: string; icon: string }[]>(
+    `${config.public.apiBase}/categories`,
+    { default: () => [] }
+);
 
 const formData = reactive({
     name: '',

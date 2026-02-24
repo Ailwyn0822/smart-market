@@ -1,19 +1,22 @@
-// apps/backend/src/products/products.controller.ts
 import {
   Controller,
   Post,
+  Get,
+  Patch,
   UseInterceptors,
   UploadedFile,
   UseGuards,
-  Get,
   Body,
   Param,
+  Query,
+  Req,
 } from '@nestjs/common';
+import type { Request } from 'express';
 import { CreateProductDto } from './dto/create-product.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { StorageService } from '../storage/storage.service';
 import { AiService } from '../ai/ai.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard'; // 記得保護這個 API
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ProductsService } from './products.service';
 
 @Controller('products')
@@ -25,43 +28,41 @@ export class ProductsController {
   ) { }
 
   @Post('analyze')
-  @UseGuards(JwtAuthGuard) // 需要登入才能用
-  @UseInterceptors(FileInterceptor('file')) // 'file' 是前端上傳時的欄位名稱
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
   async analyze(@UploadedFile() file: Express.Multer.File) {
     try {
-      console.log('Starting analysis for file:', file.originalname);
-
-      // 1. 上傳到 MinIO
       const fileName = await this.storageService.upload(file);
-      console.log('Use StorageService.upload success:', fileName);
       const fileUrl = this.storageService.getFileUrl(fileName);
-
-      // 2. 呼叫 AI 分析
       const aiResult = await this.aiService.analyzeProductImage(file.buffer, file.mimetype);
-      console.log('AI Analysis result:', aiResult);
-
-      // 3. 回傳整合結果
-      return {
-        imageUrl: fileUrl,
-        aiAnalysis: aiResult,
-      };
+      return { imageUrl: fileUrl, aiAnalysis: aiResult };
     } catch (error) {
       console.error('Error in analyze endpoint:', error);
       throw error;
     }
   }
 
-  // 👇 新增：存檔 API
-  @Post()
+  // 必須放在 :id 之前，否則 'my-listings' 會被當成 id
+  @Get('my-listings')
   @UseGuards(JwtAuthGuard)
-  async create(@Body() body: CreateProductDto) {
-    return this.productsService.create(body);
+  async getMyListings(@Req() req: Request) {
+    const user = req.user as any;
+    return this.productsService.findMyListings(user.userId);
   }
 
-  // 👇 新增：列表 API (之後用)
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  async create(@Req() req: Request, @Body() body: CreateProductDto) {
+    const user = req.user as any;
+    return this.productsService.create({ ...body, userId: user.userId });
+  }
+
   @Get()
-  async findAll() {
-    return this.productsService.findAll();
+  async findAll(
+    @Query('keyword') keyword?: string,
+    @Query('category') category?: string,
+  ) {
+    return this.productsService.findAll({ keyword, category });
   }
 
   @Get('latest')
@@ -69,8 +70,15 @@ export class ProductsController {
     return this.productsService.findLatest(4);
   }
 
+  @Patch(':id/active_status')
+  @UseGuards(JwtAuthGuard)
+  async toggleActiveStatus(@Param('id') id: string, @Req() req: Request) {
+    const user = req.user as any;
+    return this.productsService.toggleActiveStatus(+id, user.userId);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.productsService.findOne(+id); // +id 把字串轉數字
+    return this.productsService.findOne(+id);
   }
 }

@@ -95,24 +95,24 @@
     "snap_pic": "Snap a photo!",
     "drop_here": "Or drag and drop here",
     "form": {
-      "name_label": "Nó là cái gì?",
-      "name_placeholder": "Ví dụ: Xe tải đồ chơi cổ điển",
-      "category_label": "Đống nào?",
-      "category_placeholder": "Chọn một danh mục",
+      "name_label": "What is it?",
+      "name_placeholder": "e.g. Vintage Toy Truck",
+      "category_label": "Which pile?",
+      "category_placeholder": "Choose a Category",
       "categories": {
-        "toys": "Đồ chơi & Trò chơi",
-        "clothing": "Quần áo",
-        "books": "Sách",
-        "art": "Vật dụng Mỹ thuật"
+        "toys": "Toys & Games",
+        "clothing": "Clothing",
+        "books": "Books",
+        "art": "Art Supplies"
       },
-      "description_label": "Kể câu chuyện của nó",
-      "description_placeholder": "Đây từng là món đồ chơi yêu thích của tôi, nhưng giờ...",
-      "price_label": "Giá trị",
+      "description_label": "Tell its story",
+      "description_placeholder": "This used to be my favorite toy, but now...",
+      "price_label": "Value",
       "price_placeholder": "0",
+      "submit": "Done!",
+      "photo_caption": "My cool stuff...",
       "stock_label": "Stock Quantity",
-      "stock_placeholder": "Enter stock quantity",
-      "submit": "Hoàn thành!",
-      "photo_caption": "Món đồ tuyệt vời của tôi..."
+      "stock_placeholder": "Enter stock quantity"
     }
   },
   "products": {
@@ -137,7 +137,7 @@
     "category": "Category",
     "all_categories": "All",
     "all_loaded": "All loaded",
-    "no_products": "No Products",
+    "no_products": "NoProducts",
     "search_placeholder": "Search by name or description...",
     "favorite": "Add to Favorites",
     "unfavorite": "Remove from Favorites",
@@ -166,7 +166,15 @@
     "order_number_prefix": "Order",
     "order_complete_desc": "Yay! We've received your masterpiece order. You'll get an email confirmation once the paint dries (and we ship it).",
     "view_my_orders": "View My Orders",
-    "fragile": "FRAGILE"
+    "fragile": "FRAGILE",
+    "view_codes": "View Available Codes",
+    "codes_modal_title": "Available Discount Codes",
+    "codes_loading": "Loading...",
+    "codes_empty": "No discount codes available",
+    "codes_expires": "Expires",
+    "codes_no_limit": "Unlimited",
+    "codes_use": "Use This",
+    "codes_off": "Off"
   },
   "register": {
     "new_member": "New Member",
@@ -236,6 +244,16 @@
     "payment_method": {
       "cod": "Cash on Delivery",
       "online": "Online Payment"
+    },
+    "confirm_receipt": "Confirm Receipt",
+    "review": "Review",
+    "reviewed": "Reviewed",
+    "review_modal": {
+      "title": "Rate This Transaction",
+      "comment_placeholder": "Share your experience...",
+      "submit": "Submit Review",
+      "submitting": "Submitting...",
+      "later": "Maybe Later"
     }
   },
   "favorite": {

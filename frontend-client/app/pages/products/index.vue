@@ -63,19 +63,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 const config = useRuntimeConfig()
 const route = useRoute()
 const sortBy = ref('newest')
 const searchQuery = ref('')
+const debouncedKeyword = ref('')
 
-// 用 computed ref 讓 category 查詢參數具備響應性
+// 防抖：300ms 後才更新查詢關鍵字
+let debounceTimer: ReturnType<typeof setTimeout> | null = null
+watch(searchQuery, (val) => {
+    if (debounceTimer) clearTimeout(debounceTimer)
+    debounceTimer = setTimeout(() => { debouncedKeyword.value = val.trim() }, 300)
+})
+
 const categoryParam = computed(() => (route.query.category as string) || undefined)
+const keywordParam = computed(() => debouncedKeyword.value || undefined)
 
 const { data: apiProducts, pending } = useFetch<any[]>(`${config.public.apiBase}/products`, {
-    query: { category: categoryParam },
-    watch: [categoryParam],
+    query: { category: categoryParam, keyword: keywordParam },
+    watch: [categoryParam, keywordParam],
 })
 
 const colorStyles = [
@@ -104,18 +112,7 @@ function mapProduct(p: any, index: number) {
     }
 }
 
-const products = computed(() => apiProducts.value || [])
-
-// 本地搜尋過濾
-const filteredProducts = computed(() => {
-    const q = searchQuery.value.trim().toLowerCase()
-    if (!q) return products.value
-    return products.value.filter((p: any) => {
-        const name = (p.name || p.title || '').toLowerCase()
-        const desc = (p.description || '').toLowerCase()
-        return name.includes(q) || desc.includes(q)
-    })
-})
+const filteredProducts = computed(() => apiProducts.value || [])
 
 const sortedProducts = computed(() => {
     const sorted = [...filteredProducts.value]

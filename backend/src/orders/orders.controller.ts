@@ -2,6 +2,7 @@ import {
     Controller,
     Post,
     Get,
+    Delete,
     Body,
     Param,
     ParseIntPipe,
@@ -61,5 +62,11 @@ export class OrdersController {
     getOrderById(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
         const userId: string = req.user.sub || req.user.id || req.user.userId;
         return this.ordersService.getOrderById(userId, id);
+    }
+
+    // 清空所有訂單（開發/測試用）
+    @Delete('clear-all')
+    clearAllOrders() {
+        return this.ordersService.clearAll();
     }
 }

@@ -95,24 +95,24 @@
     "snap_pic": "Chụp ảnh!",
     "drop_here": "Hoặc kéo thả vào đây",
     "form": {
-      "name_label": "What is it?",
-      "name_placeholder": "e.g. Vintage Toy Truck",
-      "category_label": "Which pile?",
-      "category_placeholder": "Choose a Category",
+      "name_label": "Nó là cái gì?",
+      "name_placeholder": "Ví dụ: Xe tải đồ chơi cổ điển",
+      "category_label": "Đống nào?",
+      "category_placeholder": "Chọn một danh mục",
       "categories": {
-        "toys": "Toys & Games",
-        "clothing": "Clothing",
-        "books": "Books",
-        "art": "Art Supplies"
+        "toys": "Đồ chơi & Trò chơi",
+        "clothing": "Quần áo",
+        "books": "Sách",
+        "art": "Vật dụng Mỹ thuật"
       },
-      "description_label": "Tell its story",
-      "description_placeholder": "This used to be my favorite toy, but now...",
-      "price_label": "Value",
+      "description_label": "Kể câu chuyện của nó",
+      "description_placeholder": "Đây từng là món đồ chơi yêu thích của tôi, nhưng giờ...",
+      "price_label": "Giá trị",
       "price_placeholder": "0",
+      "submit": "Hoàn thành!",
+      "photo_caption": "Món đồ tuyệt vời của tôi...",
       "stock_label": "Số lượng tồn kho",
-      "stock_placeholder": "Nhập số lượng tồn kho",
-      "submit": "Done!",
-      "photo_caption": "My cool stuff..."
+      "stock_placeholder": "Nhập số lượng tồn kho"
     }
   },
   "products": {
@@ -166,7 +166,15 @@
     "order_number_prefix": "Mã đơn hàng",
     "order_complete_desc": "Thật tuyệt vời! Chúng tôi đã nhận được đơn đặt hàng kiệt tác của bạn. Bạn sẽ nhận được email xác nhận sau khi sơn khô (và chúng tôi giao hàng).",
     "view_my_orders": "Xem đơn hàng của tôi",
-    "fragile": "Hàng dễ vỡ"
+    "fragile": "Hàng dễ vỡ",
+    "view_codes": "Xem mã khuyến mãi",
+    "codes_modal_title": "Mã giảm giá có sẵn",
+    "codes_loading": "Đang tải...",
+    "codes_empty": "Không có mã giảm giá",
+    "codes_expires": "Hết hạn",
+    "codes_no_limit": "Không giới hạn",
+    "codes_use": "Sử dụng",
+    "codes_off": "Giảm"
   },
   "register": {
     "new_member": "Thành viên mới",
@@ -236,6 +244,16 @@
     "payment_method": {
       "cod": "Thanh toán khi nhận hàng",
       "online": "Thanh toán trực tuyến"
+    },
+    "confirm_receipt": "Xác nhận đã nhận hàng",
+    "review": "Đánh giá",
+    "reviewed": "Đã đánh giá",
+    "review_modal": {
+      "title": "Đánh giá giao dịch này",
+      "comment_placeholder": "Chia sẻ trải nghiệm của bạn...",
+      "submit": "Gửi đánh giá",
+      "submitting": "Đang gửi...",
+      "later": "Để sau"
     }
   },
   "favorite": {

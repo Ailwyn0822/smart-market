@@ -75,21 +75,46 @@
     </main>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({
     layout: 'auth'
 })
+
+const config = useRuntimeConfig()
 
 const loginForm = ref({
     username: '',
     password: ''
 })
 
-const login = () => {
-    alert(`account:${loginForm.value.username}, password:${loginForm.value.password}`)
-}
+const authStore = useAuthStore()
+const toast = useToast()
+const isLoggingIn = ref(false)
 
-const config = useRuntimeConfig()
+const login = async () => {
+    if (!loginForm.value.username || !loginForm.value.password) {
+        toast.error('請輸入帳號與密碼')
+        return
+    }
+    isLoggingIn.value = true
+    try {
+        const res = await $fetch<{ access_token: string; user: any }>(
+            `${config.public.apiBase}/auth/login`,
+            {
+                method: 'POST',
+                body: { email: loginForm.value.username, password: loginForm.value.password }
+            }
+        )
+        authStore.setAuth(res.access_token, res.user)
+        toast.success('登入成功！')
+        await navigateTo('/')
+    } catch (e: any) {
+        const msg = e?.data?.message || '帳號或密碼錯誤'
+        toast.error(msg)
+    } finally {
+        isLoggingIn.value = false
+    }
+}
 
 const loginWithGoogle = () => {
     window.location.href = `${config.public.apiBase}/auth/google`

@@ -70,4 +70,11 @@ export class FavoritesService {
 
     return favorites.map((fav) => fav.product);
   }
+
+  async checkFavorite(userId: string, productId: number): Promise<boolean> {
+    const favorite = await this.favoriteRepo.findOne({
+      where: { user: { id: userId }, product: { id: productId } },
+    });
+    return !!favorite;
+  }
 }

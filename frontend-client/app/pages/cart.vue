@@ -119,9 +119,16 @@
 
                                 <!-- 折扣碼 -->
                                 <div class="mb-6">
-                                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-                                        {{ $t('cart.discount_code') }}
-                                    </label>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                            {{ $t('cart.discount_code') }}
+                                        </label>
+                                        <button @click="openCodesModal"
+                                            :title="$t('cart.view_codes')"
+                                            class="w-5 h-5 rounded-full bg-accent-blue text-white text-xs font-black inline-flex items-center justify-center border-2 border-content hover:bg-blue-700 transition-colors shrink-0">
+                                            !
+                                        </button>
+                                    </div>
                                     <div class="relative">
                                         <div
                                             class="absolute inset-0 bg-accent-blue rounded-lg translate-y-1 translate-x-1 border border-content">
@@ -190,6 +197,66 @@
             </div>
         </div>
     </main>
+
+    <!-- 折扣碼列表 Modal -->
+    <Teleport to="body">
+        <div v-if="showCodesModal" class="fixed inset-0 z-50 flex items-center justify-center p-4"
+            @click.self="showCodesModal = false">
+            <!-- 遮罩 -->
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+            <!-- 卡片 -->
+            <div
+                class="relative bg-white rounded-[2rem] border-4 border-content shadow-[8px_8px_0px_rgba(0,0,0,0.15)] w-full max-w-md overflow-hidden z-10">
+                <!-- 標題列 -->
+                <div class="bg-accent-blue px-6 py-4 flex items-center justify-between">
+                    <h3 class="font-black text-white text-lg flex items-center gap-2">
+                        <Icon name="material-symbols:local-offer" class="text-xl" />
+                        {{ $t('cart.codes_modal_title') }}
+                    </h3>
+                    <button @click="showCodesModal = false"
+                        class="text-white hover:text-gray-200 transition-colors">
+                        <Icon name="material-symbols:close" class="text-2xl" />
+                    </button>
+                </div>
+                <!-- 內容 -->
+                <div class="p-6 max-h-[60vh] overflow-y-auto">
+                    <div v-if="loadingCodes" class="text-center py-8 text-gray-400 font-medium">
+                        {{ $t('cart.codes_loading') }}
+                    </div>
+                    <div v-else-if="availableCodes.length === 0"
+                        class="text-center py-8 text-gray-400 font-medium">
+                        {{ $t('cart.codes_empty') }}
+                    </div>
+                    <div v-else class="space-y-3">
+                        <div v-for="code in availableCodes" :key="code.id"
+                            class="bg-gray-50 rounded-2xl p-4 border-2 border-dashed border-gray-200 flex items-center justify-between gap-4">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span
+                                        class="font-black text-content bg-primary px-3 py-1 rounded-lg border-2 border-content text-sm tracking-wider uppercase">
+                                        {{ code.code }}
+                                    </span>
+                                    <span class="font-bold text-accent-red text-sm">
+                                        {{ $t('cart.codes_off') }} ${{ parseFloat(code.discountAmount).toFixed(0) }}
+                                    </span>
+                                </div>
+                                <p v-if="code.validUntil" class="text-xs text-gray-400 mt-1 font-medium">
+                                    {{ $t('cart.codes_expires') }}：{{ new Date(code.validUntil).toLocaleDateString() }}
+                                </p>
+                                <p v-if="code.maxUsages > 0" class="text-xs text-gray-400 font-medium">
+                                    {{ code.currentUsages }} / {{ code.maxUsages }} 次
+                                </p>
+                            </div>
+                            <button @click="selectCode(code.code)"
+                                class="shrink-0 bg-content text-white text-xs font-bold px-3 py-2 rounded-xl border-2 border-content hover:bg-gray-800 transition-colors">
+                                {{ $t('cart.codes_use') }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Teleport>
 </template>
 
 <script setup lang="ts">
@@ -203,9 +270,16 @@ useHead({
 const cartStore = useCartStore()
 const toast = useToast()
 
+const config = useRuntimeConfig()
+
 // 折扣碼
 const discountCode = ref('')
 const discountMessage = ref<{ ok: boolean; text: string } | null>(null)
+
+// 折扣碼 Modal
+const showCodesModal = ref(false)
+const availableCodes = ref<any[]>([])
+const loadingCodes = ref(false)
 
 // ===== 輔助 class 函式（蠟筆邊框 / 價格顏色循環） =====
 const crayonBorderClasses = ['crayon-border-blue', 'crayon-border-red', 'crayon-border-purple', 'crayon-border-yellow']
@@ -214,21 +288,43 @@ const priceColorClasses = ['text-accent-blue', 'text-accent-red', 'text-accent-p
 const crayonBorderClass = (index: number) => crayonBorderClasses[index % crayonBorderClasses.length]
 const priceColorClass = (index: number) => priceColorClasses[index % priceColorClasses.length]
 
-// ===== 折扣碼驗證 =====
-const applyDiscount = () => {
+// ===== 折扣碼 Modal =====
+const openCodesModal = async () => {
+    showCodesModal.value = true
+    if (availableCodes.value.length > 0) return
+    loadingCodes.value = true
+    try {
+        availableCodes.value = await $fetch<any[]>(`${config.public.apiBase}/discount-codes`)
+    } finally {
+        loadingCodes.value = false
+    }
+}
+
+const selectCode = (code: string) => {
+    discountCode.value = code
+    showCodesModal.value = false
+}
+
+// ===== 折扣碼驗證（串接後端） =====
+const applyDiscount = async () => {
     const code = discountCode.value.trim().toUpperCase()
-    // 硬寫折扣碼，後續可串接後端驗證
-    if (code === 'SMART10') {
-        cartStore.discountAmount = cartStore.subtotal * 0.1
-        cartStore.appliedDiscountCode = code
-        discountMessage.value = { ok: true, text: '折扣碼套用成功！折扣 10%' }
-        toast.success('折扣碼套用成功！')
-    } else if (code === '') {
+    if (!code) {
         discountMessage.value = { ok: false, text: '請輸入折扣碼' }
-    } else {
+        return
+    }
+    try {
+        const res = await $fetch<any>(`${config.public.apiBase}/discount-codes/validate`, {
+            method: 'POST',
+            body: { code }
+        })
+        cartStore.discountAmount = parseFloat(res.discountAmount)
+        cartStore.appliedDiscountCode = res.code
+        discountMessage.value = { ok: true, text: `折扣碼套用成功！折抵 $${parseFloat(res.discountAmount).toFixed(0)}` }
+        toast.success('折扣碼套用成功！')
+    } catch (e: any) {
         cartStore.discountAmount = 0
         cartStore.appliedDiscountCode = ''
-        discountMessage.value = { ok: false, text: '折扣碼無效' }
+        discountMessage.value = { ok: false, text: e?.data?.message || '折扣碼無效' }
     }
 }
 

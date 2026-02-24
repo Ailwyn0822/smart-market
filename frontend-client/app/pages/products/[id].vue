@@ -63,12 +63,6 @@
                     </div>
 
                     <div class="relative z-10 pr-24">
-                        <div class="flex items-center gap-3 mb-4">
-                            <span
-                                class="px-3 py-1 bg-accent-blue text-white text-xs font-black uppercase tracking-wider rounded-lg border-2 border-content -rotate-2">
-                                {{ product.condition || '全新' }}
-                            </span>
-                        </div>
                         <h1 class="text-5xl lg:text-6xl font-black text-content tracking-tight leading-[1.1]">
                             {{ product.name || product.title }}
                         </h1>
@@ -146,9 +140,10 @@ const toast = useToast()
 
 const productId = route.params.id as string
 
-// 串接 API 取得商品資料
+// 串接 API 取得商品資料（加 default 避免 SSR 時後端錯誤炸出整頁）
 const { data: product, pending } = await useFetch<any>(
-    `${config.public.apiBase}/products/${productId}`
+    `${config.public.apiBase}/products/${productId}`,
+    { default: () => null }
 )
 
 // 從不同可能的 API 欄位中提取賣家資訊

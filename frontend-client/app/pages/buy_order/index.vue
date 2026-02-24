@@ -85,20 +85,18 @@
                         <!-- 進度條 -->
                         <div class="pt-1">
                             <div class="flex justify-between items-center text-[10px] font-bold text-gray-400 mb-1">
-                                <span>{{ statusMap[order.status] || order.status }}</span>
-                                <span v-if="order.status === 'delivered'" class="text-green-500">{{
-                                    statusMap['delivered'] }}</span>
+                                <span>{{ $t('buy_order.status.' + order.status) }}</span>
                                 <button v-if="order.status === 'out_for_delivery'"
                                     @click.stop="updateStatus(order.id, 'delivered')"
-                                    class="bg-accent-blue text-white px-2 py-1 rounded bg-opacity-90 hover:bg-opacity-100 text-[12px]">確認收貨</button>
+                                    class="bg-accent-blue text-white px-2 py-1 rounded bg-opacity-90 hover:bg-opacity-100 text-[12px]">{{ $t('buy_order.confirm_receipt') }}</button>
                                 <button v-else-if="order.status === 'delivered' && order.isReviewed === false"
                                     @click.stop="openReviewModal(order)"
                                     class="bg-accent-red text-white px-2 py-1 flex items-center gap-1 rounded bg-opacity-90 hover:bg-opacity-100 text-[12px]">
-                                    <Icon name="material-symbols:star" />評價
+                                    <Icon name="material-symbols:star" />{{ $t('buy_order.review') }}
                                 </button>
                                 <span v-else-if="order.status === 'delivered' && order.isReviewed === true"
                                     class="text-gray-400 bg-gray-100 px-2 py-1 flex items-center gap-1 rounded text-[12px] cursor-not-allowed">
-                                    <Icon name="material-symbols:check-circle" />已評價
+                                    <Icon name="material-symbols:check-circle" />{{ $t('buy_order.reviewed') }}
                                 </span>
                             </div>
                             <div class="w-full h-2.5 bg-gray-100 rounded-full border border-gray-200 overflow-hidden">

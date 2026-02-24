@@ -109,10 +109,10 @@
       "description_placeholder": "這曾經是我最喜歡的玩具，但現在...",
       "price_label": "價值",
       "price_placeholder": "0",
-      "stock_label": "庫存數量",
-      "stock_placeholder": "請輸入庫存數量",
       "submit": "完成！",
-      "photo_caption": "我的酷東東..."
+      "photo_caption": "我的酷東東...",
+      "stock_label": "庫存數量",
+      "stock_placeholder": "請輸入庫存數量"
     }
   },
   "products": {
@@ -166,7 +166,15 @@
     "order_number_prefix": "訂單編號",
     "order_complete_desc": "太棒了！我們已收到您的傑作訂單。等顏料乾了（並且我們出貨時），您就會收到電子郵件確認。",
     "view_my_orders": "查看我的訂單",
-    "fragile": "易碎品"
+    "fragile": "易碎品",
+    "view_codes": "查看可用折扣碼",
+    "codes_modal_title": "可用折扣碼",
+    "codes_loading": "載入中...",
+    "codes_empty": "目前沒有可用折扣碼",
+    "codes_expires": "有效期限",
+    "codes_no_limit": "無限制",
+    "codes_use": "使用此碼",
+    "codes_off": "折抵"
   },
   "register": {
     "new_member": "新成員",
@@ -236,6 +244,16 @@
     "payment_method": {
       "cod": "貨到付款",
       "online": "線上付款"
+    },
+    "confirm_receipt": "確認收貨",
+    "review": "評價",
+    "reviewed": "已評價",
+    "review_modal": {
+      "title": "評價這次的交易",
+      "comment_placeholder": "寫下您對這次交易的看法...",
+      "submit": "確認送出評價",
+      "submitting": "送出中...",
+      "later": "稍後再說"
     }
   },
   "favorite": {

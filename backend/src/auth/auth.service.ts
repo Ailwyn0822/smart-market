@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { UserProvider, User } from '../users/entities/user.entity';
-import { JwtService } from '@nestjs/jwt'; // 1. 引入
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
   // 注入 UsersService，這樣我們才能操作資料庫
@@ -34,6 +35,19 @@ export class AuthService {
     return newUser;
   }
 
+  // 本地帳密登入
+  async loginWithCredentials(email: string, password: string) {
+    const user = await this.usersService.findOneByEmailWithPassword(email);
+    if (!user || !user.password) {
+      throw new UnauthorizedException('帳號或密碼錯誤');
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      throw new UnauthorizedException('帳號或密碼錯誤');
+    }
+    return this.login(user);
+  }
+
   // 3. 新增發證件方法
   async login(user: User) {
     const payload = {
@@ -47,6 +61,7 @@ export class AuthService {
       access_token: this.jwtService.sign(payload),
       // 順便把基本資料帶回去，方便前端顯示 (但不包含敏感資訊)
       user: {
+        id: user.id,
         name: user.name,
         email: user.email,
         avatar: user.avatar,

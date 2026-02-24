@@ -5,7 +5,8 @@
       "Bash(node -e \"const p = require\\(''./package.json''\\); console.log\\(''socket.io-client:'', p.dependencies[''socket.io-client'']\\); console.log\\(''dayjs:'', p.dependencies[''dayjs'']\\);\")",
       "Bash(xargs grep -l \"profile\\\\|me\\\\|current\")",
       "Bash(xargs grep -h \"@Get\\\\|@Post\\\\|@Patch\\\\|@Delete\\\\|@Controller\")",
-      "Bash(xargs ls -la)"
+      "Bash(xargs ls -la)",
+      "Bash(npm install @vueuse/core)"
     ]
   }
 }

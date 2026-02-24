@@ -15,6 +15,14 @@ export class FavoritesController {
     return this.favoritesService.getMyFavorites(userId);
   }
 
+  @Get('check/:productId')
+  @UseGuards(JwtAuthGuard)
+  async checkFavorite(@Req() req: Request, @Param('productId') productId: string) {
+    const user = req.user as any;
+    const isFavorited = await this.favoritesService.checkFavorite(user.userId, +productId);
+    return { isFavorited };
+  }
+
   @Post(':productId/favorite')
   @UseGuards(JwtAuthGuard)
   addFavorite(@Req() req: Request, @Param('productId') productId: string) {
