@@ -18,7 +18,19 @@ export class ProductsService {
 
   // 取得所有商品 (之後列表頁會用到)
   async findAll(): Promise<Product[]> {
-    return this.productRepo.find({ order: { createdAt: 'DESC' } });
+    return this.productRepo.find({
+      relations: ['category'],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  // 取得最新商品
+  async findLatest(limit: number = 4): Promise<Product[]> {
+    return this.productRepo.find({
+      relations: ['category'],
+      order: { createdAt: 'DESC' },
+      take: limit,
+    });
   }
 
   // 取得單一商品

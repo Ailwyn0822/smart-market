@@ -24,6 +24,11 @@ export class CategoriesController {
         return this.categoriesService.findAll();
     }
 
+    @Get('top')
+    getTop() {
+        return this.categoriesService.findTop(6);
+    }
+
     /** 需要 JWT（管理員用） */
     @Post()
     @UseGuards(JwtAuthGuard)

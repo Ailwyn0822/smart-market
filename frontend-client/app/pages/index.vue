@@ -38,7 +38,7 @@
                                 {{ $t('home.start_exploring') }}
                                 <Icon name="material-symbols:arrow-forward" />
                             </button>
-                            <button
+                            <button @click="navigateTo('/faq')"
                                 class="bg-white hover:bg-gray-50 text-content text-base font-bold px-8 py-3.5 rounded-full border-2 border-content shadow-[4px_4px_0px_rgba(0,0,0,0.1)] active:shadow-none active:translate-y-1 transition-all">
                                 {{ $t('home.how_it_works') }}
                             </button>
@@ -98,21 +98,19 @@
                     <Icon name="material-symbols:brush" class="text-4xl text-accent-blue" />
                     {{ $t('home.search_title') }}
                 </h2>
-                <a class="text-sm font-bold text-gray-500 underline decoration-2 hover:text-accent-blue" href="#">
-                    {{ $t('home.view_all_categories') }}
-                </a>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-                <a v-for="category in categories" :key="category.name" class="group flex flex-col items-center gap-3"
-                    href="#">
+                <a v-for="category in categoriesData" :key="category.id"
+                    class="group flex flex-col items-center gap-3 cursor-pointer"
+                    @click="navigateTo(`/products?category=${category.id}`)">
                     <div
-                        :class="`size-32 ${category.bgColor} rounded-full flex items-center justify-center border-4 border-transparent group-hover:border-content group-hover:scale-110 transition-all shadow-[0_8px_0_rgba(0,0,0,0.1)]`">
-                        <Icon :name="`material-symbols:${category.icon}`"
-                            :class="`${category.iconColor || 'text-white'} text-5xl`" />
+                        class="size-32 bg-white rounded-full flex items-center justify-center group-hover:bg-primary group-hover:scale-110 transition-all shadow-[0_12px_24px_rgba(0,0,0,0.06)] group-hover:shadow-[0_20px_40px_rgba(0,0,0,0.12)] border border-gray-50">
+                        <span class="text-5xl text-content">{{ category.icon }}</span>
                     </div>
                     <span
-                        class="font-bold text-lg text-content bg-white px-3 py-1 rounded-lg border border-transparent group-hover:border-content group-hover:shadow-sm transition-all">{{
-                            category.name }}</span>
+                        class="font-bold text-lg text-content bg-white px-3 py-1 rounded-lg border border-transparent group-hover:border-content group-hover:shadow-sm transition-all">
+                        {{ category.name }}
+                    </span>
                 </a>
             </div>
         </section>
@@ -125,7 +123,8 @@
                     $t('home.featured_finds') }}</h2>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                <ProductCard v-for="item in featuredItems" :key="item.title" :item="item" />
+                <ProductCard v-for="(product, index) in productsData" :key="product.id"
+                    :item="mapProduct(product, index)" />
             </div>
         </section>
 
@@ -148,34 +147,59 @@
 </template>
 
 <script setup>
-const { categories, featuredItems, illustrate } = useHomeData()
-
 import { useAuthStore } from '~/stores/auth';
 
+const { illustrate } = useHomeData()
+const config = useRuntimeConfig()
+
+// 串接類別 API (取前六個)
+const { data: categoriesData } = await useFetch(`${config.public.apiBase}/categories/top`)
+
+// 串接最新商品 API (取前四個)
+const { data: productsData } = await useFetch(`${config.public.apiBase}/products/latest`)
+console.log(productsData.value);
+
+// 將 API 商品對應至 ProductCard 所需格式
+function mapProduct(p, index) {
+    const colorStyles = [
+        { border: 'crayon-border-red', price: 'text-accent-red', hover: 'hover:bg-accent-red' },
+        { border: 'crayon-border-blue', price: 'text-accent-blue', hover: 'hover:bg-accent-blue' },
+        { border: 'crayon-border-yellow', price: 'text-primary', hover: 'hover:bg-primary' },
+        { border: 'crayon-border-purple', price: 'text-accent-purple', hover: 'hover:bg-accent-purple' }
+    ]
+    const style = colorStyles[index % colorStyles.length]
+
+    return {
+        id: p.id,
+        title: p.name,
+        price: `$${parseFloat(p.price).toFixed(0)}`,
+        condition: p.condition === 'New' || !p.condition ? '全新' : p.condition,
+        description: p.description,
+        image: p.imageUrl,
+        borderColorClass: style.border,
+        priceColor: style.price,
+        btnHoverBg: style.hover,
+        btnHoverText: 'text-white',
+        category: p.category
+    }
+}
+
 onMounted(() => {
-
-    // 1. 引入 Store
-
     const route = useRoute();
-    const authStore = useAuthStore(); // 啟用 Store
+    const authStore = useAuthStore();
 
-    // 2. 監聽網址參數 (只在剛登入回來時觸發)
+    // 監聽 OAuth 登入回傳
     const tokenParam = route.query.token;
     const userParam = route.query.user;
 
     if (tokenParam && userParam) {
         try {
             const userData = JSON.parse(userParam);
-
-            // 3. 呼叫 Store 的 login 動作 (存入 Cookie)
             authStore.login(tokenParam, userData);
-
-            // 4. 清除網址列 (變乾淨)
             window.history.replaceState({}, document.title, "/");
         } catch (e) {
             console.error('登入解析失敗', e);
         }
     }
 })
-
 </script>

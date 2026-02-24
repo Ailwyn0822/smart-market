@@ -4,6 +4,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config'; // 管理員工具
 import { TypeOrmModule } from '@nestjs/typeorm'; // 資料庫連線工具
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -12,6 +13,14 @@ import { AuthModule } from './auth/auth.module';
 import { StorageModule } from './storage/storage.module';
 import { AiModule } from './ai/ai.module';
 import { ProductsModule } from './products/products.module';
+import { CategoriesModule } from './categories/categories.module';
+import { OrdersModule } from './orders/orders.module';
+import { FavoritesModule } from './favorites/favorites.module';
+import { ChatModule } from './chat/chat.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { ReviewsModule } from './reviews/reviews.module';
+import { EcpayModule } from './ecpay/ecpay.module';
+import { DiscountCodesModule } from './discount-codes/discount-codes.module';
 
 // --------------------------------------------------------
 // 2. @Module 裝飾器：這是 NestJS 定義「模組」的方式
@@ -22,6 +31,7 @@ import { ProductsModule } from './products/products.module';
     ConfigModule.forRoot({
       isGlobal: true, // 這行說：「把設定檔變成全域的，這樣以後在別的檔案想讀密碼，不用再 import 一次 ConfigModule」
     }),
+    EventEmitterModule.forRoot(),
 
     // --- 第二部分：啟動資料庫連線 (TypeOrmModule) ---
     // 這裡為什麼要用 forRootAsync (非同步)？
@@ -60,8 +70,16 @@ import { ProductsModule } from './products/products.module';
     StorageModule,
     AiModule,
     ProductsModule,
+    CategoriesModule,
+    OrdersModule,
+    FavoritesModule,
+    ChatModule,
+    NotificationsModule,
+    ReviewsModule,
+    EcpayModule,
+    DiscountCodesModule,
   ],
   controllers: [AppController], // 路由控制器 (處理網址請求的)
   providers: [AppService], // 服務提供者 (寫邏輯的)
 })
-export class AppModule {}
+export class AppModule { }

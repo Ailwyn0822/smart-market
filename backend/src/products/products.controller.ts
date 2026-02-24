@@ -64,6 +64,11 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
+  @Get('latest')
+  async getLatest() {
+    return this.productsService.findLatest(4);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.productsService.findOne(+id); // +id 把字串轉數字

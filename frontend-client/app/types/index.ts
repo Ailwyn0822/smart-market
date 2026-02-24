@@ -8,6 +8,7 @@ export interface ProductItem {
     priceColor: string;
     btnHoverBg: string;
     btnHoverText: string;
+    category: string;
 }
 
 export interface CategoryItem {

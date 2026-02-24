@@ -15,11 +15,11 @@ extractSheets(
     {
         spreadsheetKey: "1WoTNVP1HIADTQbczdolRqgykGvHnCANOwuL2Kl637Q8",
         credentials: credentials,
-        sheetsToExtract: ['index', 'login', 'upload', 'products', 'cart'],
+        sheetsToExtract: ['index', 'login', 'upload', 'products', 'cart','register','checkout','buy_order','favorite','commodity','faq'],
     },
     (err, data) => {
         if (err) throw err;
-        const read = [...data['index'], ...data['login'], ...data['upload'], ...data['products'], ...data['cart']];
+        const read = [...data['index'], ...data['login'], ...data['upload'], ...data['products'], ...data['cart'], ...data['register'], ...data['checkout'], ...data['buy_order'], ...data['favorite'], ...data['commodity'], ...data['faq']];
         const result = {};
         const files = [];
 

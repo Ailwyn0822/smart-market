@@ -11,5 +11,6 @@ import { AuthModule } from '../auth/auth.module'; // 👈 匯入 AuthModule
   imports: [StorageModule, AiModule, AuthModule, TypeOrmModule.forFeature([Product])], // 這樣 Controller 才能用 storageService 和 aiService 以及 JwtAuthGuard
   controllers: [ProductsController],
   providers: [ProductsService],
+  exports: [ProductsService],
 })
-export class ProductsModule {}
+export class ProductsModule { }

@@ -4,7 +4,9 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Favorite } from '../../favorites/entities/favorite.entity';
 
 // 定義登入來源：Google、LINE 或 Local (傳統帳密)
 export enum UserProvider {
@@ -54,4 +56,7 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Favorite, (fav) => fav.user)
+  favorites: Favorite[];
 }

@@ -41,6 +41,13 @@ export class CategoriesService implements OnModuleInit {
         return this.categoryRepo.find({ order: { id: 'ASC' } });
     }
 
+    async findTop(limit: number = 6): Promise<Category[]> {
+        return this.categoryRepo.find({
+            order: { id: 'ASC' },
+            take: limit,
+        });
+    }
+
     async findOne(id: number): Promise<Category> {
         const category = await this.categoryRepo.findOneBy({ id });
         if (!category) throw new NotFoundException(`找不到 ID ${id} 的類別`);

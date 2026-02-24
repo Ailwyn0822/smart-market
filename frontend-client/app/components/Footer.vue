@@ -18,7 +18,7 @@
                 </p>
             </div>
             <div class="flex items-center gap-4">
-                <a v-for="link in socialLinks" :key="link.name" :href="link.href"
+                <a v-for="link in socialLinks" :key="link.name" :href="link.href" target="_blank"
                     :class="`size-10 ${link.bgColor} rounded-full border-2 border-white flex items-center justify-center ${link.textColor || 'text-white'} ${link.rotate} hover:${link.hoverRotate} hover:scale-110 transition-transform shadow-sm`">
                     <span class="font-bold text-sm">{{ link.name }}</span>
                 </a>
@@ -29,9 +29,9 @@
 
 <script setup>
 const socialLinks = [
-    { name: 'IG', href: '#', bgColor: 'bg-accent-blue', rotate: 'rotate-2', hoverRotate: 'rotate-6', textColor: 'text-white' },
-    { name: 'FB', href: '#', bgColor: 'bg-accent-red', rotate: '-rotate-3', hoverRotate: '-rotate-6', textColor: 'text-white' },
-    { name: 'YT', href: '#', bgColor: 'bg-primary', rotate: 'rotate-1', hoverRotate: 'rotate-3', textColor: 'text-content' },
-    { name: 'PT', href: '#', bgColor: 'bg-accent-purple', rotate: '-rotate-2', hoverRotate: '-rotate-4', textColor: 'text-white' },
+    { name: 'IG', href: 'https://www.instagram.com', bgColor: 'bg-accent-blue', rotate: 'rotate-2', hoverRotate: 'rotate-6', textColor: 'text-white' },
+    { name: 'FB', href: 'https://www.facebook.com', bgColor: 'bg-accent-red', rotate: '-rotate-3', hoverRotate: '-rotate-6', textColor: 'text-white' },
+    { name: 'YT', href: 'https://www.youtube.com', bgColor: 'bg-primary', rotate: 'rotate-1', hoverRotate: 'rotate-3', textColor: 'text-content' },
+    { name: 'PT', href: 'https://www.pinterest.com', bgColor: 'bg-accent-purple', rotate: '-rotate-2', hoverRotate: '-rotate-4', textColor: 'text-white' },
 ]
 </script>

@@ -161,5 +161,157 @@
     "order_complete_desc": "太棒了！我們已收到您的傑作訂單。等顏料乾了（並且我們出貨時），您就會收到電子郵件確認。",
     "view_my_orders": "查看我的訂單",
     "fragile": "易碎品"
+  },
+  "register": {
+    "new_member": "新成員",
+    "new": "NEW",
+    "join_class": "加入社群！",
+    "subtitle": "建立你的個人檔案，開始探索吧。",
+    "username_label": "使用者名稱",
+    "username_placeholder": "輸入使用者名稱",
+    "email_label": "電子郵件",
+    "email_placeholder": "輸入電子郵件",
+    "password_label": "密碼",
+    "password_placeholder": "輸入密碼",
+    "confirm_password_label": "確認密碼",
+    "confirm_password_placeholder": "再次輸入密碼",
+    "loading": "建立中...",
+    "submit_btn": "立即加入",
+    "already_student": "已有帳號？",
+    "login_here": "點這裡登入"
+  },
+  "checkout": {
+    "details_title": "結帳明細",
+    "whos_it_for": "收件人是誰？",
+    "buyer_name": "小孩的姓名",
+    "buyer_email": "父母的電子信箱",
+    "shipping_address": "寄送地址",
+    "how_to_pay": "付款方式",
+    "pay_card": "信用卡",
+    "pay_card_desc": "信用卡 / 簽帳卡",
+    "pay_bank": "虛擬帳號",
+    "pay_bank_desc": "PayPal / 轉帳",
+    "the_damage": "帳單總數",
+    "cart_empty": "購物車內沒有商品",
+    "subtotal": "小計",
+    "shipping_fee": "運費",
+    "discount": "折扣",
+    "total": "總計",
+    "place_order": "送出訂單",
+    "qty": "數量"
+  },
+  "buy_order": {
+    "title": "我的訂單",
+    "empty": "你還沒有任何訂單",
+    "go_shopping": "去逛逛",
+    "placed_on": "下單日期",
+    "status": {
+      "processing": "處理中",
+      "shipped": "已出貨",
+      "out_for_delivery": "配送中",
+      "delivered": "已送達"
+    },
+    "loading": "載入中...",
+    "login_required": "請先登入查看訂單",
+    "back_to_orders": "返回訂單列表",
+    "detail": {
+      "title": "訂單詳情",
+      "not_found": "找不到此訂單",
+      "date_placed": "下單日期",
+      "shipping_status": "配送狀態",
+      "items": "訂購商品",
+      "qty": "數量",
+      "payment_summary": "金額摘要",
+      "subtotal": "小計",
+      "shipping": "運費",
+      "total": "總計",
+      "delivered_to": "配送地址"
+    },
+    "payment_method": {
+      "cod": "貨到付款",
+      "online": "線上付款"
+    }
+  },
+  "favorite": {
+    "title": "我的收藏",
+    "loading": "載入中...",
+    "login_required": "請先登入以檢視您的收藏",
+    "empty_title": "這裡空空的！",
+    "empty_desc": "趕快去逛逛，把喜歡的商品加入收藏吧",
+    "go_shopping": "開始購物",
+    "remove": "移除收藏"
+  },
+  "commodity": {
+    "portfolio_title": "我的商品展示集",
+    "active_sketches": "刊登中商品 ({count})",
+    "new_listing": "新增商品",
+    "views": "次觀看",
+    "likes": "個喜歡",
+    "edit_listing": "編輯商品",
+    "deactivate_listing": "停用此商品",
+    "deactivate": "下架",
+    "edit_title": "編輯商品",
+    "active": "販售中",
+    "listing_details": "商品詳情",
+    "title_of_work": "商品名稱",
+    "category": "分類",
+    "quantity": "數量",
+    "story_behind_art": "商品描述",
+    "value": "價格",
+    "save": "儲存",
+    "change_masterpiece": "變更圖片",
+    "placeholder_title": "例如：超級賽車",
+    "placeholder_desc": "描述商品狀況、年份...",
+    "category_toys": "玩具與遊戲",
+    "category_books": "尋寶童書",
+    "category_clothing": "服飾",
+    "category_art": "美術用品"
+  },
+  "faq": {
+    "title": "常見問題與解答",
+    "subtitle": "打開這本書來尋找所有關於買賣的須知！",
+    "chapters": "章節",
+    "chapter_general": "一般資訊",
+    "chapter_buying": "關於購買",
+    "chapter_selling": "關於販售",
+    "chapter_safety": "安全守則",
+    "chapter_shipping": "寄送說明",
+    "q1": {
+      "title": "Creative Corner 是如何運作的？",
+      "p1": "很簡單！把它想像成一個巨大的線上美術課交換所。你可以把舊玩具或舊衣服上架（這就是販售），或者從其他小朋友那裡找到新寶物（這就是購買）。",
+      "p2": "爸爸媽媽會幫忙處理付款和寄件，以確保一切安全。只要拍張照、加上說明，就可以開始囉！",
+      "read_more": "閱讀更多詳細資訊"
+    },
+    "super_easy": "超級簡單！",
+    "still_have_questions": "還有其他問題嗎？",
+    "ready_to_help": "我們的團隊隨時準備為您協助！",
+    "contact_support": "聯繫客服支援",
+    "answers": {
+      "general": {
+        "title": "平台是如何運作的？",
+        "p1": "把這裡想像成一個巨大的線上交換市集！你可以將閒置玩具或衣物上架販售，或是從其他賣家那裡找到心儀的寶物。",
+        "p2": "所有交易都會受到平台的保護，確保買賣雙方都能安全完成交易，只要註冊帳號即可馬上開始。"
+      },
+      "buying": {
+        "title": "如何購買商品？",
+        "p1": "在首頁或商品列表看到喜歡的物品，點擊進入詳細頁面後，若是現貨且非您自己上架的商品，即可加入購物車。",
+        "p2": "進入購物車後點選結帳，您可以選擇安全的線上綠界付款，或是貨到付款。完成付款後等待賣家出貨即可！"
+      },
+      "selling": {
+        "title": "我要如何開始販售？",
+        "p1": "點擊帳號選單中的「發佈商品」，上傳清楚的圖片並填寫商品的狀況、價格與描述，系統便會立刻為您上架。",
+        "p2": "當買家下單後，您會在「我的訂單 (賣家)」中看到該筆記錄。商品寄出後請點擊「確認出貨」，讓買家隨時掌握貨態。也能在「賣家商品頁」管理。"
+      },
+      "safety": {
+        "title": "交易安全有保障嗎？",
+        "p1": "絕對安全！我們使用經認證的第三方支付金流 (如綠界科技 ECPay)，保障您的信用卡及帳號資訊不外流。",
+        "p2": "在買家點選「確認收貨」之前，款項會由系統託管，發現商品與描述不服時，可隨時與客服聯繫尋求協助退款。"
+      },
+      "shipping": {
+        "title": "運費與寄送方式？",
+        "p1": "目前平台提供標準的送貨到府服務。運費將在結帳頁面根據訂單總額自動計算。",
+        "p2": "賣家請於買家付款後的三個工作天內將商品妥善包裝並選擇信任的物流寄出，隨後在平台上點擊出貨，確保雙方最佳的購物體驗。"
+      }
+    }
   }
 }

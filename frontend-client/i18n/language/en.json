@@ -161,5 +161,157 @@
     "order_complete_desc": "Yay! We've received your masterpiece order. You'll get an email confirmation once the paint dries (and we ship it).",
     "view_my_orders": "View My Orders",
     "fragile": "FRAGILE"
+  },
+  "register": {
+    "new_member": "New Member",
+    "new": "NEW",
+    "join_class": "Join the Class!",
+    "subtitle": "Create your profile to start exploring.",
+    "username_label": "Username",
+    "username_placeholder": "Enter your username",
+    "email_label": "Email",
+    "email_placeholder": "Enter your email",
+    "password_label": "Password",
+    "password_placeholder": "Enter your password",
+    "confirm_password_label": "Confirm Password",
+    "confirm_password_placeholder": "Re-enter your password",
+    "loading": "Creating...",
+    "submit_btn": "Join Now",
+    "already_student": "Already a student?",
+    "login_here": "Log in here!"
+  },
+  "checkout": {
+    "details_title": "Checkout Details",
+    "whos_it_for": "Who's it for?",
+    "buyer_name": "Kid's Name",
+    "buyer_email": "Parent's Email",
+    "shipping_address": "Shipping Address",
+    "how_to_pay": "How to Pay?",
+    "pay_card": "Card",
+    "pay_card_desc": "Credit / Debit",
+    "pay_bank": "Piggy Bank",
+    "pay_bank_desc": "PayPal / Venmo",
+    "the_damage": "The Damage",
+    "cart_empty": "Cart is empty",
+    "subtotal": "Subtotal",
+    "shipping_fee": "Shipping",
+    "discount": "Discount",
+    "total": "Total",
+    "place_order": "Place Order",
+    "qty": "Quantity"
+  },
+  "buy_order": {
+    "title": "My Orders",
+    "empty": "You have no orders yet",
+    "go_shopping": "Go Shopping",
+    "placed_on": "Placed on",
+    "status": {
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "out_for_delivery": "Out for Delivery",
+      "delivered": "Delivered"
+    },
+    "loading": "Loading...",
+    "login_required": "Please login to view orders",
+    "back_to_orders": "Back to My Orders",
+    "detail": {
+      "title": "Order Details",
+      "not_found": "Order not found",
+      "date_placed": "Date Placed",
+      "shipping_status": "Shipping Status",
+      "items": "Project Items",
+      "qty": "Qty",
+      "payment_summary": "Payment Summary",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "total": "Total",
+      "delivered_to": "Delivered To"
+    },
+    "payment_method": {
+      "cod": "Cash on Delivery",
+      "online": "Online Payment"
+    }
+  },
+  "favorite": {
+    "title": "My Favorites",
+    "loading": "Loading...",
+    "login_required": "Please log in to view your favorites",
+    "empty_title": "Nothing here yet!",
+    "empty_desc": "Go shopping and add your favorite items",
+    "go_shopping": "Start Shopping",
+    "remove": "Remove from favorites"
+  },
+  "commodity": {
+    "portfolio_title": "My Portfolio Listings",
+    "active_sketches": "Active Sketches ({count})",
+    "new_listing": "New Listing",
+    "views": "Views",
+    "likes": "Likes",
+    "edit_listing": "Edit Listing",
+    "deactivate_listing": "Deactivate Listing",
+    "deactivate": "Deactivate",
+    "edit_title": "Edit Masterpiece",
+    "active": "Active",
+    "listing_details": "Listing Details",
+    "title_of_work": "Title of Work",
+    "category": "Category",
+    "quantity": "Quantity",
+    "story_behind_art": "Story Behind the Art",
+    "value": "Value",
+    "save": "Save",
+    "change_masterpiece": "Change Masterpiece",
+    "placeholder_title": "e.g. Super Fast Race Car",
+    "placeholder_desc": "Describe the condition, age, and fun facts...",
+    "category_toys": "Toys & Games",
+    "category_books": "Books",
+    "category_clothing": "Clothing",
+    "category_art": "Art Supplies"
+  },
+  "faq": {
+    "title": "Questions & Answers",
+    "subtitle": "Open the book to find everything you need to know about buying and selling!",
+    "chapters": "Chapters",
+    "chapter_general": "General Stuff",
+    "chapter_buying": "Buying Toys",
+    "chapter_selling": "Selling Gear",
+    "chapter_safety": "Safety Rules",
+    "chapter_shipping": "Shipping",
+    "q1": {
+      "title": "How does Creative Corner work?",
+      "p1": "It's simple! Think of it like a giant online art class swap. You can list your old toys...",
+      "p2": "Parents help with the payment and shipping part to keep everything safe and sound...",
+      "read_more": "Read more details"
+    },
+    "super_easy": "Super Easy!",
+    "still_have_questions": "Still have questions?",
+    "ready_to_help": "Our team is ready to help you out!",
+    "contact_support": "Contact Support",
+    "answers": {
+      "general": {
+        "title": "",
+        "p1": "",
+        "p2": ""
+      },
+      "buying": {
+        "title": "",
+        "p1": "",
+        "p2": ""
+      },
+      "selling": {
+        "title": "",
+        "p1": "",
+        "p2": ""
+      },
+      "safety": {
+        "title": "",
+        "p1": "",
+        "p2": ""
+      },
+      "shipping": {
+        "title": "",
+        "p1": "",
+        "p2": ""
+      }
+    }
   }
 }
