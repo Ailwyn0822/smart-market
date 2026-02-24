@@ -1,0 +1,17 @@
+key,zh_TW,vi,en
+register.new_member,新成員,Thành viên mới,New Member
+register.new,NEW,MỚI,NEW
+register.join_class,加入社群！,Tham gia cộng đồng!,Join the Class!
+register.subtitle,建立你的個人檔案，開始探索吧。,Tạo hồ sơ để bắt đầu khám phá.,Create your profile to start exploring.
+register.username_label,使用者名稱,Tên người dùng,Username
+register.username_placeholder,輸入使用者名稱,Nhập tên người dùng,Enter your username
+register.email_label,電子郵件,Email,Email
+register.email_placeholder,輸入電子郵件,Nhập email,Enter your email
+register.password_label,密碼,Mật khẩu,Password
+register.password_placeholder,輸入密碼,Nhập mật khẩu,Enter your password
+register.confirm_password_label,確認密碼,Xác nhận mật khẩu,Confirm Password
+register.confirm_password_placeholder,再次輸入密碼,Nhập lại mật khẩu,Re-enter your password
+register.loading,建立中...,Đang tạo...,Creating...
+register.submit_btn,立即加入,Tham gia ngay,Join Now
+register.already_student,已有帳號？,Đã có tài khoản?,Already a student?
+register.login_here,點這裡登入,Đăng nhập tại đây,Log in here!

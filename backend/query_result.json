@@ -1,0 +1,78 @@
+{
+  "users": [
+    {
+      "id": "180137b4-1fab-4511-ac39-f90853f9cb61",
+      "email": "panda0822@gmail.com",
+      "name": "panda0822"
+    },
+    {
+      "id": "4a73a6d4-bc36-45c4-9d1b-b1f22c01f45a",
+      "email": "test66@example.com",
+      "name": "testuser"
+    },
+    {
+      "id": "21e1f37f-735b-4fd8-9e2f-1c6df7fb8514",
+      "email": "test2@example.com",
+      "name": "test2"
+    },
+    {
+      "id": "7ae51aa1-b85a-48b6-a076-9d1f01685e4e",
+      "email": "test_tester@example.com",
+      "name": "tester"
+    },
+    {
+      "id": "be6c4f98-5daa-4cfd-9646-572ee03b0f70",
+      "email": "test3@example.com",
+      "name": "testuser3"
+    }
+  ],
+  "orders": [
+    {
+      "id": 6,
+      "userId": "4a73a6d4-bc36-45c4-9d1b-b1f22c01f45a"
+    },
+    {
+      "id": 5,
+      "userId": "4a73a6d4-bc36-45c4-9d1b-b1f22c01f45a"
+    },
+    {
+      "id": 4,
+      "userId": "518d0ab7-2401-412a-9f8d-e0551d247ffd"
+    },
+    {
+      "id": 3,
+      "userId": "518d0ab7-2401-412a-9f8d-e0551d247ffd"
+    },
+    {
+      "id": 2,
+      "userId": "518d0ab7-2401-412a-9f8d-e0551d247ffd"
+    }
+  ],
+  "items": [
+    {
+      "id": 6,
+      "orderId": 6,
+      "sellerId": "518d0ab7-2401-412a-9f8d-e0551d247ffd"
+    },
+    {
+      "id": 5,
+      "orderId": 5,
+      "sellerId": "518d0ab7-2401-412a-9f8d-e0551d247ffd"
+    },
+    {
+      "id": 4,
+      "orderId": 4,
+      "sellerId": null
+    },
+    {
+      "id": 3,
+      "orderId": 3,
+      "sellerId": null
+    },
+    {
+      "id": 2,
+      "orderId": 2,
+      "sellerId": null
+    }
+  ]
+}

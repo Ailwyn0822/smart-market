@@ -27,7 +27,7 @@
     "discount": "50% OFF",
     "search_title": "What are you looking for?",
     "view_all_categories": "View All Categories",
-    "featured_finds": "Featured Finds",
+    "featured_finds": "New Finds",
     "categories": {
       "toys": "Toys",
       "clothes": "Clothes",
@@ -130,7 +130,12 @@
     "condition_new": "Brand New ✨",
     "condition_like_new": "Like New 👌",
     "condition_used_good": "Used - Good 👍",
-    "view": "View"
+    "view": "View",
+    "sold_out": "SoldOut",
+    "category": "Category",
+    "all_categories": "All",
+    "all_loaded": "All loaded",
+    "no_products": "NoProducts"
   },
   "cart": {
     "title": "My Cart",
@@ -143,13 +148,18 @@
     "continue_shopping": "Continue Shopping",
     "summary": "Summary",
     "discount_code": "Student Discount Code",
-    "name_tag": "NAME TAG",
+    "name_tag": "Discount code",
     "apply": "Apply",
     "subtotal": "Subtotal",
     "shipping": "Shipping",
     "discount": "Discount",
     "total": "Total",
     "checkout_now": "Checkout Now",
-    "secure_checkout": "Secure checkout for happy parents"
+    "secure_checkout": "Secure checkout for happy parents",
+    "order_complete_title": "Project Complete!",
+    "order_number_prefix": "Order",
+    "order_complete_desc": "Yay! We've received your masterpiece order. You'll get an email confirmation once the paint dries (and we ship it).",
+    "view_my_orders": "View My Orders",
+    "fragile": "FRAGILE"
   }
 }

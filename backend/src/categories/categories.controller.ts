@@ -1,0 +1,45 @@
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    ParseIntPipe,
+    Patch,
+    Post,
+    UseGuards,
+} from '@nestjs/common';
+import { CategoriesService } from './categories.service';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+
+@Controller('categories')
+export class CategoriesController {
+    constructor(private readonly categoriesService: CategoriesService) { }
+
+    /** 公開取得所有類別 */
+    @Get()
+    findAll() {
+        return this.categoriesService.findAll();
+    }
+
+    /** 需要 JWT（管理員用） */
+    @Post()
+    @UseGuards(JwtAuthGuard)
+    create(@Body() dto: CreateCategoryDto) {
+        return this.categoriesService.create(dto);
+    }
+
+    @Patch(':id')
+    @UseGuards(JwtAuthGuard)
+    update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateCategoryDto) {
+        return this.categoriesService.update(id, dto);
+    }
+
+    @Delete(':id')
+    @UseGuards(JwtAuthGuard)
+    remove(@Param('id', ParseIntPipe) id: number) {
+        return this.categoriesService.remove(id);
+    }
+}

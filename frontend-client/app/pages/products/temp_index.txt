@@ -1,0 +1,237 @@
+﻿<template>
+    <main class="flex-grow layout-container max-w-7xl mx-auto w-full px-4 sm:px-8 lg:px-12 py-8">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- ?湧?甈?憿 + ?寞嚗mit filters 蝯衣撅?-->
+            <NotebookSidebar @update:filters="onFiltersChange" />
+
+            <!-- ?Ｗ????-->
+            <div class="flex-1">
+                <!-- 璅???摨?-->
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-3xl font-black text-content">
+                        {{ $t('products.all_treasures') }}
+                        <span class="text-gray-400 font-medium text-lg ml-2">
+                            ({{ totalCount }} {{ $t('products.items') }})
+                        </span>
+                    </h2>
+                    <!-- ????摨?-->
+                    <div class="flex items-center gap-4 w-full md:w-auto mt-4 md:mt-0">
+                        <div class="relative w-full md:w-[280px]">
+                            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                <Icon name="material-symbols:search" class="text-gray-400 text-xl" />
+                            </div>
+                            <input v-model="filterSearch" @keyup.enter="resetAndFetch"
+                                class="w-full pl-10 pr-4 py-2 rounded-xl border-2 border-dashed border-gray-400 focus:border-content focus:ring-0 text-sm font-medium placeholder-gray-400 shadow-sm transition-colors"
+                                :placeholder="$t('nav.search_placeholder')" type="text" />
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <span class="text-sm font-bold text-gray-500 hidden sm:inline">{{ $t('products.sort_by')
+                            }}</span>
+                            <select v-model="sortBy" @change="resetAndFetch"
+                                class="bg-white border-2 border-content rounded-lg py-1 px-3 text-sm font-bold focus:ring-0 focus:border-content cursor-pointer">
+                                <option value="newest">{{ $t('products.sort_newest') }}</option>
+                                <option value="price-low">{{ $t('products.sort_price_low') }}</option>
+                                <option value="price-high">{{ $t('products.sort_price_high') }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ??頛銝?-->
+                <div v-if="isInitialLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div v-for="n in 6" :key="n"
+                        class="rounded-2xl border-2 border-gray-200 bg-gray-100 animate-pulse h-72"></div>
+                </div>
+
+                <!-- ?∟???-->
+                <div v-else-if="products.length === 0 && !isLoadingMore"
+                    class="flex flex-col items-center justify-center py-24 text-gray-400">
+                    <div class="text-6xl mb-4">?孛</div>
+                    <p class="text-xl font-bold">{{ $t('products.no_products') }}</p>
+                </div>
+
+                <!-- ?Ｗ?蝬脫 -->
+                <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <ProductCard v-for="product in products" :key="product.id" :item="toProductItem(product)" />
+                </div>
+
+                <!-- ?⊿?皛曉??典?? -->
+                <div ref="sentinel" class="h-4 mt-8"></div>
+
+                <!-- 頛?游?? -->
+                <div v-if="isLoadingMore" class="mt-8 flex justify-center">
+                    <div class="flex gap-2">
+                        <div class="size-4 bg-primary rounded-full animate-bounce"></div>
+                        <div class="size-4 bg-accent-red rounded-full animate-bounce delay-100"></div>
+                        <div class="size-4 bg-accent-blue rounded-full animate-bounce delay-200"></div>
+                    </div>
+                </div>
+
+                <!-- ?券頛摰?內 -->
+                <div v-if="!hasMore && products.length > 0" class="mt-8 text-center text-gray-400 font-bold text-sm">
+                    ?? {{ $t('products.all_loaded') }}
+                </div>
+            </div>
+        </div>
+    </main>
+</template>
+
+<script setup lang="ts">
+import { useAuthStore } from '~/stores/auth'
+import type { ApiProduct, PaginatedProducts, ProductItem } from '~/types'
+
+const config = useRuntimeConfig()
+const authStore = useAuthStore()
+const route = useRoute()
+
+// ?? ?????????????????????????????????????????????
+const sortBy = ref<'newest' | 'price-low' | 'price-high'>('newest')
+const currentPage = ref(1)
+const products = ref<ApiProduct[]>([])
+const totalCount = shallowRef(0)
+const hasMore = shallowRef(true)
+const isInitialLoading = shallowRef(true)
+const isLoadingMore = shallowRef(false)
+
+// 蝭拚璇辣嚗???NotebookSidebar emit ??URL Query嚗?
+const filterCategoryId = ref<number | null>(null)
+const filterMaxPrice = ref(5000)
+const filterSearch = ref<string>('')
+
+// Intersection Observer ???DOM ref
+const sentinel = useTemplateRef<HTMLElement>('sentinel')
+let observer: IntersectionObserver | null = null
+
+// ?? API ?澆 ??????????????????????????????????????
+async function fetchProducts(append = false) {
+    if (!append) {
+        isInitialLoading.value = true
+    } else {
+        isLoadingMore.value = true
+    }
+
+    try {
+        const params: Record<string, string | number> = {
+            page: currentPage.value,
+            limit: 9,
+            sort: sortBy.value,
+        }
+        if (filterCategoryId.value) params.categoryId = filterCategoryId.value
+        if (filterMaxPrice.value < 5000) params.maxPrice = filterMaxPrice.value
+        if (filterSearch.value) params.search = filterSearch.value
+
+        const data = await $fetch<PaginatedProducts>(
+            `${config.public.apiBase}/products`,
+            {
+                params,
+                headers: {
+                    ...(authStore.token && { Authorization: `Bearer ${authStore.token}` })
+                }
+            }
+        )
+
+        if (append) {
+            products.value.push(...data.items)
+        } else {
+            products.value = data.items
+        }
+        totalCount.value = data.total
+        hasMore.value = data.hasMore
+    } catch (e) {
+        console.error('頛??憭望?', e)
+    } finally {
+        isInitialLoading.value = false
+        isLoadingMore.value = false
+    }
+}
+
+// ?? ?? ??????????????????????????????????????????
+function resetAndFetch() {
+    currentPage.value = 1
+    products.value = []
+    hasMore.value = true
+    fetchProducts(false)
+}
+
+async function loadMore() {
+    if (isLoadingMore.value || !hasMore.value) return
+    currentPage.value++
+    await fetchProducts(true)
+}
+
+
+
+// 靘 NotebookSidebar ??filters ?湔
+function onFiltersChange(filters: { categoryId: number | null; maxPrice: number }) {
+    filterCategoryId.value = filters.categoryId
+    filterMaxPrice.value = filters.maxPrice
+    resetAndFetch()
+}
+
+// ?? URL search ?霈?嚗蒂???活頛 (?誨???onMounted ??fetchProducts)
+watch(
+    () => route.query.search,
+    (newSearch) => {
+        filterSearch.value = (newSearch as string) || ''
+        // ?亦雯?銝?憿?嚗??典?甈∪?甇?
+        if (route.query.categoryId && filterCategoryId.value === null) {
+            filterCategoryId.value = Number(route.query.categoryId)
+        }
+        resetAndFetch()
+    },
+    { immediate: true }
+)
+
+// ?? Intersection Observer嚗??祆遝?孛?潘?????????????
+function setupObserver() {
+    observer = new IntersectionObserver(
+        (entries) => {
+            const entry = entries[0]
+            if (entry?.isIntersecting && hasMore.value && !isLoadingMore.value) {
+                loadMore()
+            }
+        },
+        { rootMargin: '200px' } // 頝???200px ??頛?
+    )
+    if (sentinel.value) observer.observe(sentinel.value)
+}
+
+onMounted(() => {
+    setupObserver()
+})
+
+onUnmounted(() => {
+    observer?.disconnect()
+})
+
+// ?? 撌亙?賣嚗piProduct ??ProductCard ?閬??澆? ??
+interface CardStyle { border: string; priceColor: string; hover: string; hoverText: string }
+
+function getCardStyle(id: number): CardStyle {
+    const styles: CardStyle[] = [
+        { border: 'crayon-border-red', priceColor: 'text-accent-red', hover: 'bg-accent-red', hoverText: 'text-white' },
+        { border: 'crayon-border-blue', priceColor: 'text-accent-blue', hover: 'bg-accent-blue', hoverText: 'text-white' },
+        { border: 'crayon-border-yellow', priceColor: 'text-primary', hover: 'bg-primary', hoverText: 'text-content' },
+        { border: 'crayon-border-purple', priceColor: 'text-accent-purple', hover: 'bg-accent-purple', hoverText: 'text-white' },
+    ]
+    return styles[id % styles.length] ?? styles[0]!
+}
+
+function toProductItem(p: ApiProduct): ProductItem {
+    const style = getCardStyle(p.id)
+    return {
+        id: p.id,
+        title: p.name,
+        price: `$${p.price}`,
+        condition: p.category?.name ?? '',
+        description: p.description,
+        image: p.imageUrl,
+        borderColorClass: style.border,
+        priceColor: style.priceColor,
+        btnHoverBg: style.hover,
+        btnHoverText: style.hoverText,
+        isFavorited: p.isFavorited
+    }
+}
+
+</script>

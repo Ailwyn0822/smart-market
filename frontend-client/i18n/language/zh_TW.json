@@ -27,7 +27,7 @@
     "discount": "五折",
     "search_title": "你在找什麼？",
     "view_all_categories": "查看所有類別",
-    "featured_finds": "特色發現",
+    "featured_finds": "最新發現",
     "categories": {
       "toys": "玩具",
       "clothes": "衣服",
@@ -130,7 +130,12 @@
     "condition_new": "全新 ✨",
     "condition_like_new": "近全新 👌",
     "condition_used_good": "二手良好 👍",
-    "view": "查看"
+    "view": "查看",
+    "sold_out": "售完",
+    "category": "類別",
+    "all_categories": "全部",
+    "all_loaded": "已全部載入",
+    "no_products": "尚無商品"
   },
   "cart": {
     "title": "我的購物車",
@@ -143,13 +148,18 @@
     "continue_shopping": "繼續購物",
     "summary": "摘要",
     "discount_code": "學生折扣碼",
-    "name_tag": "名牌",
+    "name_tag": "折扣碼",
     "apply": "套用",
     "subtotal": "小計",
     "shipping": "運費",
     "discount": "折扣",
     "total": "總計",
     "checkout_now": "立即結帳",
-    "secure_checkout": "安全結帳，家長放心"
+    "secure_checkout": "安全結帳，家長放心",
+    "order_complete_title": "訂單已完成！",
+    "order_number_prefix": "訂單編號",
+    "order_complete_desc": "太棒了！我們已收到您的傑作訂單。等顏料乾了（並且我們出貨時），您就會收到電子郵件確認。",
+    "view_my_orders": "查看我的訂單",
+    "fragile": "易碎品"
   }
 }

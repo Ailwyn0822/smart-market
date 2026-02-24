@@ -160,9 +160,17 @@ console.log(data.value);
 const sortedProducts = computed(() => {
     const sorted = [...products.value]
     if (sortBy.value === 'price-low') {
-        return sorted.sort((a, b) => parseFloat(a.price.replace('$', '')) - parseFloat(b.price.replace('$', '')))
+        return sorted.sort((a, b) => {
+            const priceA = parseFloat(a.price?.toString().replace('$', '') || '0')
+            const priceB = parseFloat(b.price?.toString().replace('$', '') || '0')
+            return priceA - priceB
+        })
     } else if (sortBy.value === 'price-high') {
-        return sorted.sort((a, b) => parseFloat(b.price.replace('$', '')) - parseFloat(a.price.replace('$', '')))
+        return sorted.sort((a, b) => {
+            const priceA = parseFloat(a.price?.toString().replace('$', '') || '0')
+            const priceB = parseFloat(b.price?.toString().replace('$', '') || '0')
+            return priceB - priceA
+        })
     }
     return sorted // newest (default order)
 })

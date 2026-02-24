@@ -130,7 +130,12 @@
     "condition_new": "Mới tinh ✨",
     "condition_like_new": "Như mới 👌",
     "condition_used_good": "Đã dùng - Tốt 👍",
-    "view": "Xem"
+    "view": "Xem",
+    "sold_out": "BÁN HẾT",
+    "category": "loại",
+    "all_categories": "tất cả",
+    "all_loaded": "Tất cả đã được tải",
+    "no_products": "Không có sản phẩm"
   },
   "cart": {
     "title": "Giỏ hàng của tôi",
@@ -143,13 +148,18 @@
     "continue_shopping": "Tiếp tục mua sắm",
     "summary": "Tóm tắt",
     "discount_code": "Mã giảm giá học sinh",
-    "name_tag": "TÊN THẺ",
+    "name_tag": "mã giảm giá",
     "apply": "Áp dụng",
     "subtotal": "Tạm tính",
     "shipping": "Phí vận chuyển",
     "discount": "Giảm giá",
     "total": "Tổng cộng",
     "checkout_now": "Thanh toán ngay",
-    "secure_checkout": "Thanh toán an toàn cho phụ huynh"
+    "secure_checkout": "Thanh toán an toàn cho phụ huynh",
+    "order_complete_title": "Đã hoàn tất đơn hàng!",
+    "order_number_prefix": "Mã đơn hàng",
+    "order_complete_desc": "Thật tuyệt vời! Chúng tôi đã nhận được đơn đặt hàng kiệt tác của bạn. Bạn sẽ nhận được email xác nhận sau khi sơn khô (và chúng tôi giao hàng).",
+    "view_my_orders": "Xem đơn hàng của tôi",
+    "fragile": "Hàng dễ vỡ"
   }
 }
