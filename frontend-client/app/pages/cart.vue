@@ -26,7 +26,7 @@
                         </h2>
 
                         <!-- 空購物車提示 -->
-                        <div v-if="cartItems.length === 0"
+                        <div v-if="cartStore.items.length === 0"
                             class="bg-white rounded-2xl p-10 flex flex-col items-center justify-center crayon-border-yellow text-center gap-4">
                             <Icon name="material-symbols:shopping-cart-off" class="text-6xl text-gray-300" />
                             <p class="font-bold text-gray-400 text-lg">{{ $t('cart.empty') }}</p>
@@ -38,12 +38,12 @@
 
                         <!-- 商品列表 -->
                         <template v-else>
-                            <div v-for="(item, index) in cartItems" :key="item.id" :class="[
+                            <div v-for="(item, index) in cartStore.items" :key="item.product.id" :class="[
                                 'bg-white rounded-2xl p-4 flex gap-4 items-center relative group',
                                 crayonBorderClass(index)
                             ]">
                                 <!-- 刪除按鈕 -->
-                                <button @click="removeItem(item.id)"
+                                <button @click="cartStore.removeFromCart(item.product.id)"
                                     class="absolute -top-3 -right-3 bg-red-100 hover:bg-accent-red text-accent-red hover:text-white rounded-full p-1 border-2 border-red-200 hover:border-accent-red transition-colors z-20">
                                     <Icon name="material-symbols:close" class="text-lg" />
                                 </button>
@@ -51,19 +51,16 @@
                                 <!-- 商品圖片 -->
                                 <div
                                     class="w-24 h-24 shrink-0 bg-gray-100 rounded-xl overflow-hidden border-2 border-dashed border-gray-300">
-                                    <img :src="item.image" :alt="item.name" class="w-full h-full object-cover" />
+                                    <img :src="item.product.imageUrl || item.product.image" :alt="item.product.name"
+                                        class="w-full h-full object-cover" />
                                 </div>
 
                                 <!-- 商品資訊 -->
                                 <div class="flex-grow">
                                     <div class="flex justify-between items-start">
-                                        <div>
-                                            <h3 class="font-bold text-lg text-content">{{ item.name }}</h3>
-                                            <p class="text-sm text-gray-500">{{ $t('cart.condition') }}: {{
-                                                item.condition }}</p>
-                                        </div>
+                                        <h3 class="font-bold text-lg text-content">{{ item.product.name }}</h3>
                                         <span :class="['font-black text-xl', priceColorClass(index)]">
-                                            ${{ item.price.toFixed(2) }}
+                                            ${{ parseFloat(String(item.product.price)).toFixed(2) }}
                                         </span>
                                     </div>
 
@@ -71,21 +68,23 @@
                                     <div class="mt-2 flex items-center gap-4">
                                         <div
                                             class="flex items-center gap-2 bg-gray-50 rounded-lg border border-gray-200 px-2 py-1">
-                                            <button @click="decreaseQty(item.id)"
+                                            <button @click="cartStore.updateQuantity(item.product.id, item.quantity - 1)"
                                                 class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-content rounded hover:bg-gray-200 transition-colors">
                                                 <Icon name="material-symbols:remove" class="text-sm" />
                                             </button>
                                             <span class="font-bold text-sm w-4 text-center">{{ item.quantity }}</span>
-                                            <button @click="increaseQty(item.id)"
-                                                class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-content rounded hover:bg-gray-200 transition-colors">
+                                            <button
+                                                @click="cartStore.updateQuantity(item.product.id, Math.min(item.quantity + 1, item.product.stock ?? 999))"
+                                                :disabled="item.product.stock !== undefined && item.quantity >= item.product.stock"
+                                                class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-content rounded hover:bg-gray-200 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
                                                 <Icon name="material-symbols:add" class="text-sm" />
                                             </button>
                                         </div>
-                                        <span v-if="item.stock === 'last'"
+                                        <span v-if="item.product.stock !== undefined && item.product.stock <= 3 && item.product.stock > 0"
                                             class="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded-md border border-orange-100">
                                             {{ $t('cart.last_one') }}
                                         </span>
-                                        <span v-else
+                                        <span v-else-if="item.product.stock === undefined || item.product.stock > 3"
                                             class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-md border border-green-100">
                                             {{ $t('cart.in_stock') }}
                                         </span>
@@ -137,28 +136,33 @@
                                             </button>
                                         </div>
                                     </div>
+                                    <p v-if="discountMessage"
+                                        class="mt-1 text-xs font-bold"
+                                        :class="discountMessage.ok ? 'text-green-600' : 'text-accent-red'">
+                                        {{ discountMessage.text }}
+                                    </p>
                                 </div>
 
                                 <!-- 金額明細 -->
                                 <div class="space-y-3 mb-6 border-t-2 border-dashed border-gray-200 pt-4">
                                     <div class="flex justify-between text-sm font-medium text-gray-600">
                                         <span>{{ $t('cart.subtotal') }}</span>
-                                        <span>${{ subtotal.toFixed(2) }}</span>
+                                        <span>${{ cartStore.subtotal.toFixed(2) }}</span>
                                     </div>
                                     <div class="flex justify-between text-sm font-medium text-gray-600">
                                         <span>{{ $t('cart.shipping') }}</span>
-                                        <span>${{ shipping.toFixed(2) }}</span>
+                                        <span>${{ cartStore.shipping.toFixed(2) }}</span>
                                     </div>
                                     <div class="flex justify-between text-sm font-bold text-accent-red">
                                         <span>{{ $t('cart.discount') }}</span>
-                                        <span>-${{ discount.toFixed(2) }}</span>
+                                        <span>-${{ cartStore.discountAmount.toFixed(2) }}</span>
                                     </div>
                                 </div>
 
                                 <!-- 總計 -->
                                 <div class="flex justify-between items-end border-t-2 border-content pt-4 mb-8">
                                     <span class="font-bold text-lg text-content">{{ $t('cart.total') }}</span>
-                                    <span class="font-black text-3xl text-content">${{ total.toFixed(2) }}</span>
+                                    <span class="font-black text-3xl text-content">${{ cartStore.total.toFixed(2) }}</span>
                                 </div>
 
                                 <!-- 結帳按鈕 -->
@@ -189,64 +193,19 @@
 </template>
 
 <script setup lang="ts">
+import { useCartStore } from '~/stores/cart'
+
 // ===== SEO =====
 useHead({
     title: 'Cart | Smart Market',
 })
 
-// ===== 購物車商品資料（之後接 API / Pinia store） =====
-interface CartItem {
-    id: number
-    name: string
-    condition: string
-    price: number
-    quantity: number
-    image: string
-    stock: 'in-stock' | 'last'
-}
-
-const cartItems = ref<CartItem[]>([
-    {
-        id: 1,
-        name: 'Wooden Block Set',
-        condition: 'Like New',
-        price: 24.00,
-        quantity: 1,
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD7Gb6q0aM6_Jn46xxTtF07VC8s9kY2NQ55MVDqfqcR1WRTr__E1Yn7eo9jQcEeeve0VrjcNHnPcK4QROkPBXnA07HHOhDf1nPOz9Nxle82uKW0epPYTcm2m-00BAV5tEdC00124Zq4ZuOPAHecaTddJSfaJmBxz86hx4gj8-JAZH7jv6HbOiSRrnaAFA6uVkpwtR7AflAIKr3RfDOHmuYBpZqW2w1rBkY-nVP4iNOvLUyMkjeyfFHg-_lzjHZ7_N7SBhNDoJa66QDP',
-        stock: 'in-stock',
-    },
-    {
-        id: 2,
-        name: 'Classic Red Racer',
-        condition: 'Used - Good',
-        price: 15.00,
-        quantity: 1,
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAPB3dGs-oKxc75etMaToQGn0skAAjAeBZnWv5T5HwOeTHYcZ-gXZMNAdHDsCt48KIPL9ZMYQ9Q8I9gmdfU14ROgReXqaHiR8CJuY59CjOQs6j-lp94D8dxZtBFTKYZM4xE7Jtn0-4NIbaVOXJRN0DN-IE-DuNHh6xPVDydKCiCt85nC9TWQa0Ijxrp0kcYZuqYAvEddxq_vlrsPTuvfR-zmOPg86fU4LkTzJ9vM4pThtlE_lICxatASb8O2_duSXHuZX6gxOkJPOuQ',
-        stock: 'last',
-    },
-    {
-        id: 3,
-        name: 'Artist Starter Kit',
-        condition: 'New',
-        price: 30.00,
-        quantity: 1,
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD2BqY4axIOd2zsQ0sXt702dJjPyc2uW61HdaIrnz7GQWvAE07wwmVEo6ZLgqC3p8oXeX2htk2TvIuMQDOSBmnzh9NDKghVHuaHNQJaHcC8LpJV4oXVe6PaAuMlyyP8GbNXksjIZuyYxbt80zGREEITHsQn0M_GIW160ynsSuSepavdT4JPZr5dznyJIfO0uJ4obBSxNx_LaQeX1X3HII50qoChfxSdyjepE3S7ZNKyREI8hHeP8n4QoV7SUIcPERI_H2yRYtg97aH7',
-        stock: 'in-stock',
-    },
-])
+const cartStore = useCartStore()
+const toast = useToast()
 
 // 折扣碼
 const discountCode = ref('')
-const discount = ref(0)
-const shipping = computed(() => cartItems.value.length > 0 ? 5.00 : 0)
-
-// 小計
-const subtotal = computed(() =>
-    cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
-)
-
-// 總計
-const total = computed(() => subtotal.value + shipping.value - discount.value)
+const discountMessage = ref<{ ok: boolean; text: string } | null>(null)
 
 // ===== 輔助 class 函式（蠟筆邊框 / 價格顏色循環） =====
 const crayonBorderClasses = ['crayon-border-blue', 'crayon-border-red', 'crayon-border-purple', 'crayon-border-yellow']
@@ -255,30 +214,25 @@ const priceColorClasses = ['text-accent-blue', 'text-accent-red', 'text-accent-p
 const crayonBorderClass = (index: number) => crayonBorderClasses[index % crayonBorderClasses.length]
 const priceColorClass = (index: number) => priceColorClasses[index % priceColorClasses.length]
 
-// ===== 操作函式 =====
-const removeItem = (id: number) => {
-    cartItems.value = cartItems.value.filter(item => item.id !== id)
-}
-
-const increaseQty = (id: number) => {
-    const item = cartItems.value.find(i => i.id === id)
-    if (item) item.quantity++
-}
-
-const decreaseQty = (id: number) => {
-    const item = cartItems.value.find(i => i.id === id)
-    if (item && item.quantity > 1) item.quantity--
-}
-
+// ===== 折扣碼驗證 =====
 const applyDiscount = () => {
-    // TODO: 串接後端折扣碼驗證
-    if (discountCode.value.trim().toUpperCase() === 'SMART10') {
-        discount.value = subtotal.value * 0.1
+    const code = discountCode.value.trim().toUpperCase()
+    // 硬寫折扣碼，後續可串接後端驗證
+    if (code === 'SMART10') {
+        cartStore.discountAmount = cartStore.subtotal * 0.1
+        cartStore.appliedDiscountCode = code
+        discountMessage.value = { ok: true, text: '折扣碼套用成功！折扣 10%' }
+        toast.success('折扣碼套用成功！')
+    } else if (code === '') {
+        discountMessage.value = { ok: false, text: '請輸入折扣碼' }
+    } else {
+        cartStore.discountAmount = 0
+        cartStore.appliedDiscountCode = ''
+        discountMessage.value = { ok: false, text: '折扣碼無效' }
     }
 }
 
 const checkout = () => {
-    // TODO: 串接結帳流程
     navigateTo('/checkout')
 }
 </script>
@@ -309,13 +263,5 @@ const checkout = () => {
             rgba(244, 192, 37, 0.15) 0%,
             rgba(255, 107, 107, 0.05) 50%,
             transparent 70%);
-}
-
-.sticker-nav-item {
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
-}
-
-.sticker-nav-item:hover {
-    transform: scale(1.05) rotate(-2deg);
 }
 </style>

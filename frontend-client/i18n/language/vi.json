@@ -109,6 +109,8 @@
       "description_placeholder": "This used to be my favorite toy, but now...",
       "price_label": "Value",
       "price_placeholder": "0",
+      "stock_label": "Số lượng tồn kho",
+      "stock_placeholder": "Nhập số lượng tồn kho",
       "submit": "Done!",
       "photo_caption": "My cool stuff..."
     }
@@ -135,7 +137,11 @@
     "category": "loại",
     "all_categories": "tất cả",
     "all_loaded": "Tất cả đã được tải",
-    "no_products": "Không có sản phẩm"
+    "no_products": "Không có sản phẩm",
+    "search_placeholder": "Tìm kiếm tên, mô tả...",
+    "favorite": "Thêm vào yêu thích",
+    "unfavorite": "Bỏ yêu thích",
+    "delisted": "Đã gỡ bán"
   },
   "cart": {
     "title": "Giỏ hàng của tôi",

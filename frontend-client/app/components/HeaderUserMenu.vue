@@ -161,24 +161,6 @@
                         <div class="h-px bg-gray-100 my-1 mx-2"></div>
                     </template>
 
-                    <!-- 語言設定 -->
-                    <div class="py-1">
-                        <div
-                            class="px-3 py-1 flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-wider">
-                            <Icon name="material-symbols:language" class="text-base" />
-                            語言切換
-                        </div>
-                        <button v-for="l in locales" :key="l.code" @click="handleSetLocale(l.code)"
-                            class="w-full text-left px-3 py-2 text-sm font-bold text-content hover:bg-gray-100 rounded-xl flex items-center justify-between transition-colors"
-                            :class="{ 'bg-gray-50 text-primary': locale === l.code }">
-                            <span class="uppercase">{{ l.code }}</span>
-                            <Icon v-if="locale === l.code" name="material-symbols:check"
-                                class="text-primary text-base" />
-                        </button>
-                    </div>
-
-                    <div class="h-px bg-gray-100 my-1 mx-2"></div>
-
                     <!-- 登入/登出按鈕 -->
                     <button v-if="!authStore.isAuthenticated" @click="handleAction('/login')"
                         class="w-full text-left px-3 py-2 text-sm font-bold text-accent-blue hover:bg-accent-blue/10 rounded-xl flex items-center gap-3 transition-colors">
@@ -213,7 +195,7 @@ dayjs.locale('zh-tw');
 const config = useRuntimeConfig();
 const authStore = useAuthStore();
 const router = useRouter();
-const { locale, setLocale, locales } = useI18n();
+useI18n();
 
 const isOpen = shallowRef(false);
 const menuContainer = useTemplateRef<HTMLElement>('menuContainer');
@@ -250,11 +232,6 @@ function handleAction(path: string) {
 function handleLogout() {
     closeMenu();
     authStore.logout();
-}
-
-function handleSetLocale(code: string) {
-    setLocale(code as any);
-    closeMenu();
 }
 
 async function fetchNotifications() {

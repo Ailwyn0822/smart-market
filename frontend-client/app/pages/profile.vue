@@ -80,6 +80,7 @@
 </template>
 
 <script setup lang="ts">
+import { watch } from 'vue';
 import { useAuthStore } from '~/stores/auth';
 import { useToast } from '~/composables/useToast';
 
@@ -95,21 +96,38 @@ const isSubmitting = shallowRef(false);
 const isUploading = shallowRef(false);
 const fileInput = useTemplateRef<HTMLInputElement>('fileInput');
 
-const { data: profile, pending, refresh } = await useFetch<any>(`${config.public.apiBase}/users/profile`, {
-    headers: { Authorization: `Bearer ${authStore.token}` }
-});
+// 用 $fetch 直接抓，避免 useFetch headers 無法響應式的問題
+const profile = ref<any>(null);
+const pending = ref(true);
+
+async function refresh() {
+    const tok = authStore.token;
+    if (!tok) { pending.value = false; return; }
+    pending.value = true;
+    try {
+        profile.value = await $fetch<any>(`${config.public.apiBase}/users/profile`, {
+            headers: { Authorization: `Bearer ${tok}` }
+        });
+    } catch (e) {
+        console.error('Profile load error:', e);
+    } finally {
+        pending.value = false;
+    }
+}
+
+onMounted(() => refresh());
 
 const formData = reactive({
     name: '',
     avatar: ''
 });
 
-watchEffect(() => {
-    if (profile.value) {
-        formData.name = profile.value.name;
-        formData.avatar = profile.value.avatar;
+watch(profile, (val) => {
+    if (val) {
+        formData.name = val.name || val.username || '';
+        formData.avatar = val.avatar || val.picture || '';
     }
-});
+}, { immediate: true });
 
 function triggerFileInput() {
     fileInput.value?.click();
@@ -125,13 +143,25 @@ async function handleFileUpload(event: Event) {
 
     isUploading.value = true;
     try {
-        const response = await $fetch<any>(`${config.public.apiBase}/products/analyze`, {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${authStore.token}` },
-            body: uploadForm
-        });
+        // 嘗試使用專屬頭像上傳端點，若失敗則使用通用圖片分析端點
+        let imageUrl = '';
+        try {
+            const res = await $fetch<any>(`${config.public.apiBase}/users/avatar`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${authStore.token}` },
+                body: uploadForm
+            });
+            imageUrl = res.imageUrl || res.url || res.avatar || '';
+        } catch {
+            const res = await $fetch<any>(`${config.public.apiBase}/products/analyze`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${authStore.token}` },
+                body: uploadForm
+            });
+            imageUrl = res.imageUrl || '';
+        }
 
-        formData.avatar = response.imageUrl;
+        formData.avatar = imageUrl;
 
         // 上傳完成後直接幫使用者儲存
         await $fetch(`${config.public.apiBase}/users/profile`, {

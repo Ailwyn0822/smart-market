@@ -93,22 +93,28 @@
 
         <!-- Categories Section -->
         <section>
-            <div class="flex items-end justify-between mb-8 px-2">
-                <h2 class="text-3xl font-black text-content tracking-tight flex items-center gap-3">
-                    <Icon name="material-symbols:brush" class="text-4xl text-accent-blue" />
+            <div class="flex items-center justify-center mb-10 relative">
+                <div class="absolute h-0.5 w-full bg-content top-1/2 -z-10 rounded-full opacity-10"></div>
+                <h2 class="bg-primary border-2 border-content shadow-[4px_4px_0px_#1c180d] px-6 py-2 rounded-full text-2xl font-black text-content tracking-tight flex items-center gap-2">
+                    <Icon name="material-symbols:search" class="text-2xl" />
                     {{ $t('home.search_title') }}
                 </h2>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-                <a v-for="category in categoriesData" :key="category.id"
-                    class="group flex flex-col items-center gap-3 cursor-pointer"
-                    @click="navigateTo(`/products?category=${category.id}`)">
-                    <div
-                        class="size-32 bg-white rounded-full flex items-center justify-center group-hover:bg-primary group-hover:scale-110 transition-all shadow-[0_12px_24px_rgba(0,0,0,0.06)] group-hover:shadow-[0_20px_40px_rgba(0,0,0,0.12)] border border-gray-50">
-                        <span class="text-5xl text-content">{{ category.icon }}</span>
-                    </div>
-                    <span
-                        class="font-bold text-lg text-content bg-white px-3 py-1 rounded-lg border border-transparent group-hover:border-content group-hover:shadow-sm transition-all">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
+                <a v-for="(category, index) in categoriesData" :key="category.id"
+                    :class="[
+                        'group flex flex-col items-center gap-2 cursor-pointer rounded-2xl border-2 border-content p-5',
+                        'shadow-[4px_4px_0px_#1c180d] transition-all duration-200',
+                        'bg-transparent',
+                        'hover:shadow-none hover:translate-x-1 hover:translate-y-1 hover:scale-105',
+                        index % 4 === 0 ? 'rotate-[-1deg] hover:rotate-0' :
+                        index % 4 === 1 ? 'rotate-[1.5deg] hover:rotate-0' :
+                        index % 4 === 2 ? 'rotate-[-1.5deg] hover:rotate-0' :
+                                          'rotate-[1deg] hover:rotate-0'
+                    ]"
+                    @click="navigateTo(`/products?category=${encodeURIComponent(category.name)}`)">
+                    <span class="text-5xl leading-none mt-1">{{ category.icon }}</span>
+                    <span class="font-black text-base text-content text-center leading-tight mt-1">
                         {{ category.name }}
                     </span>
                 </a>
@@ -157,7 +163,6 @@ const { data: categoriesData } = await useFetch(`${config.public.apiBase}/catego
 
 // 串接最新商品 API (取前四個)
 const { data: productsData } = await useFetch(`${config.public.apiBase}/products/latest`)
-console.log(productsData.value);
 
 // 將 API 商品對應至 ProductCard 所需格式
 function mapProduct(p, index) {
@@ -180,7 +185,9 @@ function mapProduct(p, index) {
         priceColor: style.price,
         btnHoverBg: style.hover,
         btnHoverText: 'text-white',
-        category: p.category
+        category: typeof p.category === 'object' && p.category !== null
+            ? p.category
+            : { name: p.category || '' }
     }
 }
 

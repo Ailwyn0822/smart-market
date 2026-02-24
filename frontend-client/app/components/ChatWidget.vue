@@ -50,31 +50,65 @@
                 </div>
 
                 <!-- 聯絡人列表 -->
-                <div v-if="!chatStore.activeContactId" class="h-full overflow-y-auto p-4 space-y-3 relative z-10">
-                    <div v-if="chatStore.contacts.length === 0"
-                        class="flex flex-col items-center justify-center h-full gap-2 text-gray-400">
-                        <Icon name="material-symbols:speaker-notes-off-outline" class="text-5xl" />
-                        <span class="font-bold">目前沒有任何訊息</span>
+                <div v-if="!chatStore.activeContactId" class="h-full flex flex-col relative z-10">
+                    <!-- 搜尋框 -->
+                    <div class="p-3 border-b-2 border-content/10 shrink-0">
+                        <div class="relative">
+                            <Icon name="material-symbols:search" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
+                            <input v-model="searchQuery" @input="onSearchInput" type="text"
+                                placeholder="搜尋帳號..."
+                                class="w-full pl-9 pr-4 py-2 rounded-xl border-2 border-dashed border-gray-300 focus:border-content bg-gray-50 text-sm font-bold outline-none transition-all" />
+                        </div>
                     </div>
 
-                    <div v-for="contact in chatStore.contacts" :key="contact.id" @click="chatStore.openChat(contact)"
-                        class="bg-white p-3 rounded-2xl border-2 border-dashed border-gray-300 hover:border-content hover:shadow-stitch-sm transition-all cursor-pointer flex items-center gap-3 relative">
-                        <!-- 大頭照 -->
-                        <NuxtImg
-                            :src="contact.avatar || 'https://api.dicebear.com/7.x/notionists/svg?seed=' + contact.name"
-                            class="w-12 h-12 rounded-full border-2 border-content bg-gray-100 object-cover shrink-0"
-                            loading="lazy" format="webp" />
+                    <!-- 搜尋結果 -->
+                    <div v-if="searchQuery.trim() && searchResults.length > 0" class="overflow-y-auto flex-1 p-3 space-y-2">
+                        <p class="text-xs font-bold text-gray-400 px-1 mb-2">搜尋結果</p>
+                        <div v-for="user in searchResults" :key="user.id" @click="startChatWith(user)"
+                            class="bg-white p-3 rounded-2xl border-2 border-dashed border-gray-300 hover:border-content hover:shadow-stitch-sm transition-all cursor-pointer flex items-center gap-3">
+                            <NuxtImg
+                                :src="user.avatar || 'https://api.dicebear.com/7.x/notionists/svg?seed=' + user.username"
+                                class="w-10 h-10 rounded-full border-2 border-content bg-gray-100 object-cover shrink-0"
+                                loading="lazy" format="webp" />
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-bold text-content text-sm truncate">{{ user.name || user.username }}</h4>
+                                <p class="text-xs text-gray-400 truncate">@{{ user.username }}</p>
+                            </div>
+                            <Icon name="material-symbols:chat-bubble-outline" class="text-accent-blue text-lg shrink-0" />
+                        </div>
+                    </div>
 
-                        <div class="flex-1 min-w-0">
-                            <h4 class="font-bold text-content text-sm truncate">{{ contact.name }}</h4>
-                            <p class="text-xs text-gray-500 truncate mt-0.5">{{ contact.lastMessage || '點擊開始對話' }}</p>
+                    <!-- 搜尋中但無結果 -->
+                    <div v-else-if="searchQuery.trim() && !isSearching && searchResults.length === 0"
+                        class="flex flex-col items-center justify-center flex-1 gap-2 text-gray-400 p-4">
+                        <Icon name="material-symbols:person-search" class="text-4xl" />
+                        <span class="font-bold text-sm">找不到此帳號</span>
+                    </div>
+
+                    <!-- 歷史聊天列表 -->
+                    <div v-else class="overflow-y-auto flex-1 p-3 space-y-2">
+                        <div v-if="chatStore.contacts.length === 0"
+                            class="flex flex-col items-center justify-center h-full gap-2 text-gray-400">
+                            <Icon name="material-symbols:speaker-notes-off-outline" class="text-5xl" />
+                            <span class="font-bold">目前沒有任何訊息</span>
+                            <p class="text-xs text-center">搜尋帳號開始聊天</p>
                         </div>
 
-                        <!-- 未讀數 -->
-                        <span v-if="contact.unreadCount"
-                            class="bg-accent-red text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                            {{ contact.unreadCount }}
-                        </span>
+                        <div v-for="contact in chatStore.contacts" :key="contact.id" @click="chatStore.openChat(contact)"
+                            class="bg-white p-3 rounded-2xl border-2 border-dashed border-gray-300 hover:border-content hover:shadow-stitch-sm transition-all cursor-pointer flex items-center gap-3 relative">
+                            <NuxtImg
+                                :src="contact.avatar || 'https://api.dicebear.com/7.x/notionists/svg?seed=' + contact.name"
+                                class="w-12 h-12 rounded-full border-2 border-content bg-gray-100 object-cover shrink-0"
+                                loading="lazy" format="webp" />
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-bold text-content text-sm truncate">{{ contact.name }}</h4>
+                                <p class="text-xs text-gray-500 truncate mt-0.5">{{ contact.lastMessage || '點擊開始對話' }}</p>
+                            </div>
+                            <span v-if="contact.unreadCount"
+                                class="bg-accent-red text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                {{ contact.unreadCount }}
+                            </span>
+                        </div>
                     </div>
                 </div>
 
@@ -126,8 +160,44 @@ import { ref, watch, computed, nextTick, onUnmounted, useTemplateRef } from 'vue
 
 const authStore = useAuthStore()
 const chatStore = useChatStore()
+const config = useRuntimeConfig()
 const inputText = ref('')
 const messagesContainer = useTemplateRef<HTMLElement>('messagesContainer')
+
+// 搜尋使用者
+const searchQuery = ref('')
+const searchResults = ref<any[]>([])
+const isSearching = ref(false)
+let searchTimer: ReturnType<typeof setTimeout> | null = null
+
+function onSearchInput() {
+    if (searchTimer) clearTimeout(searchTimer)
+    const q = searchQuery.value.trim()
+    if (!q) {
+        searchResults.value = []
+        return
+    }
+    isSearching.value = true
+    searchTimer = setTimeout(async () => {
+        try {
+            const data = await $fetch<any[]>(`${config.public.apiBase}/users/search`, {
+                query: { q },
+                headers: { Authorization: `Bearer ${authStore.token}` }
+            })
+            searchResults.value = (data || []).filter((u: any) => u.id !== authStore.user?.id)
+        } catch {
+            searchResults.value = []
+        } finally {
+            isSearching.value = false
+        }
+    }, 400)
+}
+
+function startChatWith(user: any) {
+    searchQuery.value = ''
+    searchResults.value = []
+    chatStore.openChat({ id: user.id, name: user.name || user.username, avatar: user.avatar })
+}
 
 // 監聽登入狀態以連接 Socket
 watch(() => authStore.isAuthenticated, (isAuth) => {

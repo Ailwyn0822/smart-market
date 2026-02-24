@@ -18,22 +18,40 @@
                         </h3>
 
                         <div class="space-y-6">
-                            <!-- 條件過濾器 -->
+                            <!-- 類別過濾器 -->
                             <div>
                                 <h4 class="font-bold text-sm uppercase tracking-wider text-gray-500 mb-4">
-                                    {{ $t('products.condition') }}
+                                    {{ $t('products.category') }}
                                 </h4>
-                                <div class="flex flex-col gap-3">
-                                    <div class="relative" v-for="condition in conditions" :key="condition.id">
-                                        <input class="filter-checkbox sr-only" :id="`filter-${condition.id}`"
-                                            type="checkbox" v-model="condition.checked" />
-                                        <label :class="[
-                                            'block cursor-pointer font-bold py-2 px-4 rounded-lg border-2 border-transparent hover:border-content transition-all text-center shadow-sm',
-                                            condition.bgColor, condition.textColor
-                                        ]" :for="`filter-${condition.id}`">
-                                            {{ condition.label }}
-                                        </label>
-                                    </div>
+
+                                <div v-if="loadingCategories" class="flex justify-center py-4">
+                                    <Icon name="line-md:loading-loop" class="text-2xl text-primary" />
+                                </div>
+
+                                <div v-else class="flex flex-col gap-2">
+                                    <!-- 全部 -->
+                                    <button @click="selectCategory('')"
+                                        :class="[
+                                            'w-full text-left font-bold py-2 px-4 rounded-lg border-2 transition-all text-sm',
+                                            selectedCategory === ''
+                                                ? 'bg-content text-white border-content'
+                                                : 'bg-white text-content border-gray-200 hover:border-content'
+                                        ]">
+                                        {{ $t('products.all_categories') }}
+                                    </button>
+
+                                    <!-- 各類別 -->
+                                    <button v-for="(cat, index) in categories" :key="cat.id || cat.name"
+                                        @click="selectCategory(cat.name)"
+                                        :class="[
+                                            'w-full text-left font-bold py-2 px-4 rounded-lg border-2 transition-all text-sm',
+                                            selectedCategory === cat.name
+                                                ? 'text-white border-transparent'
+                                                : 'bg-white text-content border-gray-200 hover:border-content',
+                                            selectedCategory === cat.name ? categoryBgColors[index % categoryBgColors.length] : ''
+                                        ]">
+                                        {{ cat.name }}
+                                    </button>
                                 </div>
                             </div>
 
@@ -67,14 +85,50 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, shallowRef, onMounted } from 'vue'
 
-const { t } = useI18n()
+const config = useRuntimeConfig()
+const route = useRoute()
+const router = useRouter()
 const priceValue = ref(40)
 
-const conditions = computed(() => [
-    { id: 'new', label: t('products.condition_new'), bgColor: 'bg-accent-purple', textColor: 'text-white', checked: false },
-    { id: 'like-new', label: t('products.condition_like_new'), bgColor: 'bg-accent-blue', textColor: 'text-white', checked: true },
-    { id: 'good', label: t('products.condition_used_good'), bgColor: 'bg-primary', textColor: 'text-content', checked: false },
-])
+const categories = ref<{ id?: number; name: string }[]>([])
+const loadingCategories = shallowRef(false)
+
+const categoryBgColors = [
+    'bg-accent-purple',
+    'bg-accent-blue',
+    'bg-primary',
+    'bg-accent-red',
+    'bg-green-500',
+    'bg-orange-500',
+]
+
+// 從 URL 取得目前選中的類別
+const selectedCategory = computed(() => (route.query.category as string) || '')
+
+async function fetchCategories() {
+    loadingCategories.value = true
+    try {
+        const data = await $fetch<{ id?: number; name: string }[]>(`${config.public.apiBase}/categories`)
+        categories.value = data || []
+    } catch (e) {
+        console.error('Failed to fetch categories', e)
+        categories.value = []
+    } finally {
+        loadingCategories.value = false
+    }
+}
+
+function selectCategory(name: string) {
+    const query = { ...route.query }
+    if (name) {
+        query.category = name
+    } else {
+        delete query.category
+    }
+    router.push({ path: route.path, query })
+}
+
+onMounted(fetchCategories)
 </script>

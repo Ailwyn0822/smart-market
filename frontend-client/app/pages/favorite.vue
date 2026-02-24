@@ -56,15 +56,18 @@
                     <!-- 收藏商品列表 -->
                     <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         <div v-for="product in favorites" :key="product.id"
-                            class="bg-white p-4 rounded-2xl border-2 border-content shadow-stitch flex flex-col gap-3 group hover:-translate-y-2 transition-transform duration-300 relative">
+                            class="bg-white p-4 rounded-2xl border-2 border-content shadow-stitch flex flex-col gap-3 group hover:-translate-y-2 transition-transform duration-300 relative"
+                            :class="{ 'opacity-60': product.isActive === false }">
 
                             <!-- 圖片區塊 -->
                             <div
                                 class="aspect-square bg-gray-100 rounded-xl overflow-hidden relative border-2 border-content">
-                                <!-- 狀態標籤 -->
-                                <div v-if="product.condition"
-                                    class="absolute top-2 left-2 z-10 bg-accent-red px-3 py-1 rounded-full text-[10px] font-black tracking-wider text-white border-2 border-content uppercase">
-                                    {{ $t(`products.condition.${product.condition}`) }}
+                                <!-- 已下架遮罩 -->
+                                <div v-if="product.isActive === false"
+                                    class="absolute inset-0 z-20 bg-black/50 flex items-center justify-center">
+                                    <span class="bg-gray-800 text-white text-xs font-black px-3 py-1 rounded-full border-2 border-white">
+                                        {{ $t('products.delisted') }}
+                                    </span>
                                 </div>
 
                                 <!-- 取消收藏按鈕 -->
@@ -85,23 +88,23 @@
                             <!-- 資訊區塊 -->
                             <div class="flex flex-col gap-1 mt-1">
                                 <h3 class="font-black text-content text-lg line-clamp-1">{{ product.name }}</h3>
-                                <p class="text-xs font-bold text-gray-500 mb-1 flex items-center gap-1">
-                                    <Icon name="material-symbols:location-on" class="text-gray-400" />
-                                    {{ $t('products.ships_from') }}
-                                </p>
                                 <span class="font-black text-xl text-accent-blue">${{ product.price }}</span>
                             </div>
 
                             <!-- 動作按鈕 -->
                             <div class="mt-auto pt-2">
-                                <button v-if="product.stock > 0" @click="addToCart(product)"
+                                <button v-if="product.isActive === false" disabled
+                                    class="w-full bg-gray-200 border-2 border-gray-300 py-2.5 rounded-xl font-black text-gray-400 text-sm flex items-center justify-center gap-2 cursor-not-allowed">
+                                    {{ $t('products.delisted') }}
+                                </button>
+                                <button v-else-if="product.stock !== undefined && product.stock <= 0" disabled
+                                    class="w-full bg-gray-200 border-2 border-gray-300 py-2.5 rounded-xl font-black text-gray-400 text-sm flex items-center justify-center gap-2 cursor-not-allowed">
+                                    {{ $t('products.sold_out') }}
+                                </button>
+                                <button v-else @click="addToCart(product)"
                                     class="w-full bg-primary hover:bg-[#ffe066] border-2 border-content py-2.5 rounded-xl font-black text-sm transition-colors flex items-center justify-center gap-2 shadow-stitch-sm active:shadow-none active:translate-y-1">
                                     <Icon name="material-symbols:shopping-cart" class="text-lg" />
                                     {{ $t('products.add_to_cart') }}
-                                </button>
-                                <button v-else disabled
-                                    class="w-full bg-gray-200 border-2 border-gray-300 py-2.5 rounded-xl font-black text-gray-400 text-sm flex items-center justify-center gap-2 cursor-not-allowed">
-                                    {{ $t('products.sold_out') }}
                                 </button>
                             </div>
                         </div>
@@ -140,6 +143,7 @@ interface Product {
     imageUrl: string
     categoryId: number
     condition: string
+    isActive?: boolean
 }
 
 const favorites = ref<Product[]>([])

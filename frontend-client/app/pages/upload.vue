@@ -127,6 +127,15 @@
                         </div>
                     </StickyNoteField>
 
+                    <!-- Field 5: Stock (Yellow) -->
+                    <StickyNoteField color="yellow" :label="$t('upload.form.stock_label')"
+                        icon="material-symbols:inventory-2-outline" positionClass="lg:top-[500px] lg:left-10 z-30"
+                        widthClass="lg:w-[220px]" rotationClass="rotate-slight-left" tapeRotation="rotate-3">
+                        <input v-model="formData.stock" type="number" min="0"
+                            class="w-full bg-white/80 border-0 rounded-lg px-4 py-3 text-gray-800 placeholder-yellow-600/40 focus:ring-2 focus:ring-primary focus:bg-white transition-all shadow-sm font-bold"
+                            :placeholder="$t('upload.form.stock_placeholder')" />
+                    </StickyNoteField>
+
                     <!-- Submit Button Sticker -->
                     <div class="lg:absolute lg:bottom-10 lg:right-10 mt-8 lg:mt-0 flex justify-center lg:block z-50">
                         <button @click="submitForm" class="group relative flex items-center justify-center">
@@ -156,6 +165,7 @@ import { useAuthStore } from '@/stores/auth';
 
 const config = useRuntimeConfig();
 const authStore = useAuthStore();
+const toast = useToast();
 const isLoading = ref(false);
 const fileInput = ref<HTMLInputElement | null>(null);
 
@@ -164,6 +174,7 @@ const formData = reactive({
     category: '',
     description: '',
     price: '',
+    stock: '',
     imageUrl: ''
 });
 
@@ -186,7 +197,7 @@ const handleDrop = (event: DragEvent) => {
 
 const processFile = async (file: File) => {
     if (!file.type.startsWith('image/')) {
-        alert('Please upload an image file.');
+        toast.error('請上傳圖片檔案');
         return;
     }
 
@@ -205,7 +216,7 @@ const processFile = async (file: File) => {
     try {
         const token = authStore.token;
         if (!token) {
-            alert('Please login first!');
+            toast.error('請先登入');
             return;
         }
 
@@ -234,7 +245,7 @@ const processFile = async (file: File) => {
         }
     } catch (error) {
         console.error('Failed to analyze image:', error);
-        alert('Failed to analyze the image. Please try again.');
+        toast.error('圖片分析失敗，請再試一次');
     } finally {
         isLoading.value = false;
     }
@@ -242,7 +253,7 @@ const processFile = async (file: File) => {
 
 const submitForm = async () => {
     if (!formData.name || !formData.description || !formData.category || !formData.price || !formData.imageUrl) {
-        alert('Please fill in all fields.');
+        toast.error('請填寫所有欄位');
         return;
     }
 
@@ -251,17 +262,18 @@ const submitForm = async () => {
     try {
         const token = authStore.token;
         if (!token) {
-            alert('Please login first!');
+            toast.error('請先登入');
             return;
         }
 
-        const response = await $fetch(`${config.public.apiBase}/products`, {
+        await $fetch(`${config.public.apiBase}/products`, {
             method: 'POST',
             body: {
                 name: formData.name,
                 description: formData.description,
                 category: formData.category,
                 price: formData.price,
+                stock: formData.stock ? Number(formData.stock) : 1,
                 imageUrl: formData.imageUrl
             },
             headers: {
@@ -269,20 +281,18 @@ const submitForm = async () => {
             }
         });
 
-        if (response) {
-            alert('Product uploaded successfully!');
-            formData = {
-                name: '',
-                description: '',
-                category: '',
-                price: '',
-                imageUrl: ''
-            };
-            isLoading.value = false;
-        }
+        toast.success('商品上架成功！');
+        Object.assign(formData, {
+            name: '',
+            description: '',
+            category: '',
+            price: '',
+            stock: '',
+            imageUrl: ''
+        });
     } catch (error) {
         console.error('Failed to upload product:', error);
-        alert('Failed to upload the product. Please try again.');
+        toast.error('上架失敗，請再試一次');
     } finally {
         isLoading.value = false;
     }

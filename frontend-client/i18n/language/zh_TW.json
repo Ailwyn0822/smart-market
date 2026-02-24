@@ -109,6 +109,8 @@
       "description_placeholder": "這曾經是我最喜歡的玩具，但現在...",
       "price_label": "價值",
       "price_placeholder": "0",
+      "stock_label": "庫存數量",
+      "stock_placeholder": "請輸入庫存數量",
       "submit": "完成！",
       "photo_caption": "我的酷東東..."
     }
@@ -135,7 +137,11 @@
     "category": "類別",
     "all_categories": "全部",
     "all_loaded": "已全部載入",
-    "no_products": "尚無商品"
+    "no_products": "尚無商品",
+    "search_placeholder": "搜尋商品名稱、描述...",
+    "favorite": "加入收藏",
+    "unfavorite": "取消收藏",
+    "delisted": "已下架"
   },
   "cart": {
     "title": "我的購物車",

@@ -109,6 +109,8 @@
       "description_placeholder": "Đây từng là món đồ chơi yêu thích của tôi, nhưng giờ...",
       "price_label": "Giá trị",
       "price_placeholder": "0",
+      "stock_label": "Stock Quantity",
+      "stock_placeholder": "Enter stock quantity",
       "submit": "Hoàn thành!",
       "photo_caption": "Món đồ tuyệt vời của tôi..."
     }
@@ -135,7 +137,11 @@
     "category": "Category",
     "all_categories": "All",
     "all_loaded": "All loaded",
-    "no_products": "NoProducts"
+    "no_products": "No Products",
+    "search_placeholder": "Search by name or description...",
+    "favorite": "Add to Favorites",
+    "unfavorite": "Remove from Favorites",
+    "delisted": "Delisted"
   },
   "cart": {
     "title": "My Cart",

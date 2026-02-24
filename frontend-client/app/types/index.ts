@@ -1,4 +1,18 @@
+export interface ApiProduct {
+    id: number
+    name: string
+    price: string | number
+    imageUrl?: string
+    image?: string
+    description?: string
+    condition?: string
+    category?: string
+    stock?: number
+    sellerId?: string
+}
+
 export interface ProductItem {
+    id?: number | string;
     title: string;
     price: string;
     condition: string;
@@ -8,7 +22,7 @@ export interface ProductItem {
     priceColor: string;
     btnHoverBg: string;
     btnHoverText: string;
-    category: string;
+    category: { name: string } | string | null;
 }
 
 export interface CategoryItem {

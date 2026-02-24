@@ -8,12 +8,33 @@
                     {{ $t('products.back_to_gallery') }}
                 </NuxtLink>
             </div>
-            <div class="flex flex-col lg:flex-row gap-16 items-start">
+
+            <!-- 載入中 -->
+            <div v-if="pending" class="flex justify-center items-center py-32">
+                <div class="flex gap-2">
+                    <div class="size-4 bg-primary rounded-full animate-bounce"></div>
+                    <div class="size-4 bg-accent-red rounded-full animate-bounce delay-100"></div>
+                    <div class="size-4 bg-accent-blue rounded-full animate-bounce delay-200"></div>
+                </div>
+            </div>
+
+            <!-- 找不到商品 -->
+            <div v-else-if="!product"
+                class="flex flex-col items-center justify-center py-32 gap-4 text-gray-400">
+                <Icon name="material-symbols:search-off" class="text-6xl" />
+                <span class="font-bold text-xl">找不到此商品</span>
+                <NuxtLink to="/products"
+                    class="mt-2 bg-primary px-6 py-2 rounded-full border-2 border-content font-bold text-content shadow-[4px_4px_0px_#1c180d]">
+                    回到商品列表
+                </NuxtLink>
+            </div>
+
+            <div v-else class="flex flex-col lg:flex-row gap-16 items-start">
                 <!-- 左側圖片區 -->
                 <div class="w-full lg:w-1/2 flex flex-col items-center sticky top-8">
                     <div class="relative group w-full max-w-xl mx-auto py-6">
                         <div class="relative bg-white p-4 pb-12 shadow-xl rotate-[-2deg] z-10">
-                            <NuxtImg :src="product.image" :alt="product.title"
+                            <NuxtImg :src="product.imageUrl || product.image" :alt="product.name || product.title"
                                 class="w-full h-auto object-cover grayscale-[10%] relative z-0" />
                             <div class="washi-tape absolute -top-2 -left-2 w-40 h-12 bg-primary -rotate-[35deg] z-50">
                             </div>
@@ -30,7 +51,7 @@
                             <div class="text-center -rotate-12">
                                 <span class="block text-xs font-bold font-mono-card uppercase tracking-widest mb-1">{{
                                     $t('products.price') }}</span>
-                                <span class="font-marker text-4xl">{{ product.price }}</span>
+                                <span class="font-marker text-4xl">${{ parseFloat(product.price || 0).toFixed(0) }}</span>
                             </div>
                         </div>
                         <div
@@ -45,13 +66,31 @@
                         <div class="flex items-center gap-3 mb-4">
                             <span
                                 class="px-3 py-1 bg-accent-blue text-white text-xs font-black uppercase tracking-wider rounded-lg border-2 border-content -rotate-2">
-                                {{ product.condition }}
+                                {{ product.condition || '全新' }}
                             </span>
                         </div>
                         <h1 class="text-5xl lg:text-6xl font-black text-content tracking-tight leading-[1.1]">
-                            {{ product.title }}
+                            {{ product.name || product.title }}
                         </h1>
                     </div>
+
+                    <!-- 賣家資訊卡片 -->
+                    <NuxtLink v-if="sellerInfo"
+                        :to="`/seller/${sellerInfo.id}`"
+                        class="flex items-center gap-3 bg-white/80 border-2 border-content rounded-2xl px-4 py-3 shadow-[3px_3px_0px_#1c180d] hover:shadow-[1px_1px_0px_#1c180d] hover:translate-x-0.5 hover:translate-y-0.5 transition-all group/seller w-fit">
+                        <div class="size-10 rounded-full border-2 border-content overflow-hidden bg-gray-100 shrink-0 flex items-center justify-center">
+                            <NuxtImg v-if="sellerInfo.avatar" :src="sellerInfo.avatar" alt="seller"
+                                class="w-full h-full object-cover" />
+                            <Icon v-else name="material-symbols:person" class="text-gray-400 text-xl" />
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">賣家</span>
+                            <span class="text-sm font-black text-content group-hover/seller:text-accent-blue transition-colors">
+                                {{ sellerInfo.name || '查看賣家' }}
+                            </span>
+                        </div>
+                        <Icon name="material-symbols:chevron-right" class="text-gray-400 ml-auto group-hover/seller:translate-x-1 transition-transform" />
+                    </NuxtLink>
 
                     <!-- Description Box -->
                     <div class="relative w-full transform -rotate-1 hover:rotate-0 transition-transform duration-300">
@@ -67,12 +106,20 @@
                         </div>
                     </div>
 
-                    <div class="py-4">
-                        <button
+                    <!-- 操作按鈕 -->
+                    <div class="py-4 flex flex-col gap-3">
+                        <button @click="addToCart"
                             class="w-full bg-accent-blue text-white font-marker text-2xl py-5 px-6 rounded-2xl border-4 border-content shadow-[6px_6px_0px_#1c180d] hover:shadow-[2px_2px_0px_#1c180d] hover:translate-x-1 hover:translate-y-1 transition-all duration-200 flex items-center justify-center gap-3 group">
                             <Icon name="material-symbols:shopping-cart"
                                 class="text-3xl group-hover:scale-110 group-hover:rotate-12 transition-transform" />
                             {{ $t('products.add_to_cart') }}
+                        </button>
+                        <button @click="toggleFavorite"
+                            class="w-full bg-white font-bold text-base py-3 px-6 rounded-2xl border-2 border-content shadow-[4px_4px_0px_#1c180d] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-2"
+                            :class="isFavorited ? 'text-accent-red' : 'text-gray-500'">
+                            <Icon :name="isFavorited ? 'material-symbols:favorite' : 'material-symbols:favorite-outline'"
+                                class="text-xl" />
+                            {{ isFavorited ? $t('products.unfavorite') : $t('products.favorite') }}
                         </button>
                     </div>
                 </div>
@@ -82,7 +129,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useHead } from '#imports'
 
 useHead({
@@ -91,12 +138,74 @@ useHead({
     ]
 })
 
-// 模擬產品資料
-const product = ref({
-    title: 'Classic Red',
-    price: '$15',
-    condition: 'Toy Car',
-    description: 'This vintage style metal pedal car is a real treasure! It has been loved but still runs super fast. There are a few scratches on the bumper from intense racing, but the wheels are in perfect condition. Great for ages 3-5.',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAPB3dGs-oKxc75etMaToQGn0skAAjAeBZnWv5T5HwOeTHYcZ-gXZMNAdHDsCt48KIPL9ZMYQ9Q8I9gmdfU14ROgReXqaHiR8CJuY59CjOQs6j-lp94D8dxZtBFTKYZM4xE7Jtn0-4NIbaVOXJRN0DN-IE-DuNHh6xPVDydKCiCt85nC9TWQa0Ijxrp0kcYZuqYAvEddxq_vlrsPTuvfR-zmOPg86fU4LkTzJ9vM4pThtlE_lICxatASb8O2_duSXHuZX6gxOkJPOuQ'
+const config = useRuntimeConfig()
+const route = useRoute()
+const router = useRouter()
+const authStore = useAuthStore()
+const toast = useToast()
+
+const productId = route.params.id as string
+
+// 串接 API 取得商品資料
+const { data: product, pending } = await useFetch<any>(
+    `${config.public.apiBase}/products/${productId}`
+)
+
+// 從不同可能的 API 欄位中提取賣家資訊
+const sellerInfo = computed(() => {
+    const p = product.value
+    if (!p) return null
+    // 支援多種 API 回傳格式：seller / user / sellerId / userId 等
+    const id = p.seller?.id || p.user?.id || p.sellerId || p.userId || p.seller_id || p.user_id || null
+    const name = p.seller?.name || p.seller?.username || p.user?.name || p.user?.username || p.sellerName || p.seller_name || null
+    const avatar = p.seller?.avatar || p.seller?.picture || p.user?.avatar || p.user?.picture || p.sellerAvatar || null
+    if (!id) return null
+    return { id, name, avatar }
 })
+
+// 收藏狀態
+const isFavorited = ref(false)
+
+// 若已登入，確認是否已收藏
+if (authStore.isAuthenticated) {
+    try {
+        const favRes = await $fetch<any>(`${config.public.apiBase}/favorites/check/${productId}`, {
+            headers: { Authorization: `Bearer ${authStore.token}` }
+        }).catch(() => null)
+        if (favRes) isFavorited.value = favRes.isFavorited ?? false
+    } catch {}
+}
+
+async function toggleFavorite() {
+    if (!authStore.isAuthenticated) {
+        router.push('/login')
+        return
+    }
+    try {
+        if (isFavorited.value) {
+            await $fetch(`${config.public.apiBase}/favorites/${productId}/favorite`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${authStore.token}` }
+            })
+            isFavorited.value = false
+            toast.success('已取消收藏')
+        } else {
+            await $fetch(`${config.public.apiBase}/favorites/${productId}/favorite`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${authStore.token}` }
+            })
+            isFavorited.value = true
+            toast.success('已加入收藏！')
+        }
+    } catch (e) {
+        toast.error('操作失敗，請稍後再試')
+    }
+}
+
+function addToCart() {
+    if (!product.value) return
+    const cartStore = useCartStore()
+    cartStore.addToCart(product.value, 1)
+    toast.success('已加入購物車！')
+}
 </script>
