@@ -16,6 +16,7 @@ export class StorageService implements OnModuleInit {
       useSSL: false,
       accessKey: this.configService.getOrThrow<string>('MINIO_ACCESS_KEY'),
       secretKey: this.configService.getOrThrow<string>('MINIO_SECRET_KEY'),
+      pathStyle: true,
     });
     this.bucketName = this.configService.getOrThrow<string>('MINIO_BUCKET');
   }
