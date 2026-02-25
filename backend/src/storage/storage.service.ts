@@ -58,8 +58,10 @@ export class StorageService implements OnModuleInit {
     return fileName;
   }
 
-  // 取得完整網址的方法
+  // 取得完整網址的方法（生產環境請設 MINIO_PUBLIC_URL）
   getFileUrl(fileName: string): string {
-    return `http://localhost:9000/${this.bucketName}/${fileName}`;
+    const publicUrl = this.configService.get<string>('MINIO_PUBLIC_URL')
+      || `http://localhost:9000`;
+    return `${publicUrl}/${this.bucketName}/${fileName}`;
   }
 }

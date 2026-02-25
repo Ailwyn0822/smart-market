@@ -1,0 +1,37 @@
+# ============================
+# Stage 1: Build
+# ============================
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+# 複製 package.json 和 lock file（利用 Docker cache）
+COPY package.json package-lock.json ./
+COPY shared/package.json ./shared/
+COPY backend/package.json ./backend/
+COPY frontend-client/package.json ./frontend-client/
+COPY frontend-admin/package.json ./frontend-admin/
+
+# 安裝所有依賴（npm workspaces）
+RUN npm ci
+
+# 複製原始碼並建置 shared
+COPY shared/ ./shared/
+RUN npm run build --workspace=shared
+
+# 複製 frontend-client 並建置（Nuxt SSR）
+COPY frontend-client/ ./frontend-client/
+WORKDIR /app/frontend-client
+RUN npm run build
+
+# ============================
+# Stage 2: Production Runner
+# ============================
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+
+# 只複製 Nuxt 建置產物
+COPY --from=builder /app/frontend-client/.output ./.output
+
+EXPOSE 3000
+CMD ["node", ".output/server/index.mjs"]

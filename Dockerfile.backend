@@ -1,0 +1,38 @@
+# ============================
+# Stage 1: Build
+# ============================
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+# 複製 package.json 和 lock file（利用 Docker cache）
+COPY package.json package-lock.json ./
+COPY shared/package.json ./shared/
+COPY backend/package.json ./backend/
+COPY frontend-client/package.json ./frontend-client/
+COPY frontend-admin/package.json ./frontend-admin/
+
+# 安裝所有依賴（npm workspaces）
+RUN npm ci
+
+# 複製原始碼並建置 shared
+COPY shared/ ./shared/
+RUN npm run build --workspace=shared
+
+# 複製 backend 原始碼並建置
+COPY backend/ ./backend/
+RUN npm run build --workspace=backend
+
+# ============================
+# Stage 2: Production Runner
+# ============================
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+
+# 複製建置產物和依賴
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/shared ./shared
+COPY --from=builder /app/backend/dist ./dist
+
+EXPOSE 8080
+CMD ["node", "dist/main"]

@@ -1,0 +1,38 @@
+# ============================
+# Stage 1: Build
+# ============================
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+# 複製 package.json 和 lock file（利用 Docker cache）
+COPY package.json package-lock.json ./
+COPY shared/package.json ./shared/
+COPY backend/package.json ./backend/
+COPY frontend-client/package.json ./frontend-client/
+COPY frontend-admin/package.json ./frontend-admin/
+
+# 安裝所有依賴（npm workspaces）
+RUN npm ci
+
+# 複製原始碼並建置 shared
+COPY shared/ ./shared/
+RUN npm run build --workspace=shared
+
+# 複製 frontend-admin 並建置（SPA with /admin/ base）
+COPY frontend-admin/ ./frontend-admin/
+WORKDIR /app/frontend-admin
+
+# VITE_API_BASE 是 build-time 變數，透過 ARG 傳入
+ARG VITE_API_BASE=http://localhost:8080
+ENV VITE_API_BASE=$VITE_API_BASE
+
+# 建置時指定 base 路徑為 /admin/
+RUN npx vite build --base /admin/
+
+# ============================
+# Stage 2: Nginx 靜態服務
+# ============================
+FROM nginx:alpine AS runner
+COPY --from=builder /app/frontend-admin/dist /usr/share/nginx/html
+COPY nginx-admin.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80

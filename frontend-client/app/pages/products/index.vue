@@ -6,8 +6,7 @@
                 <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                     <Icon name="material-symbols:search" class="text-gray-400 text-xl" />
                 </div>
-                <input v-model="searchQuery" type="text"
-                    :placeholder="$t('products.search_placeholder')"
+                <input v-model="searchQuery" type="text" :placeholder="$t('products.search_placeholder')"
                     class="w-full pl-12 pr-4 py-3 rounded-2xl border-2 border-content focus:ring-0 focus:border-content text-sm font-bold placeholder-gray-400 shadow-[4px_4px_0px_#1c180d]" />
             </div>
         </div>
@@ -48,33 +47,19 @@
                     - 上下 padding 撐出「完整」捲軸高度（讓瀏覽器以為有那麼多內容）
                     - DOM 只渲染 visibleRows（可視區域 ± overscan）
                 -->
-                <div
-                    ref="gridRef"
-                    :style="{
-                        paddingTop: virtualState.paddingTop + 'px',
-                        paddingBottom: virtualState.paddingBottom + 'px',
-                    }"
-                >
-                    <div
-                        v-for="(row, idx) in virtualState.visibleRows"
-                        :key="virtualState.startIdx + idx"
-                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6"
-                    >
-                        <ProductCard
-                            v-for="product in row"
-                            :key="product.id || product.title"
-                            :item="product"
-                        />
+                <div ref="gridRef" :style="{
+                    paddingTop: virtualState.paddingTop + 'px',
+                    paddingBottom: virtualState.paddingBottom + 'px',
+                }">
+                    <div v-for="(row, idx) in virtualState.visibleRows" :key="virtualState.startIdx + idx"
+                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                        <ProductCard v-for="product in row" :key="product.id || product.title" :item="product" />
                     </div>
                 </div>
 
                 <!-- 載入動畫 -->
-                <div v-if="pending" class="mt-8 flex justify-center">
-                    <div class="flex gap-2">
-                        <div class="size-4 bg-primary rounded-full animate-bounce"></div>
-                        <div class="size-4 bg-accent-red rounded-full animate-bounce delay-100"></div>
-                        <div class="size-4 bg-accent-blue rounded-full animate-bounce delay-200"></div>
-                    </div>
+                <div v-if="pending" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                    <ProductCardSkeleton v-for="i in 3" :key="i" />
                 </div>
 
                 <!-- 全部載入完畢 -->
@@ -232,7 +217,7 @@ const colorStyles = [
 ]
 
 function mapProduct(p: any, index: number) {
-    const style = colorStyles[index % colorStyles.length]
+    const style = colorStyles[index % colorStyles.length]!
     return {
         id: p.id,
         title: p.name || p.title,

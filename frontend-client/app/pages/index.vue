@@ -95,29 +95,35 @@
         <section>
             <div class="flex items-center justify-center mb-10 relative">
                 <div class="absolute h-0.5 w-full bg-content top-1/2 -z-10 rounded-full opacity-10"></div>
-                <h2 class="bg-primary border-2 border-content shadow-[4px_4px_0px_#1c180d] px-6 py-2 rounded-full text-2xl font-black text-content tracking-tight flex items-center gap-2">
+                <h2
+                    class="bg-primary border-2 border-content shadow-[4px_4px_0px_#1c180d] px-6 py-2 rounded-full text-2xl font-black text-content tracking-tight flex items-center gap-2">
                     <Icon name="material-symbols:search" class="text-2xl" />
                     {{ $t('home.search_title') }}
                 </h2>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
-                <a v-for="(category, index) in categoriesData" :key="category.id"
-                    :class="[
+                <template v-if="categoriesPending">
+                    <div v-for="i in 6" :key="i"
+                        class="flex flex-col items-center gap-2 rounded-2xl border-2 border-gray-200 bg-gray-100 p-5 h-[140px] animate-pulse">
+                    </div>
+                </template>
+                <template v-else>
+                    <a v-for="(category, index) in categoriesData" :key="category.id" :class="[
                         'group flex flex-col items-center gap-2 cursor-pointer rounded-2xl border-2 border-content p-5',
                         'shadow-[4px_4px_0px_#1c180d] transition-all duration-200',
                         'bg-transparent',
                         'hover:shadow-none hover:translate-x-1 hover:translate-y-1 hover:scale-105',
                         index % 4 === 0 ? 'rotate-[-1deg] hover:rotate-0' :
-                        index % 4 === 1 ? 'rotate-[1.5deg] hover:rotate-0' :
-                        index % 4 === 2 ? 'rotate-[-1.5deg] hover:rotate-0' :
-                                          'rotate-[1deg] hover:rotate-0'
-                    ]"
-                    @click="navigateTo(`/products?category=${encodeURIComponent(category.name)}`)">
-                    <span class="text-5xl leading-none mt-1">{{ category.icon }}</span>
-                    <span class="font-black text-base text-content text-center leading-tight mt-1">
-                        {{ category.name }}
-                    </span>
-                </a>
+                            index % 4 === 1 ? 'rotate-[1.5deg] hover:rotate-0' :
+                                index % 4 === 2 ? 'rotate-[-1.5deg] hover:rotate-0' :
+                                    'rotate-[1deg] hover:rotate-0'
+                    ]" @click="navigateTo(`/products?category=${encodeURIComponent(category.name)}`)">
+                        <span class="text-5xl leading-none mt-1">{{ category.icon }}</span>
+                        <span class="font-black text-base text-content text-center leading-tight mt-1">
+                            {{ category.name }}
+                        </span>
+                    </a>
+                </template>
             </div>
         </section>
 
@@ -129,8 +135,12 @@
                     $t('home.featured_finds') }}</h2>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                <ProductCard v-for="product in displayProducts" :key="product.id"
-                    :item="product" />
+                <template v-if="productsPending">
+                    <ProductCardSkeleton v-for="i in 4" :key="i" />
+                </template>
+                <template v-else>
+                    <ProductCard v-for="product in displayProducts" :key="product.id" :item="product" />
+                </template>
             </div>
         </section>
 
@@ -167,10 +177,10 @@ const route = useRoute()
 const authStore = useAuthStore()
 
 // 串接類別 API (取前六個)
-const { data: categoriesData } = await useFetch(`${config.public.apiBase}/categories/top`)
+const { data: categoriesData, pending: categoriesPending } = await useLazyFetch<{ id: number; name: string; icon: string }[]>(`${config.public.apiBase}/categories/top`)
 
 // 串接最新商品 API (取前四個)
-const { data: productsData } = await useFetch<any[]>(`${config.public.apiBase}/products/latest`)
+const { data: productsData, pending: productsPending } = await useLazyFetch<any[]>(`${config.public.apiBase}/products/latest`)
 
 const colorStyles = [
     { border: 'crayon-border-red', price: 'text-accent-red', hover: 'hover:bg-accent-red' },
@@ -182,7 +192,7 @@ const colorStyles = [
 // 映射至 ProductCard 格式（computed 避免模板中重複運算）
 const displayProducts = computed(() =>
     (productsData.value || []).map((p: any, index: number) => {
-        const style = colorStyles[index % colorStyles.length]
+        const style = colorStyles[index % colorStyles.length]!
         return {
             id: p.id,
             title: p.name,

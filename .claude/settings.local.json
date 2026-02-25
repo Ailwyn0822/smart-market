@@ -42,7 +42,8 @@
       "Bash(curl -s -X POST \"http://localhost:8080/auth/login\" -H \"Content-Type: application/json\" -d \"{\"\"email\"\":\"\"admin@smartmarket.com\"\",\"\"password\"\":\"\"password123\"\"}\" -o C:/tmp/auth_response.json)",
       "Bash(node -e \"const fs=require\\(''fs''\\); const d=JSON.parse\\(fs.readFileSync\\(''/tmp/auth_response.json'',''utf8''\\)\\); const token=d.access_token; const {execSync}=require\\(''child_process''\\); const result=execSync\\(''curl -s \"\"http://localhost:8080/products/admin/list?page=1&limit=3\"\" -H \"\"Authorization: Bearer ''+token+''\"\"''\\).toString\\(\\); console.log\\(result.slice\\(0,500\\)\\);\")",
       "Bash(node -e \":*)",
-      "Bash(docker exec sm_db psql -U postgres -d smart_market -c \"DELETE FROM users WHERE email = ''line_Ue59101477da0e8890ac829e9c1b55ab7@smart-market.com'';\")"
+      "Bash(docker exec sm_db psql -U postgres -d smart_market -c \"DELETE FROM users WHERE email = ''line_Ue59101477da0e8890ac829e9c1b55ab7@smart-market.com'';\")",
+      "Bash(cat /c/Users/asd66/Documents/GitHub/smart-market/frontend-admin/.env.*)"
     ]
   }
 }

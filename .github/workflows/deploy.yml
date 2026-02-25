@@ -1,0 +1,32 @@
+name: Deploy to GCP
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    name: SSH 部署到 GCP VM
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 部署到 GCP VM
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.GCP_HOST }}
+          username: ${{ secrets.GCP_USER }}
+          key: ${{ secrets.GCP_SSH_KEY }}
+          script: |
+            set -e
+            cd ~/smart-market
+
+            # 拉最新程式碼
+            git pull origin master
+
+            # 重新建置並啟動容器（有變更的才重建）
+            docker compose -f docker-compose.prod.yml up -d --build
+
+            # 清理舊的 image 節省磁碟空間
+            docker image prune -f
+
+            echo "✅ 部署完成！"
