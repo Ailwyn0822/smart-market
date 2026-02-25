@@ -32,9 +32,8 @@ services:
   # 3. 後端 API (NestJS)
   # ----------------------------
   backend:
-    build:
-      context: .
-      dockerfile: Dockerfile.backend
+    image: ghcr.io/ailwyn0822/smart-market-backend:latest
+    pull_policy: always
     container_name: sm_backend
     restart: always
     env_file: .env.prod
@@ -48,9 +47,8 @@ services:
   # 4. 前台 (Nuxt SSR)
   # ----------------------------
   client:
-    build:
-      context: .
-      dockerfile: Dockerfile.client
+    image: ghcr.io/ailwyn0822/smart-market-client:latest
+    pull_policy: always
     container_name: sm_client
     restart: always
     env_file: .env.prod
@@ -61,11 +59,8 @@ services:
   # 5. 後台管理 (Vue SPA)
   # ----------------------------
   admin:
-    build:
-      context: .
-      dockerfile: Dockerfile.admin
-      args:
-        VITE_API_BASE: https://panda-map.com/api
+    image: ghcr.io/ailwyn0822/smart-market-admin:latest
+    pull_policy: always
     container_name: sm_admin
     restart: always
     networks:

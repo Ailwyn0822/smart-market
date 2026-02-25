@@ -21,7 +21,8 @@ RUN npm run build --workspace=shared
 # 複製 frontend-client 並建置（Nuxt SSR）
 COPY frontend-client/ ./frontend-client/
 WORKDIR /app/frontend-client
-RUN NODE_OPTIONS="--max-old-space-size=1536" npm run build
+RUN --mount=type=cache,target=/app/frontend-client/node_modules/.cache \
+    NODE_OPTIONS="--max-old-space-size=1536" npm run build
 
 # ============================
 # Stage 2: Production Runner

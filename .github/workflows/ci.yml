@@ -8,9 +8,47 @@ on:
 
 jobs:
   # ─────────────────────────────────────────────
-  # 1. Shared package — TypeScript type check + build
+  # 0. 偵測哪些路徑有變更
+  # ─────────────────────────────────────────────
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      shared:  ${{ steps.filter.outputs.shared }}
+      backend: ${{ steps.filter.outputs.backend }}
+      client:  ${{ steps.filter.outputs.client }}
+      admin:   ${{ steps.filter.outputs.admin }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            shared:
+              - 'shared/**'
+              - 'package.json'
+              - 'package-lock.json'
+            backend:
+              - 'backend/**'
+              - 'shared/**'
+              - 'package.json'
+              - 'package-lock.json'
+            client:
+              - 'frontend-client/**'
+              - 'shared/**'
+              - 'package.json'
+              - 'package-lock.json'
+            admin:
+              - 'frontend-admin/**'
+              - 'shared/**'
+              - 'package.json'
+              - 'package-lock.json'
+
+  # ─────────────────────────────────────────────
+  # 1. Shared package — build（只改 shared 時獨立檢查）
   # ─────────────────────────────────────────────
   shared-check:
+    needs: changes
+    if: ${{ needs.changes.outputs.shared == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,19 +62,13 @@ jobs:
       # build 本身就是 tsc，已含 type check
       - name: Build shared
         run: npm run build -w shared
-      # 把 shared/dist 傳給後續 job，避免重複 build
-      - name: Upload shared build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: shared-dist
-          path: shared/dist/
-          retention-days: 1
 
   # ─────────────────────────────────────────────
   # 2. Backend — type check + build
   # ─────────────────────────────────────────────
   backend-check:
-    needs: shared-check
+    needs: changes
+    if: ${{ needs.changes.outputs.backend == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,11 +79,8 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: npm ci
-      - name: Download shared build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: shared-dist
-          path: shared/dist/
+      - name: Build shared
+        run: npm run build -w shared
       - name: Build Backend (NestJS compile)
         run: npm run build -w backend
 
@@ -59,7 +88,8 @@ jobs:
   # 3. Frontend Client — unit tests + build
   # ─────────────────────────────────────────────
   client-check:
-    needs: shared-check
+    needs: changes
+    if: ${{ needs.changes.outputs.client == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -70,11 +100,8 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: npm ci
-      - name: Download shared build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: shared-dist
-          path: shared/dist/
+      - name: Build shared
+        run: npm run build -w shared
       - name: Unit tests
         run: npm run test:unit -w frontend-client
       - name: Build (type check included)
@@ -87,7 +114,8 @@ jobs:
   # 4. Frontend Admin — type check + unit tests + build
   # ─────────────────────────────────────────────
   admin-check:
-    needs: shared-check
+    needs: changes
+    if: ${{ needs.changes.outputs.admin == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -98,11 +126,8 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: npm ci
-      - name: Download shared build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: shared-dist
-          path: shared/dist/
+      - name: Build shared
+        run: npm run build -w shared
       - name: TypeScript type check
         run: npm run type-check -w frontend-admin
       - name: Unit tests

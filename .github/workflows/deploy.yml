@@ -1,7 +1,6 @@
 name: Deploy to GCP
 
 on:
-  # 等 CI workflow 全部通過才觸發部署
   workflow_run:
     workflows: ["CI"]
     branches: [master]
@@ -9,37 +8,124 @@ on:
 
 jobs:
   deploy:
-    name: SSH 部署到 GCP VM
+    name: Build → Push to GHCR → Deploy
     runs-on: ubuntu-latest
-    # CI 失敗時不部署
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
+    permissions:
+      contents: read
+      packages: write  # 允許 push 到 GHCR
+
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 2
+
+      # 偵測哪些服務有變更
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+              - 'shared/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'Dockerfile.backend'
+            client:
+              - 'frontend-client/**'
+              - 'shared/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'Dockerfile.client'
+            admin:
+              - 'frontend-admin/**'
+              - 'shared/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'Dockerfile.admin'
+
+      # 啟用 BuildKit（支援 cache-from/cache-to）
+      - uses: docker/setup-buildx-action@v3
+
+      # 登入 GHCR（用 GITHUB_TOKEN，不需額外 secret）
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── Backend ──────────────────────────────
+      - name: Build & Push backend
+        if: steps.filter.outputs.backend == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.backend
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/smart-market-backend:latest
+          # 用 GHCR 存放 Docker layer cache，下次 build 可重用
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/smart-market-backend:cache
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/smart-market-backend:cache,mode=max
+
+      # ── Admin ────────────────────────────────
+      - name: Build & Push admin
+        if: steps.filter.outputs.admin == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.admin
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/smart-market-admin:latest
+          build-args: |
+            VITE_API_BASE=https://panda-map.com/api
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/smart-market-admin:cache
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/smart-market-admin:cache,mode=max
+
+      # ── Client（最慢，放最後）────────────────
+      - name: Build & Push client
+        if: steps.filter.outputs.client == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.client
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/smart-market-client:latest
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/smart-market-client:cache
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/smart-market-client:cache,mode=max
+
+      # ── VM 只負責 pull + up ───────────────────
       - name: 部署到 GCP VM
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
         with:
           host: ${{ secrets.GCP_HOST }}
           username: ${{ secrets.GCP_USER }}
           key: ${{ secrets.GCP_SSH_KEY }}
-          command_timeout: 60m
+          command_timeout: 10m
+          envs: GHCR_TOKEN,GHCR_USER
           script: |
             set -e
             cd ~/smart-market
 
-            # 拉最新程式碼（強制覆蓋本地修改）
+            # 拉最新設定檔（nginx.conf、docker-compose.prod.yml 等）
             git fetch origin master
             git reset --hard origin/master
 
-            # 依序 build 各服務避免 OOM（docker compose v2 不支援 --no-parallel）
-            docker compose -f docker-compose.prod.yml build backend
-            docker compose -f docker-compose.prod.yml build admin
-            docker compose -f docker-compose.prod.yml build client
+            # 登入 GHCR 才能 pull private image
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+
+            # Pull 最新 image 並重啟
+            docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d
 
-            # 清理舊的 image 節省磁碟空間
+            # 清理舊 image
             docker image prune -f
 
-            # 重啟 nginx 讓它重新解析容器 IP
+            # 重啟 nginx
             docker compose -f docker-compose.prod.yml restart nginx
 
             echo "✅ 部署完成！"
