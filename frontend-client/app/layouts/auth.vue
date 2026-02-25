@@ -5,14 +5,15 @@
                 <HeaderLogo />
                 <div class="flex items-center gap-4">
                     <LanguageSwitcher />
-                    <a class="hidden sm:inline-flex items-center gap-2 font-bold text-content hover:text-accent-red transition-colors group"
-                        href="#">
+                    <NuxtLink v-if="route.path !== '/register'"
+                        class="hidden sm:inline-flex items-center gap-2 font-bold text-content hover:text-accent-red transition-colors group"
+                        to="/register">
                         {{ $t('auth.new_here') }}
                         <span
                             class="bg-white px-4 py-2 rounded-lg border-2 border-content shadow-sm group-hover:shadow-md transition-all -rotate-2 group-hover:rotate-0">
                             {{ $t('auth.join_club') }}
                         </span>
-                    </a>
+                    </NuxtLink>
                 </div>
             </div>
         </header>
@@ -20,3 +21,7 @@
         <Footer />
     </div>
 </template>
+
+<script setup lang="ts">
+const route = useRoute()
+</script>
