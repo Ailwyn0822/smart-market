@@ -20,8 +20,9 @@ jobs:
             set -e
             cd ~/smart-market
 
-            # 拉最新程式碼
-            git pull origin master
+            # 拉最新程式碼（強制覆蓋本地修改）
+            git fetch origin master
+            git reset --hard origin/master
 
             # 重新建置並啟動容器（有變更的才重建）
             docker compose -f docker-compose.prod.yml up -d --build
