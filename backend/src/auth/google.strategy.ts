@@ -34,6 +34,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       lastName: name?.familyName,
       picture: photos?.[0]?.value,
       providerId: profile.id,
+      provider: 'google' as const,
       accessToken,
     };
 

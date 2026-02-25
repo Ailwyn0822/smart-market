@@ -2,12 +2,14 @@ import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/commo
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private productRepo: Repository<Product>,
+    private notificationsService: NotificationsService,
   ) { }
 
   // 建立商品
@@ -16,8 +18,11 @@ export class ProductsService {
     return this.productRepo.save(product);
   }
 
-  // 取得所有商品（支援搜尋 + 分類篩選）
-  async findAll(query?: { keyword?: string; category?: string }): Promise<Product[]> {
+  // 取得所有商品（支援搜尋 + 分類篩選 + 分頁）
+  async findAll(query?: { keyword?: string; category?: string; page?: number; limit?: number }): Promise<{ items: Product[]; total: number }> {
+    const page = query?.page ?? 1;
+    const limit = query?.limit ?? 20;
+
     const qb = this.productRepo.createQueryBuilder('product')
       .leftJoinAndSelect('product.category', 'category')
       .where('product.isActive = :isActive', { isActive: true })
@@ -34,7 +39,12 @@ export class ProductsService {
       qb.andWhere('category.name = :cat', { cat: query.category });
     }
 
-    return qb.getMany();
+    const [items, total] = await qb
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+
+    return { items, total };
   }
 
   // 取得最新商品
@@ -75,12 +85,66 @@ export class ProductsService {
     return products;
   }
 
-  // 切換上/下架狀態
+  // 切換上/下架狀態（賣家自用，需驗證擁有者）
   async toggleActiveStatus(productId: number, userId: string): Promise<Product> {
     const product = await this.productRepo.findOne({ where: { id: productId } });
     if (!product) throw new NotFoundException('找不到此商品');
     if (product.userId !== userId) throw new ForbiddenException('您無權修改此商品');
     product.isActive = !product.isActive;
     return this.productRepo.save(product);
+  }
+
+  // ── Admin 專用 ────────────────────────────────────────
+
+  // 取得所有商品（含下架 + 賣家資訊 + 分頁）
+  async findAllAdmin(query: { keyword?: string; status?: string; page?: number; limit?: number }) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+
+    const qb = this.productRepo.createQueryBuilder('product')
+      .leftJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('product.seller', 'seller')
+      .orderBy('product.createdAt', 'DESC');
+
+    if (query.keyword) {
+      qb.andWhere('product.name ILIKE :kw', { kw: `%${query.keyword}%` });
+    }
+    if (query.status === 'active') {
+      qb.andWhere('product.isActive = true');
+    } else if (query.status === 'inactive') {
+      qb.andWhere('product.isActive = false');
+    }
+
+    const [items, total] = await qb
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+
+    return { items, total, page, limit };
+  }
+
+  // 管理員切換商品上下架（略過擁有者驗證，並通知賣家）
+  async adminToggleStatus(productId: number): Promise<Product> {
+    const product = await this.productRepo.findOne({
+      where: { id: productId },
+      relations: ['seller'],
+    });
+    if (!product) throw new NotFoundException('找不到此商品');
+
+    const wasActive = product.isActive;
+    product.isActive = !product.isActive;
+    const saved = await this.productRepo.save(product);
+
+    // 若管理員將商品「下架」，通知賣家
+    if (wasActive && !saved.isActive && product.userId) {
+      await this.notificationsService.createNotification(
+        product.userId,
+        `您的商品「${product.name}」已被管理員下架，如有疑問請聯絡客服。`,
+        'product_deactivated',
+        String(product.id),
+      );
+    }
+
+    return saved;
   }
 }

@@ -17,12 +17,12 @@
             <NotebookSidebar />
 
             <!-- 產品區域 -->
-            <div class="flex-1">
+            <div class="flex-1 min-w-0">
                 <!-- 標題與排序 -->
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-3xl font-black text-content">
                         {{ $t('products.all_treasures') }}
-                        <span class="text-gray-400 font-medium text-lg ml-2">({{ filteredProducts.length }} {{
+                        <span class="text-gray-400 font-medium text-lg ml-2">({{ total }} {{
                             $t('products.items') }})</span>
                     </h2>
                     <div class="flex items-center gap-2">
@@ -37,25 +37,49 @@
                 </div>
 
                 <!-- 空白狀態 -->
-                <div v-if="filteredProducts.length === 0 && !pending"
+                <div v-if="displayProducts.length === 0 && !pending"
                     class="flex flex-col items-center justify-center py-24 gap-4 text-gray-400">
                     <Icon name="material-symbols:search-off" class="text-6xl" />
                     <span class="font-bold text-lg">找不到相關商品</span>
                 </div>
 
-                <!-- 產品網格 -->
-                <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <ProductCard v-for="product in displayProducts" :key="product.id || product.title"
-                        :item="product" />
+                <!--
+                    虛擬列表容器：
+                    - 上下 padding 撐出「完整」捲軸高度（讓瀏覽器以為有那麼多內容）
+                    - DOM 只渲染 visibleRows（可視區域 ± overscan）
+                -->
+                <div
+                    ref="gridRef"
+                    :style="{
+                        paddingTop: virtualState.paddingTop + 'px',
+                        paddingBottom: virtualState.paddingBottom + 'px',
+                    }"
+                >
+                    <div
+                        v-for="(row, idx) in virtualState.visibleRows"
+                        :key="virtualState.startIdx + idx"
+                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6"
+                    >
+                        <ProductCard
+                            v-for="product in row"
+                            :key="product.id || product.title"
+                            :item="product"
+                        />
+                    </div>
                 </div>
 
                 <!-- 載入動畫 -->
-                <div v-if="pending" class="mt-16 flex justify-center">
+                <div v-if="pending" class="mt-8 flex justify-center">
                     <div class="flex gap-2">
                         <div class="size-4 bg-primary rounded-full animate-bounce"></div>
                         <div class="size-4 bg-accent-red rounded-full animate-bounce delay-100"></div>
                         <div class="size-4 bg-accent-blue rounded-full animate-bounce delay-200"></div>
                     </div>
+                </div>
+
+                <!-- 全部載入完畢 -->
+                <div v-if="!hasMore && displayProducts.length > 0" class="text-center text-gray-400 text-sm py-6">
+                    已顯示全部 {{ total }} 筆商品
                 </div>
             </div>
         </div>
@@ -63,24 +87,143 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { useWindowScroll, useWindowSize } from '@vueuse/core'
 
 const config = useRuntimeConfig()
 const route = useRoute()
 const sortBy = ref('newest')
 const searchQuery = ref('')
 
-// 防抖：300ms 後才更新查詢關鍵字（composable 內自動在 onUnmounted 清理）
 const debouncedKeyword = useDebounce(() => searchQuery.value.trim(), 300)
 
 const categoryParam = computed(() => (route.query.category as string) || undefined)
 const keywordParam = computed(() => debouncedKeyword.value || undefined)
 
-const { data: apiProducts, pending } = useFetch<any[]>(`${config.public.apiBase}/products`, {
-    query: { category: categoryParam, keyword: keywordParam },
-    watch: [categoryParam, keywordParam],
+// ── 視窗尺寸 & 捲動位置（VueUse 響應式）────────────
+const { width, height: windowHeight } = useWindowSize()
+const { y: scrollY } = useWindowScroll()
+
+// 依視窗寬度決定欄數（與 Tailwind sm/lg breakpoint 對齊）
+const cols = computed(() => width.value >= 1024 ? 3 : width.value >= 640 ? 2 : 1)
+
+// 估算每列高度：ProductCard 是 aspect-square 圖 + 約 160px 文字按鈕 + 24px 列間距
+const rowHeight = computed(() => {
+    const cardW = (width.value - 120) / cols.value
+    return Math.max(300, cardW + 160 + 24)
 })
 
+// ── 分頁狀態 ──────────────────────────────────────
+const PAGE_SIZE = 20
+const page = ref(1)
+const rawItems = ref<any[]>([])
+const total = ref(0)
+const pending = ref(false)
+const hasMore = ref(true)
+
+const loadMore = async () => {
+    if (pending.value || !hasMore.value) return
+    pending.value = true
+    try {
+        const res = await $fetch<{ items: any[]; total: number }>(
+            `${config.public.apiBase}/products`,
+            {
+                query: {
+                    keyword: keywordParam.value,
+                    category: categoryParam.value,
+                    page: page.value,
+                    limit: PAGE_SIZE,
+                },
+            }
+        )
+        rawItems.value.push(...res.items)
+        total.value = res.total
+        if (rawItems.value.length >= res.total) hasMore.value = false
+        page.value++
+    } catch {
+        // 靜默失敗
+    } finally {
+        pending.value = false
+    }
+}
+
+const resetAndLoad = () => {
+    page.value = 1
+    rawItems.value = []
+    total.value = 0
+    hasMore.value = true
+    window.scrollTo({ top: 0, behavior: 'instant' })
+    loadMore()
+}
+
+watch([categoryParam, keywordParam], resetAndLoad)
+
+// ── 虛擬渲染核心 ──────────────────────────────────
+// gridRef 讓我們知道商品列表從頁面哪個 Y 位置開始
+const gridRef = ref<HTMLElement>()
+const containerOffsetTop = ref(0)
+
+const measureContainer = () => {
+    if (gridRef.value) {
+        // getBoundingClientRect().top 是相對 viewport，加上 scrollY 就是相對頁面頂端
+        containerOffsetTop.value = gridRef.value.getBoundingClientRect().top + window.scrollY
+    }
+}
+
+// 將商品平鋪陣列按欄數分組成「列」
+const rows = computed(() => {
+    const n = cols.value
+    const items = displayProducts.value
+    const result: (typeof items)[] = []
+    for (let i = 0; i < items.length; i += n) result.push(items.slice(i, i + n))
+    return result
+})
+
+const OVERSCAN = 3
+
+// 核心計算：根據目前捲動位置，算出哪幾列要出現，以及上下 padding
+const virtualState = computed(() => {
+    const rh = rowHeight.value
+    const totalRows = rows.value.length
+
+    // 用戶已捲過多少 px（相對於商品容器頂端）
+    const scrolledInContainer = Math.max(0, scrollY.value - containerOffsetTop.value)
+
+    const startIdx = Math.max(0, Math.floor(scrolledInContainer / rh) - OVERSCAN)
+    const visibleCount = Math.ceil(windowHeight.value / rh) + OVERSCAN * 2
+    const endIdx = Math.min(totalRows, startIdx + visibleCount)
+
+    return {
+        startIdx,
+        paddingTop: startIdx * rh,
+        paddingBottom: Math.max(0, (totalRows - endIdx) * rh),
+        visibleRows: rows.value.slice(startIdx, endIdx),
+    }
+})
+
+// ── Window scroll：無限滾動 ───────────────────────
+const handleWindowScroll = () => {
+    const scrolled = window.scrollY + window.innerHeight
+    const docHeight = document.documentElement.scrollHeight
+    if (docHeight - scrolled < 600) loadMore()
+}
+
+onMounted(() => {
+    resetAndLoad()
+    // 等 DOM 渲染完才量測容器位置
+    nextTick(measureContainer)
+    window.addEventListener('scroll', handleWindowScroll, { passive: true })
+    window.addEventListener('resize', measureContainer)
+})
+
+onUnmounted(() => {
+    window.removeEventListener('scroll', handleWindowScroll)
+    window.removeEventListener('resize', measureContainer)
+})
+
+// 欄數改變時（螢幕旋轉/resize）重新量測容器
+watch(cols, () => nextTick(measureContainer))
+
+// ── 排序 & 格式轉換 ───────────────────────────────
 const colorStyles = [
     { border: 'crayon-border-red', price: 'text-accent-red', hover: 'hover:bg-accent-red' },
     { border: 'crayon-border-blue', price: 'text-accent-blue', hover: 'hover:bg-accent-blue' },
@@ -107,20 +250,16 @@ function mapProduct(p: any, index: number) {
     }
 }
 
-const filteredProducts = computed(() => apiProducts.value || [])
-
-const sortedProducts = computed(() => {
-    const sorted = [...filteredProducts.value]
-    if (sortBy.value === 'price-low') {
-        return sorted.sort((a: any, b: any) => parseFloat(a.price || 0) - parseFloat(b.price || 0))
-    } else if (sortBy.value === 'price-high') {
-        return sorted.sort((a: any, b: any) => parseFloat(b.price || 0) - parseFloat(a.price || 0))
-    }
+const sortedRaw = computed(() => {
+    const sorted = [...rawItems.value]
+    if (sortBy.value === 'price-low')
+        return sorted.sort((a, b) => parseFloat(a.price || 0) - parseFloat(b.price || 0))
+    if (sortBy.value === 'price-high')
+        return sorted.sort((a, b) => parseFloat(b.price || 0) - parseFloat(a.price || 0))
     return sorted
 })
 
-// 映射後的顯示資料，避免在模板 v-for 中重複呼叫函式
 const displayProducts = computed(() =>
-    sortedProducts.value.map((p: any, index: number) => mapProduct(p, index))
+    sortedRaw.value.map((p, i) => mapProduct(p, i))
 )
 </script>

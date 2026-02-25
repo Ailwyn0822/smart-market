@@ -19,6 +19,9 @@ import { StorageService } from '../storage/storage.service';
 import { AiService } from '../ai/ai.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ProductsService } from './products.service';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
+import { UserRole } from '@smart-market/shared';
 
 @ApiTags('products')
 @Controller('products')
@@ -48,7 +51,7 @@ export class ProductsController {
     }
   }
 
-  // 必須放在 :id 之前，否則 'my-listings' 會被當成 id
+  // ── 必須放在 :id 之前 ────────────────────────────────
   @Get('my-listings')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
@@ -59,6 +62,43 @@ export class ProductsController {
     return this.productsService.findMyListings(user.userId);
   }
 
+  // ── Admin 端點（需放在 :id 之前）─────────────────────
+  @Get('admin/list')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: '（Admin）取得所有商品列表（含下架）' })
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'limit', required: false })
+  @ApiQuery({ name: 'keyword', required: false })
+  @ApiQuery({ name: 'status', required: false, description: 'all | active | inactive' })
+  @ApiResponse({ status: 200, description: '{ items, total, page, limit }' })
+  async adminList(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('keyword') keyword?: string,
+    @Query('status') status?: string,
+  ) {
+    return this.productsService.findAllAdmin({
+      page: page ? +page : 1,
+      limit: limit ? +limit : 20,
+      keyword,
+      status,
+    });
+  }
+
+  @Patch('admin/:id/toggle')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: '（Admin）切換任意商品上下架狀態並通知賣家' })
+  @ApiParam({ name: 'id', description: '商品 ID' })
+  @ApiResponse({ status: 200, description: '狀態更新成功' })
+  async adminToggle(@Param('id') id: string) {
+    return this.productsService.adminToggleStatus(+id);
+  }
+
+  // ── 公開端點 ────────────────────────────────────────
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
@@ -70,15 +110,24 @@ export class ProductsController {
   }
 
   @Get()
-  @ApiOperation({ summary: '搜尋商品列表', description: '支援關鍵字和分類篩選' })
-  @ApiQuery({ name: 'keyword', required: false, description: '搜尋關鍵字' })
-  @ApiQuery({ name: 'category', required: false, description: '分類名稱' })
-  @ApiResponse({ status: 200, description: '商品清單' })
+  @ApiOperation({ summary: '搜尋商品列表', description: '支援關鍵字、分類篩選及分頁' })
+  @ApiQuery({ name: 'keyword', required: false })
+  @ApiQuery({ name: 'category', required: false })
+  @ApiQuery({ name: 'page', required: false, description: '頁碼（預設 1）' })
+  @ApiQuery({ name: 'limit', required: false, description: '每頁筆數（預設 20）' })
+  @ApiResponse({ status: 200, description: '{ items: Product[], total: number }' })
   async findAll(
     @Query('keyword') keyword?: string,
     @Query('category') category?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
   ) {
-    return this.productsService.findAll({ keyword, category });
+    return this.productsService.findAll({
+      keyword,
+      category,
+      page: page ? +page : 1,
+      limit: limit ? +limit : 20,
+    });
   }
 
   @Get('latest')
@@ -91,7 +140,7 @@ export class ProductsController {
   @Patch(':id/active_status')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ summary: '切換商品上下架狀態' })
+  @ApiOperation({ summary: '切換商品上下架狀態（賣家）' })
   @ApiParam({ name: 'id', description: '商品 ID' })
   @ApiResponse({ status: 200, description: '狀態更新成功' })
   async toggleActiveStatus(@Param('id') id: string, @Req() req: Request) {

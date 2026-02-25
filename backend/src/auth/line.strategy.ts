@@ -34,6 +34,7 @@ export class LineStrategy extends PassportStrategy(Strategy, 'line') {
       lastName: '', // LINE 只有一個名字，沒有分姓氏
       picture: pictureUrl,
       providerId: id,
+      provider: 'line' as const,
       accessToken,
     };
 

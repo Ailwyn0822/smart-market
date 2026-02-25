@@ -12,7 +12,7 @@
     </div>
 
     <el-card>
-      <el-table :data="filteredUsers" v-loading="loading" stripe style="width: 100%">
+      <el-table :data="pagedUsers" v-loading="loading" stripe style="width: 100%">
         <el-table-column prop="id" label="UUID" width="120">
           <template #default="{ row }">
             <el-tooltip :content="row.id" placement="top">
@@ -29,10 +29,10 @@
         </el-table-column>
         <el-table-column prop="name" label="名稱" />
         <el-table-column prop="email" label="Email" />
-        <el-table-column prop="provider" label="登入方式" width="100">
+        <el-table-column prop="provider" label="登入方式" width="110">
           <template #default="{ row }">
             <el-tag :type="providerTagType(row.provider)" size="small">
-              {{ row.provider }}
+              {{ providerLabel(row.provider) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -88,6 +88,12 @@ const filteredUsers = computed(() => {
   )
 })
 
+// 分頁後的資料（實際顯示在 table 中）
+const pagedUsers = computed(() => {
+  const start = (currentPage.value - 1) * pageSize
+  return filteredUsers.value.slice(start, start + pageSize)
+})
+
 const fetchUsers = async () => {
   loading.value = true
   try {
@@ -115,9 +121,17 @@ const handleSearch = () => {
 }
 
 const providerTagType = (provider: string) => {
-  if (provider === 'google') return 'danger'
-  if (provider === 'line') return 'success'
+  const p = provider?.toLowerCase()
+  if (p === 'google') return 'danger'
+  if (p === 'line') return 'success'
   return 'info'
+}
+
+const providerLabel = (provider: string) => {
+  const p = provider?.toLowerCase()
+  if (p === 'google') return 'Google'
+  if (p === 'line') return 'LINE'
+  return '本地帳號'
 }
 
 const formatDate = (dateStr: string) => {

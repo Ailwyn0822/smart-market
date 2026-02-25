@@ -19,11 +19,15 @@ export class AuthService {
     }
 
     console.log('User not found. Creating new user...');
+    const providerMap: Record<string, UserProvider> = {
+      google: UserProvider.GOOGLE,
+      line: UserProvider.LINE,
+    };
     const newUser = await this.usersService.createOAuthUser({
       email: details.email,
-      name: `${details.firstName} ${details.lastName}`,
+      name: `${details.firstName} ${details.lastName}`.trim(),
       avatar: details.picture,
-      provider: UserProvider.GOOGLE,
+      provider: providerMap[details.provider] ?? UserProvider.GOOGLE,
       providerId: details.providerId,
     });
 
