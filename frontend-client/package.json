@@ -12,6 +12,8 @@
     "test:unit": "vitest run"
   },
   "dependencies": {
+    "@iconify-json/line-md": "^1.2.14",
+    "@iconify-json/material-symbols": "^1.2.58",
     "@nuxt/icon": "^2.2.1",
     "@nuxt/image": "^2.0.0",
     "@nuxtjs/i18n": "^10.2.1",
