@@ -196,4 +196,4 @@ smart-market/
 | Docker Multi-stage Build                               | 🟠 待部署 |
 | Nginx 反向代理                                         | 🟠 待部署 |
 | README 文件完善                                        | 🔵 低     |
-| Demo 影片錄製                                          | 🔵 低     |
+| Demo  影片錄製                                          | 🔵 低     |
