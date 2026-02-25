@@ -111,11 +111,6 @@
                                 <Icon name="material-symbols:shopping-bag-outline" class="text-base" />
                                 {{ $t('menu.buyer_center') }}
                             </div>
-                            <button @click="handleAction('/cart')"
-                                class="w-full text-left px-3 py-2 text-sm font-bold text-content hover:bg-accent-blue/10 hover:text-accent-blue rounded-xl flex items-center gap-3 transition-colors">
-                                <Icon name="material-symbols:shopping-cart" class="text-lg" />
-                                {{ $t('nav.cart') }}
-                            </button>
 
                             <button @click="handleAction('/buy_order')"
                                 class="w-full text-left px-3 py-2 text-sm font-bold text-content hover:bg-accent-purple/10 hover:text-accent-purple rounded-xl flex items-center gap-3 transition-colors">
