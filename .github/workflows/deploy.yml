@@ -131,6 +131,12 @@ jobs:
           envs: GHCR_TOKEN,GHCR_USER
           script: |
             set -e
+
+            # 若目錄不存在則先 clone（VM 重建時自動處理）
+            if [ ! -d ~/smart-market ]; then
+              git clone git@github.com:ailwyn0822/smart-market.git ~/smart-market
+            fi
+
             cd ~/smart-market
 
             # 拉最新設定檔（nginx.conf、docker-compose.prod.yml 等）
