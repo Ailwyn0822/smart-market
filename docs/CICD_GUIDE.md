@@ -26,7 +26,7 @@
 Internet → Nginx (80/443)
             ├── panda-map.com/               → sm_client  (Nuxt SSR, port 3000)
             ├── panda-map.com/api/_nuxt_icon/ → sm_client  (Nuxt icon 內部 API)
-            ├── panda-map.com/api/            → sm_backend (NestJS, port 8080)
+            ├── panda-map.com/api/            → sm_backend (NestJS, port 8080) 
             ├── panda-map.com/socket.io/      → sm_backend (WebSocket)
             ├── panda-map.com/admin/          → sm_admin   (Vue SPA, inner nginx port 80)
             └── panda-map.com/minio/          → sm_minio   (MinIO API, port 9000)
