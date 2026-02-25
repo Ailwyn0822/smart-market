@@ -5,7 +5,6 @@
             <!-- 資料夾 Tab 標籤 -->
             <div
                 class="absolute -top-10 left-0 w-52 h-12 bg-accent-purple rounded-t-2xl border-4 border-b-0 border-content flex items-center justify-center z-10 gap-2">
-                <span class="material-symbols-outlined text-white text-xl">folder_open</span>
                 <span class="font-bold text-white text-lg">{{ $t('buy_order.title') }}</span>
             </div>
 
