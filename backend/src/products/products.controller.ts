@@ -10,6 +10,7 @@ import {
   Param,
   Query,
   Req,
+  BadRequestException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiConsumes, ApiParam } from '@nestjs/swagger';
 import type { Request } from 'express';
@@ -41,9 +42,16 @@ export class ProductsController {
   @ApiResponse({ status: 200, description: '分析成功，回傳圖片 URL 和 AI 建議' })
   async analyze(@UploadedFile() file: Express.Multer.File) {
     try {
+      // 先審核內容，通過後才存圖，避免違禁圖片寫入儲存空間
+      const aiResult = await this.aiService.analyzeProductImage(file.buffer, file.mimetype);
+
+      if (aiResult.flagged) {
+        console.warn('Content violation detected:', aiResult.reason);
+        throw new BadRequestException('CONTENT_VIOLATION');
+      }
+
       const fileName = await this.storageService.upload(file);
       const fileUrl = this.storageService.getFileUrl(fileName);
-      const aiResult = await this.aiService.analyzeProductImage(file.buffer, file.mimetype);
       return { imageUrl: fileUrl, aiAnalysis: aiResult };
     } catch (error) {
       console.error('Error in analyze endpoint:', error);

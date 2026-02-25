@@ -4,6 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export interface AiAnalysisResult {
+  flagged: boolean;
+  reason?: string;
   name: string;
   description: string;
   category: string;
@@ -21,21 +23,29 @@ export class AiService {
   async analyzeProductImage(imageBuffer: Buffer, mimeType: string): Promise<AiAnalysisResult> {
     try {
       console.log('Initializing Gemini model...');
-      // 使用支援圖片的模型 (Fallback to gemini-pro-vision if 1.5 is not available)
       const model = this.genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
       console.log('Gemini model initialized.');
 
       const prompt = `
-      你是一個專業的電商管理員。請分析這張圖片，並回傳以下 JSON 格式的資訊 (不要 Markdown，只要純 JSON)：
+      你是一個專業的電商平台內容審核員與商品管理員。
+      請先審核這張圖片是否包含以下任何不當內容：
+      - 武器（刀、槍、爆炸物等）
+      - 毒品或管制藥品
+      - 色情或暴露裸體
+      - 血腥、暴力、驚悚畫面
+      - 其他違法物品或服務
+
+      請回傳以下 JSON 格式（不要 Markdown，只要純 JSON）：
       {
-        "name": "商品繁體中文名稱 (簡短有力)",
-        "description": "商品的詳細描述 (50字以內)",
-        "category": "商品分類 (例如: 3C, 食品, 服飾...)",
-        "price": 預估台幣售價 (純數字)
+        "flagged": true 或 false,
+        "reason": "若 flagged 為 true，說明偵測到的不當內容（否則省略此欄位）",
+        "name": "若未被標記，填入商品繁體中文名稱（簡短有力）；若被標記則填入空字串",
+        "description": "若未被標記，填入商品的詳細描述（50字以內）；若被標記則填入空字串",
+        "category": "若未被標記，填入商品分類（例如: 3C, 食品, 服飾...）；若被標記則填入空字串",
+        "price": 若未被標記，填入預估台幣售價（純數字）；若被標記則填入 0
       }
     `;
 
-      // 將圖片轉為 Gemini 看得懂的格式
       const imagePart = {
         inlineData: {
           data: imageBuffer.toString('base64'),
@@ -47,7 +57,7 @@ export class AiService {
       const response = await result.response;
       const text = response.text();
 
-      // 清理回應 (有時候 AI 會包 \`\`\`json ... \`\`\`)
+      // 清理回應 (有時候 AI 會包 ```json ... ```)
       const cleanText = text.replace(/```json|```/g, '').trim();
 
       return JSON.parse(cleanText) as AiAnalysisResult;

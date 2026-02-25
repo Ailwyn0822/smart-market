@@ -424,7 +424,8 @@
     "discount_success": "Discount code applied!",
     "shipment_confirmed": "Order marked as shipped (In Transit)!",
     "upload_success": "Product listed successfully!",
-    "upload_error": "Failed to list product, please try again"
+    "upload_error": "Failed to list product, please try again",
+    "content_violation": "Prohibited or inappropriate content detected. Please do not upload such images."
   },
   "menu": {
     "notifications": "Notifications",

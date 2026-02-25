@@ -18,12 +18,13 @@ export class OrdersService {
         private notificationsService: NotificationsService,
     ) { }
 
-    async createOrder(userId: string, dto: CreateOrderDto): Promise<Order> {
+    async createOrder(userId: string, dto: CreateOrderDto, status = OrderStatus.PROCESSING): Promise<Order> {
         const orderNumber = 'SM' + Date.now();
 
         const order = this.ordersRepo.create({
             orderNumber,
             userId,
+            status,
             totalAmount: dto.amount,
             paymentMethod: dto.paymentMethod as PaymentMethod,
             recipientName: dto.recipientName,
@@ -40,6 +41,21 @@ export class OrdersService {
         });
 
         return this.ordersRepo.save(order);
+    }
+
+    async handlePaymentCallback(orderNumber: string, rtnCode: string): Promise<void> {
+        const order = await this.ordersRepo.findOne({ where: { orderNumber } });
+        if (!order) return;
+
+        if (rtnCode === '1') {
+            // 付款成功 → 更新為處理中
+            order.status = OrderStatus.PROCESSING;
+            await this.ordersRepo.save(order);
+        } else {
+            // 付款失敗 → 刪除待付款訂單
+            await this.orderItemsRepo.delete({ orderId: order.id });
+            await this.ordersRepo.delete({ id: order.id });
+        }
     }
 
     async getMyOrders(userId: string): Promise<Order[]> {

@@ -424,7 +424,8 @@
     "discount_success": "折扣碼套用成功！",
     "shipment_confirmed": "訂單已標記為出貨（配送中）！",
     "upload_success": "商品上架成功！",
-    "upload_error": "上架失敗，請再試一次"
+    "upload_error": "上架失敗，請再試一次",
+    "content_violation": "偵測到違禁或不當內容，請勿上傳此類圖片"
   },
   "menu": {
     "notifications": "通知中心",

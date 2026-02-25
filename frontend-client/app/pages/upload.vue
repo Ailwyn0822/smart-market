@@ -247,9 +247,15 @@ const processFile = async (file: File) => {
             formData.price = response.aiAnalysis.price.toString();
             formData.imageUrl = response.imageUrl; // Use URL from server
         }
-    } catch (error) {
-        console.error('Failed to analyze image:', error);
-        toast.error(t('toast.error_generic'));
+    } catch (error: unknown) {
+        const errData = (error as { data?: { message?: string } })?.data;
+        if (errData?.message === 'CONTENT_VIOLATION') {
+            formData.imageUrl = '';
+            toast.error(t('toast.content_violation'));
+        } else {
+            console.error('Failed to analyze image:', error);
+            toast.error(t('toast.error_generic'));
+        }
     } finally {
         isLoading.value = false;
     }

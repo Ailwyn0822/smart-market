@@ -424,7 +424,8 @@
     "discount_success": "Mã giảm giá đã được áp dụng!",
     "shipment_confirmed": "Đơn hàng đã được đánh dấu là đã gửi hàng!",
     "upload_success": "Đăng sản phẩm thành công!",
-    "upload_error": "Đăng sản phẩm thất bại, vui lòng thử lại"
+    "upload_error": "Đăng sản phẩm thất bại, vui lòng thử lại",
+    "content_violation": "Phát hiện nội dung bị cấm hoặc không phù hợp. Vui lòng không tải lên hình ảnh này."
   },
   "menu": {
     "notifications": "Thông báo",

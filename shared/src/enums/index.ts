@@ -1,5 +1,6 @@
 // 訂單狀態（抽離自 backend/src/orders/entities/order.entity.ts）
 export enum OrderStatus {
+  PENDING_PAYMENT = 'pending_payment',
   PROCESSING = 'processing',
   SHIPPED = 'shipped',
   OUT_FOR_DELIVERY = 'out_for_delivery',

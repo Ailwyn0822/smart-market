@@ -140,6 +140,12 @@ jobs:
             # 登入 GHCR 才能 pull private image
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
 
+            # DB schema 遷移（冪等，安全可重複執行）
+            docker compose -f docker-compose.prod.yml up -d postgres
+            sleep 3
+            docker exec sm_db psql -U postgres -d smart_market \
+              -c "ALTER TYPE orders_status_enum ADD VALUE IF NOT EXISTS 'pending_payment' BEFORE 'processing';" || true
+
             # Pull 最新 image 並重啟
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d

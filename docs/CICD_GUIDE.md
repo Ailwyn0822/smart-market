@@ -24,11 +24,12 @@
 
 ```
 Internet → Nginx (80/443)
-            ├── panda-map.com/          → sm_client  (Nuxt SSR, port 3000)
-            ├── panda-map.com/api/      → sm_backend (NestJS, port 8080)
-            ├── panda-map.com/socket.io/ → sm_backend (WebSocket)
-            ├── panda-map.com/admin/    → sm_admin   (Vue SPA, inner nginx port 80)
-            └── panda-map.com/minio/    → sm_minio   (MinIO API, port 9000)
+            ├── panda-map.com/               → sm_client  (Nuxt SSR, port 3000)
+            ├── panda-map.com/api/_nuxt_icon/ → sm_client  (Nuxt icon 內部 API)
+            ├── panda-map.com/api/            → sm_backend (NestJS, port 8080)
+            ├── panda-map.com/socket.io/      → sm_backend (WebSocket)
+            ├── panda-map.com/admin/          → sm_admin   (Vue SPA, inner nginx port 80)
+            └── panda-map.com/minio/          → sm_minio   (MinIO API, port 9000)
 
 Docker Network (sm_network):
   sm_db       PostgreSQL 15
@@ -41,8 +42,19 @@ Docker Network (sm_network):
 
 **CI/CD 流程：**
 ```
-本機 git push → GitHub → Actions 觸發 → SSH 進 VM → git pull → docker compose build & up → restart nginx
+git push to master
+  → [CI] 只跑有改動的 package（backend / client / admin / shared）
+  → [Deploy] CI 全部通過後觸發：
+      1. GitHub Actions 上 build Docker image（8 核，快）
+      2. Push image 到 GHCR（GitHub Container Registry）
+      3. SSH 進 VM：docker pull + docker compose up -d
+         （VM 不再自己 build，只負責拉 image 跑起來）
 ```
+
+**為什麼這樣設計：**
+- VM 資源有限（2 vCPU），在 VM 上 build 很慢（20+ 分鐘）
+- GitHub Actions runner 有 8 核，build 快很多
+- VM 只要 `docker pull` 拉現成 image，部署只需 1~2 分鐘
 
 ---
 
@@ -142,39 +154,40 @@ nano .env.prod
 | `LINE_CHANNEL_ID` | LINE Login Channel ID |
 | `LINE_CHANNEL_SECRET` | LINE Login Channel Secret |
 | `GEMINI_API_KEY` | Google Gemini AI API Key |
+| `FRONTEND_URL` | `https://panda-map.com` |
+| `ECPAY_API_BASE` | `https://panda-map.com/api` |
 
 > ⚠️ **注意**：`.env.prod` 不會被 git commit，每次重新部署到新機器都要重新設定。
 
-### 3. 取得 SSL 憑證（先暫時用 HTTP）
-
-首次取得憑證前，需要先將 `nginx/nginx.conf` 的 HTTPS 區段暫時改為只有 HTTP，或直接用 standalone 模式：
+### 3. 取得 SSL 憑證
 
 ```bash
-# 先停掉佔用 80 port 的服務（如果有）
 sudo systemctl stop nginx 2>/dev/null || true
-
-# 取得憑證
 sudo certbot certonly --standalone -d panda-map.com
-
-# 確認憑證位置
 ls /etc/letsencrypt/live/panda-map.com/
 ```
 
-### 4. 首次啟動（需讓 TypeORM 建立資料表）
+### 4. 設定 GitHub Actions（先完成第 5 節設定）
 
-**第一次啟動時**，由於資料庫是空的，需要暫時讓 TypeORM 自動建立資料表：
+**初次啟動前，需先讓 GitHub Actions 跑一次把 image push 到 GHCR。**
+
+push 任意 commit 觸發 Actions，等 CI + Deploy 跑完後，再繼續以下步驟。
+
+### 5. 登入 GHCR 並首次啟動
 
 ```bash
-# 暫時改成 development 讓 TypeORM synchronize
+# 建立 GitHub Personal Access Token（Settings → Developer settings → PAT → read:packages）
+echo "your_github_pat" | docker login ghcr.io -u ailwyn0822 --password-stdin
+
+# Pull image 並啟動（第一次需要暫時讓 TypeORM 建立資料表）
 nano .env.prod
 # 把 NODE_ENV=production 改成 NODE_ENV=development
+
+docker compose -f docker-compose.prod.yml pull
+docker compose -f docker-compose.prod.yml up -d
 ```
 
-```bash
-docker compose -f docker-compose.prod.yml up -d --build
-```
-
-等待所有服務啟動（約 3～5 分鐘），確認 backend 已 seed 資料：
+等待 backend 完全啟動並 seed 資料：
 
 ```bash
 docker compose -f docker-compose.prod.yml logs backend --tail=30
@@ -190,21 +203,15 @@ nano .env.prod
 docker compose -f docker-compose.prod.yml restart backend
 ```
 
-### 5. 確認所有容器運作
+### 6. 確認所有容器運作
 
 ```bash
 docker compose -f docker-compose.prod.yml ps
 ```
 
-應看到 6 個容器都是 `Up` 狀態：
-- sm_db
-- sm_minio
-- sm_backend
-- sm_client
-- sm_admin
-- sm_nginx
+應看到 6 個容器都是 `Up` 狀態：sm_db、sm_minio、sm_backend、sm_client、sm_admin、sm_nginx
 
-### 6. 驗證網站
+### 7. 驗證網站
 
 | URL | 預期結果 |
 |-----|----------|
@@ -217,18 +224,12 @@ docker compose -f docker-compose.prod.yml ps
 
 ## GitHub Actions 自動部署設定
 
-每次 push 到 `master` 分支，GitHub Actions 會自動 SSH 進 VM 執行部署。
-
-### 1. 在 VM 產生 SSH Key pair
+### 1. 在 VM 產生 SSH Key pair（給 Actions 用）
 
 ```bash
 ssh-keygen -t ed25519 -C "github-actions" -f ~/.ssh/github_actions -N ""
-
-# 將公鑰加入 authorized_keys
 cat ~/.ssh/github_actions.pub >> ~/.ssh/authorized_keys
-
-# 查看私鑰（稍後貼到 GitHub Secrets）
-cat ~/.ssh/github_actions
+cat ~/.ssh/github_actions   # 複製私鑰內容，稍後貼到 GitHub Secrets
 ```
 
 ### 2. 設定 GitHub Secrets
@@ -239,87 +240,55 @@ GitHub repo → Settings → Secrets and variables → Actions → New repositor
 |------------|-----|
 | `GCP_HOST` | VM 的 External IP（例如 `35.189.168.63`） |
 | `GCP_USER` | VM 登入帳號（例如 `asd66151200`） |
-| `GCP_SSH_KEY` | 上一步 `cat ~/.ssh/github_actions` 的完整內容（包含 `-----BEGIN...-----END-----`） |
+| `GCP_SSH_KEY` | 上一步私鑰完整內容（包含 `-----BEGIN...-----END-----`） |
+
+> `GITHUB_TOKEN` 不需要另外設定，GitHub Actions 自動提供。
 
 ### 3. 設定 VM 的 git remote 使用 SSH
-
-因為 Actions 在 VM 上會執行 `git pull`，需要用 SSH 連 GitHub（不然需要帳密）：
-
-**在 VM 上產生 GitHub Deploy Key：**
 
 ```bash
 ssh-keygen -t ed25519 -C "github-deploy" -f ~/.ssh/github_deploy -N ""
 
-# 設定 SSH config
 cat >> ~/.ssh/config << 'EOF'
 Host github.com
   IdentityFile ~/.ssh/github_deploy
   StrictHostKeyChecking no
 EOF
 
-# 查看公鑰
-cat ~/.ssh/github_deploy.pub
+cat ~/.ssh/github_deploy.pub  # 複製公鑰
 ```
 
-**到 GitHub 加入 Deploy Key：**
-
-GitHub repo → Settings → Deploy keys → Add deploy key
-- Title: `gcp-vm`
-- Key: 貼上公鑰內容
-- Allow write access: 不需要勾選
-
-**更改 git remote 為 SSH：**
+GitHub repo → Settings → Deploy keys → Add deploy key（貼上公鑰，不需要 write access）
 
 ```bash
 cd ~/smart-market
 git remote set-url origin git@github.com:ailwyn0822/smart-market.git
-
-# 測試
-git pull origin master
+git pull origin master  # 測試
 ```
 
-### 4. Deploy Workflow 說明
+### 4. Workflow 說明
 
-檔案位置：[.github/workflows/deploy.yml](../.github/workflows/deploy.yml)
+**CI (`.github/workflows/ci.yml`)：**
+- 每次 push 到 master 或 PR 觸發
+- 用 `dorny/paths-filter` 偵測哪些路徑有改動
+- 只跑有改動的 job：shared-check / backend-check / client-check / admin-check
+- 改後端不需要等前端 CI 跑完
 
-```yaml
-name: Deploy to GCP
+**Deploy (`.github/workflows/deploy.yml`)：**
+- 等 CI **全部通過**後才觸發（`workflow_run` trigger）
+- 在 GitHub Actions 上 build Docker image（只 build 有改動的 service）
+- Push 到 GHCR（`ghcr.io/ailwyn0822/smart-market-{backend,client,admin}:latest`）
+- SSH 進 VM：`docker pull` + `docker compose up -d`（VM 不做任何 build）
+- Docker layer cache 存在 GHCR，第二次以後 build 快很多
 
-on:
-  push:
-    branches: [master]    # 只有 push 到 master 才觸發
+**部署時間（有 layer cache 後）：**
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: 部署到 GCP VM
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.GCP_HOST }}
-          username: ${{ secrets.GCP_USER }}
-          key: ${{ secrets.GCP_SSH_KEY }}
-          command_timeout: 30m       # 建置最多等 30 分鐘
-          script: |
-            cd ~/smart-market
-
-            # 強制覆蓋本地修改，拉最新程式碼
-            git fetch origin master
-            git reset --hard origin/master
-
-            # 重新建置並啟動容器（只重建有變更的）
-            docker compose -f docker-compose.prod.yml up -d --build
-
-            # 清理舊的 image 節省磁碟空間
-            docker image prune -f
-
-            # 重啟 nginx（讓 DNS 重新解析新容器的 IP）
-            docker compose -f docker-compose.prod.yml restart nginx
-
-            echo "✅ 部署完成！"
-```
-
-> ⚠️ **重要**：`git reset --hard` 會覆蓋 VM 上的本地修改。如果在 VM 上手動改了任何檔案（如 `docker-compose.prod.yml`），push 後會被覆蓋。務必把所有修改 commit 到 git。
+| 改動 | 時間 |
+|------|------|
+| 只改後端 | ~2 分鐘 |
+| 只改前台 | ~4 分鐘 |
+| 只改 nginx.conf | ~1 分鐘（不 build，只 pull + restart） |
+| 初次建立（無 cache） | ~20 分鐘 |
 
 ---
 
@@ -327,29 +296,26 @@ jobs:
 
 參考 [.env.prod.example](../.env.prod.example)
 
-### 關鍵變數說明
-
 | 變數 | 說明 | 注意事項 |
 |------|------|----------|
-| `NODE_ENV` | 執行環境 | 生產環境必須設 `production`，否則 TypeORM 會在每次啟動時同步資料表（有刪除風險） |
-| `PORT` | NestJS 後端 port | 設 `8080`；**不要改**，Nuxt 也會讀這個變數，需另外設 `NITRO_PORT=3000` |
-| `NITRO_PORT` | Nuxt SSR server port | 必須設 `3000`，防止與後端 `PORT=8080` 衝突 |
-| `MINIO_ENDPOINT` | MinIO 服務名稱 | Docker network 內用 `minio`（容器名稱去掉 `sm_` 前綴後的別名），**不是** `sm_minio` |
-| `MINIO_PUBLIC_URL` | MinIO 對外 URL | 前端顯示圖片用，設為 `https://panda-map.com/minio` |
-| `FRONTEND_URL` | 前台網址 | OAuth 登入後跳轉用 |
-| `ECPAY_API_BASE` | 後端對外網址 | ECPay 回呼 URL 用，設為 `https://panda-map.com/api` |
+| `NODE_ENV` | 執行環境 | 生產環境必須設 `production` |
+| `PORT` | NestJS 後端 port | 設 `8080` |
+| `NITRO_PORT` | Nuxt SSR server port | 必須設 `3000` |
+| `MINIO_ENDPOINT` | MinIO 服務名稱 | Docker network 內用 `minio`（**不是** `sm_minio`） |
+| `MINIO_PUBLIC_URL` | MinIO 對外 URL | 設為 `https://panda-map.com/minio` |
+| `FRONTEND_URL` | 前台網址 | OAuth 登入後跳轉用，設 `https://panda-map.com` |
+| `ECPAY_API_BASE` | 後端對外網址 | ECPay 回呼 URL 用，設 `https://panda-map.com/api` |
 | `CORS_ORIGINS` | 允許的前端網域 | 多個用逗號分隔 |
-| `VITE_API_BASE` | Admin 前台 API 網址 | **Build-time 變數**，設在 `docker-compose.prod.yml` 的 `args`，不是 `.env.prod` |
+
+> `VITE_API_BASE`（Admin build-time 變數）已寫死在 `docker-compose.prod.yml` 的 build args，不需要在 `.env.prod` 設定。
 
 ### OAuth 設定
 
 **Google OAuth：**
-1. GCP Console → APIs & Services → Credentials → OAuth 2.0 Client
-2. Authorized redirect URIs 加入：`https://panda-map.com/api/auth/google/callback`
+Authorized redirect URIs 加入：`https://panda-map.com/api/auth/google/callback`
 
 **LINE Login：**
-1. LINE Developers Console → Channel → LINE Login
-2. Callback URL 加入：`https://panda-map.com/api/auth/line/callback`
+Callback URL 加入：`https://panda-map.com/api/auth/line/callback`
 
 ---
 
@@ -359,13 +325,14 @@ jobs:
 
 | 路徑 | 代理目標 | 說明 |
 |------|----------|------|
-| `/` | `sm_client:3000` | Nuxt SSR 前台 |
+| `/api/_nuxt_icon/` | `sm_client:3000` | Nuxt icon 內部 API（**必須在 `/api/` 之前**） |
 | `/api/` | `sm_backend:8080/` | NestJS API（strip /api prefix） |
-| `/socket.io/` | `sm_backend:8080/socket.io/` | WebSocket |
+| `/socket.io/` | `sm_backend:8080/socket.io/` | WebSocket（設有 `proxy_read_timeout 86400s`） |
 | `/admin/` | `sm_admin:80/` | Vue SPA 後台 |
 | `/minio/` | `minio:9000/` | MinIO 圖片存取 |
+| `/` | `sm_client:3000` | Nuxt SSR 前台 |
 
-> ⚠️ MinIO proxy 的 Host header 必須設為 `minio:9000`（不含路徑），否則 MinIO 會回傳錯誤。
+> ⚠️ `/api/_nuxt_icon/` 必須定義在 `/api/` 前面，否則 Nuxt 的 icon endpoint 會被錯誤導向 NestJS backend 造成 404。
 
 ---
 
@@ -376,20 +343,14 @@ jobs:
 **更新憑證（每 90 天需要更新一次）：**
 
 ```bash
-# 停掉 nginx 容器（釋放 443 port）
 docker compose -f ~/smart-market/docker-compose.prod.yml stop nginx
-
-# 更新憑證
 sudo certbot renew
-
-# 重啟 nginx
 docker compose -f ~/smart-market/docker-compose.prod.yml start nginx
 ```
 
-**設定自動更新（建議）：**
+**設定自動更新：**
 
 ```bash
-# 新增 cron job，每月 1 號凌晨 3 點自動更新
 (crontab -l 2>/dev/null; echo "0 3 1 * * docker compose -f /home/asd66151200/smart-market/docker-compose.prod.yml stop nginx && sudo certbot renew && docker compose -f /home/asd66151200/smart-market/docker-compose.prod.yml start nginx") | crontab -
 ```
 
@@ -399,44 +360,12 @@ docker compose -f ~/smart-market/docker-compose.prod.yml start nginx
 
 MinIO console（port 9001）只綁定到 VM 的 `127.0.0.1`，需要 SSH tunnel 才能存取。
 
-### 建立 SSH Tunnel
-
-**方法一：先設定本機 SSH Key（一次性設定）**
-
 ```bash
-# 本機產生 key
-ssh-keygen -t ed25519 -f ~/.ssh/gcp_key
-
-# 查看公鑰
-cat ~/.ssh/gcp_key.pub
-```
-
-在 VM 的瀏覽器 SSH 執行：
-```bash
-echo "貼上公鑰內容" >> ~/.ssh/authorized_keys
-```
-
-之後本機就可以建立 tunnel：
-```bash
+# 本機建立 SSH tunnel（使用 port 19001 避免與本地 Docker 衝突）
 ssh -i ~/.ssh/gcp_key -L 19001:127.0.0.1:9001 asd66151200@35.189.168.63 -N
 ```
 
-**方法二：使用 gcloud（需安裝 gcloud SDK）**
-
-```bash
-gcloud compute ssh asd66151200@smart-market-vm --zone=asia-east1-b -- -L 19001:127.0.0.1:9001 -N
-```
-
-### 登入 MinIO Console
-
-tunnel 建立後（終端機會卡住，這是正常的），瀏覽器開：
-
-```
-http://localhost:19001
-```
-
-帳號：`MINIO_ROOT_USER` 的值（預設 `admin`）
-密碼：`MINIO_ROOT_PASSWORD` 的值
+瀏覽器開 `http://localhost:19001`，輸入 `MINIO_ROOT_USER` / `MINIO_ROOT_PASSWORD`。
 
 ---
 
@@ -444,11 +373,46 @@ http://localhost:19001
 
 ### 502 Bad Gateway
 
-通常是 nginx 的 DNS 快取失效（容器重建後 IP 改變）。
+nginx DNS 快取失效（容器重建後 IP 改變）：
 
 ```bash
 docker compose -f ~/smart-market/docker-compose.prod.yml restart nginx
 ```
+
+### Icon 顯示 404（`/api/_nuxt_icon/` not found）
+
+確認 `nginx/nginx.conf` 有在 `/api/` 前面加入：
+```nginx
+location /api/_nuxt_icon/ {
+    proxy_pass http://sm_client:3000/api/_nuxt_icon/;
+    ...
+}
+```
+
+### Socket.io 400 "Session ID unknown"
+
+通常是 backend 重啟後 client 用舊 session id 重連，屬正常暫時現象，client 會自動重連。
+
+若持續發生，確認 `nginx/nginx.conf` 的 socket.io 區段有：
+```nginx
+proxy_read_timeout 86400s;
+proxy_buffering    off;
+```
+
+### ECPay 500 Internal Server Error
+
+確認 backend logs：
+```bash
+docker compose -f docker-compose.prod.yml logs backend --tail=20
+```
+若看到 `Cannot find module 'ecpay-aio-node'`，代表 `ecpay-aio-node` 未安裝，需確認 `backend/package.json` 的 `dependencies` 有 `"ecpay-aio-node": "^0.0.5"`。
+
+### GHCR image 找不到（初次部署）
+
+確認 GitHub Actions 已成功 push image：
+- 到 GitHub repo → Packages，應看到 `smart-market-backend`、`smart-market-client`、`smart-market-admin`
+
+若還沒有，等 Actions 跑完或手動觸發 deploy workflow。
 
 ### Backend 起不來
 
@@ -463,50 +427,17 @@ docker compose -f ~/smart-market/docker-compose.prod.yml logs backend --tail=50
 
 ### 資料表不存在（42P01 error）
 
-只有在**全新資料庫**初次啟動時會發生。解法：
-
 ```bash
-nano ~/smart-market/.env.prod
-# 改 NODE_ENV=development
-
+nano ~/smart-market/.env.prod   # NODE_ENV=development
 docker compose -f docker-compose.prod.yml restart backend
-# 等 backend 完全啟動並 seed 資料
-
-nano ~/smart-market/.env.prod
-# 改回 NODE_ENV=production
-
+# 等 backend 完全啟動
+nano ~/smart-market/.env.prod   # NODE_ENV=production
 docker compose -f docker-compose.prod.yml restart backend
-```
-
-### MinIO S3Error: Invalid Request
-
-確認 `backend/src/storage/storage.service.ts` 中有：
-1. `pathStyle: true` 在 MinIO client 設定
-2. `regionMap` 預先填入（繞過 SDK 的 region 探索請求）
-
-### GitHub Actions 部署超時
-
-預設 `command_timeout: 30m`。如果仍然超時，可能是 VM 記憶體不足。確認 swap 有設定：
-
-```bash
-free -h
-# 應看到 Swap: 2.0G
 ```
 
 ### OAuth 登入後跳轉到 localhost
 
-確認 VM 的 `.env.prod` 有設定：
-```
-FRONTEND_URL=https://panda-map.com
-```
-
-### Admin 後台打 API 到 localhost
-
-這是 build-time 問題。確認 `docker-compose.prod.yml` 的 admin args：
-```yaml
-args:
-  VITE_API_BASE: https://panda-map.com/api
-```
+確認 VM 的 `.env.prod` 有設定 `FRONTEND_URL=https://panda-map.com`
 
 ---
 
@@ -522,16 +453,20 @@ docker compose -f ~/smart-market/docker-compose.prod.yml ps
 
 ```bash
 docker compose -f ~/smart-market/docker-compose.prod.yml logs <service> --tail=50
-
-# service 可以是: backend, client, admin, nginx, minio, postgres
+# service: backend, client, admin, nginx, minio, postgres
 ```
 
 ### 手動觸發重新部署
 
 ```bash
 cd ~/smart-market
-git pull origin master
-docker compose -f docker-compose.prod.yml up -d --build
+git fetch origin master && git reset --hard origin/master
+
+# 登入 GHCR（若 token 過期）
+echo "your_github_pat" | docker login ghcr.io -u ailwyn0822 --password-stdin
+
+docker compose -f docker-compose.prod.yml pull
+docker compose -f docker-compose.prod.yml up -d
 docker image prune -f
 docker compose -f docker-compose.prod.yml restart nginx
 ```
@@ -546,11 +481,8 @@ docker system df
 ### 清理 Docker 資源
 
 ```bash
-# 清理未使用的 image
-docker image prune -f
-
-# 清理全部未使用資源（謹慎使用）
-docker system prune -f
+docker image prune -f          # 清理未使用的 image
+docker system prune -f         # 清理全部未使用資源（謹慎使用）
 ```
 
 ### 備份資料庫
@@ -581,7 +513,7 @@ docker exec -i sm_db psql -U postgres smart_market < backup_20260225.sql
 
 | 檔案 | 說明 |
 |------|------|
-| `docker-compose.prod.yml` | 生產環境容器設定 |
+| `docker-compose.prod.yml` | 生產環境容器設定（使用 GHCR image） |
 | `.env.prod` | 生產環境變數（**不進 git**） |
 | `.env.prod.example` | 環境變數範本（進 git） |
 | `nginx/nginx.conf` | Nginx 反向代理設定 |
@@ -589,7 +521,8 @@ docker exec -i sm_db psql -U postgres smart_market < backup_20260225.sql
 | `Dockerfile.client` | Nuxt SSR 建置 |
 | `Dockerfile.admin` | Vue SPA 建置 |
 | `nginx-admin.conf` | Admin SPA 的 inner nginx 設定 |
-| `.github/workflows/deploy.yml` | GitHub Actions CI/CD |
+| `.github/workflows/ci.yml` | CI：路徑過濾 + 各 package 測試與 build |
+| `.github/workflows/deploy.yml` | Deploy：build image → push GHCR → VM pull |
 
 ---
 

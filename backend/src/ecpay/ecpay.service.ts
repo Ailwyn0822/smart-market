@@ -6,7 +6,7 @@ export class EcpayService {
     constructor(private configService: ConfigService) { }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    generateAioCheckout(orderData: any) {
+    generateAioCheckout(orderData: any, tradeNo: string) {
         // eslint-disable-next-line @typescript-eslint/no-require-imports
         const ECPayPayment = require('ecpay-aio-node');
 
@@ -28,7 +28,7 @@ export class EcpayService {
 
         const create = new ECPayPayment(options);
 
-        const TradeNo = 'SM' + new Date().getTime();
+        const TradeNo = tradeNo;
 
         // 格式: yyyy/MM/dd HH:mm:ss
         const now = new Date();
