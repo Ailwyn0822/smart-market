@@ -30,4 +30,7 @@ jobs:
             # 清理舊的 image 節省磁碟空間
             docker image prune -f
 
+            # 重啟 nginx 讓它重新解析容器 IP
+            docker compose -f docker-compose.prod.yml restart nginx
+
             echo "✅ 部署完成！"
