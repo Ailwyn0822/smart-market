@@ -289,9 +289,12 @@ function setupSSE() {
         }
     };
 
-    sseSource.onerror = (err) => {
-        console.error('SSE Error', err);
-        sseSource?.close();
+    sseSource.onerror = () => {
+        // 若連線已關閉（CLOSED=2），3 秒後自動重連
+        // 不呼叫 close()，讓瀏覽器內建重連機制先嘗試
+        if (sseSource?.readyState === EventSource.CLOSED) {
+            setTimeout(() => setupSSE(), 3000);
+        }
     };
 }
 

@@ -73,6 +73,14 @@ export const useChatStore = defineStore('chat', () => {
             } else {
                 fetchContacts()
             }
+
+            // 彈窗關閉且非自己發送 → toast 提示
+            if (!isOpen.value && msg.senderId !== authStore.user?.id) {
+                const sender = contacts.value.find(c => c.id === msg.senderId)
+                const senderName = sender?.name || '新訊息'
+                const preview = msg.content.length > 25 ? msg.content.substring(0, 25) + '…' : msg.content
+                useToast().info(`💬 ${senderName}：${preview}`)
+            }
         })
     }
 

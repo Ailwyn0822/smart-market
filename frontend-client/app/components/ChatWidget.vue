@@ -217,6 +217,34 @@ watch(() => authStore.isAuthenticated, (isAuth) => {
     }
 }, { immediate: true })
 
+// 用 Web Audio API 合成一個簡單的通知音
+function playNotificationSound() {
+    try {
+        const ctx = new AudioContext()
+        const osc = ctx.createOscillator()
+        const gain = ctx.createGain()
+        osc.connect(gain)
+        gain.connect(ctx.destination)
+        osc.type = 'sine'
+        osc.frequency.setValueAtTime(880, ctx.currentTime)
+        osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.1)
+        gain.gain.setValueAtTime(0.2, ctx.currentTime)
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4)
+        osc.start(ctx.currentTime)
+        osc.stop(ctx.currentTime + 0.4)
+    } catch { /* 瀏覽器不支援或使用者未互動則忽略 */ }
+}
+
+// 未讀數增加時：播音效 + 更新 tab 標題
+const originalTitle = import.meta.client ? document.title : 'Smart Market'
+watch(() => chatStore.totalUnread, (newVal, oldVal) => {
+    if (!import.meta.client) return
+    if (newVal > oldVal && !chatStore.isOpen) {
+        playNotificationSound()
+    }
+    document.title = newVal > 0 ? `(${newVal}) ${originalTitle}` : originalTitle
+})
+
 // 滾動到底部
 watch(() => chatStore.currentMessages, async () => {
     await nextTick()
