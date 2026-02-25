@@ -56,6 +56,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # GHCR 要求全小寫，github.repository_owner 可能含大寫
+      - name: Set lowercase image names
+        id: images
+        run: |
+          OWNER=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')
+          echo "backend=ghcr.io/${OWNER}/smart-market-backend:latest"       >> $GITHUB_OUTPUT
+          echo "backend_cache=ghcr.io/${OWNER}/smart-market-backend:cache"  >> $GITHUB_OUTPUT
+          echo "client=ghcr.io/${OWNER}/smart-market-client:latest"         >> $GITHUB_OUTPUT
+          echo "client_cache=ghcr.io/${OWNER}/smart-market-client:cache"    >> $GITHUB_OUTPUT
+          echo "admin=ghcr.io/${OWNER}/smart-market-admin:latest"           >> $GITHUB_OUTPUT
+          echo "admin_cache=ghcr.io/${OWNER}/smart-market-admin:cache"      >> $GITHUB_OUTPUT
+
       # 檢查 GHCR 上的 image 是否已存在（初次部署時全部不存在，要強制 build）
       - name: Check images exist in GHCR
         id: image_check
@@ -63,9 +75,9 @@ jobs:
           check() {
             docker manifest inspect "$1" > /dev/null 2>&1 && echo "true" || echo "false"
           }
-          echo "backend=$(check ghcr.io/${{ github.repository_owner }}/smart-market-backend:latest)" >> $GITHUB_OUTPUT
-          echo "client=$(check ghcr.io/${{ github.repository_owner }}/smart-market-client:latest)"   >> $GITHUB_OUTPUT
-          echo "admin=$(check ghcr.io/${{ github.repository_owner }}/smart-market-admin:latest)"     >> $GITHUB_OUTPUT
+          echo "backend=$(check ${{ steps.images.outputs.backend }})" >> $GITHUB_OUTPUT
+          echo "client=$(check ${{ steps.images.outputs.client }})"   >> $GITHUB_OUTPUT
+          echo "admin=$(check ${{ steps.images.outputs.admin }})"     >> $GITHUB_OUTPUT
 
       # ── Backend ──────────────────────────────
       - name: Build & Push backend
@@ -75,10 +87,9 @@ jobs:
           context: .
           file: Dockerfile.backend
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/smart-market-backend:latest
-          # 用 GHCR 存放 Docker layer cache，下次 build 可重用
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/smart-market-backend:cache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/smart-market-backend:cache,mode=max
+          tags: ${{ steps.images.outputs.backend }}
+          cache-from: type=registry,ref=${{ steps.images.outputs.backend_cache }}
+          cache-to: type=registry,ref=${{ steps.images.outputs.backend_cache }},mode=max
 
       # ── Admin ────────────────────────────────
       - name: Build & Push admin
@@ -88,11 +99,11 @@ jobs:
           context: .
           file: Dockerfile.admin
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/smart-market-admin:latest
+          tags: ${{ steps.images.outputs.admin }}
           build-args: |
             VITE_API_BASE=https://panda-map.com/api
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/smart-market-admin:cache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/smart-market-admin:cache,mode=max
+          cache-from: type=registry,ref=${{ steps.images.outputs.admin_cache }}
+          cache-to: type=registry,ref=${{ steps.images.outputs.admin_cache }},mode=max
 
       # ── Client（最慢，放最後）────────────────
       - name: Build & Push client
@@ -102,9 +113,9 @@ jobs:
           context: .
           file: Dockerfile.client
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/smart-market-client:latest
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/smart-market-client:cache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/smart-market-client:cache,mode=max
+          tags: ${{ steps.images.outputs.client }}
+          cache-from: type=registry,ref=${{ steps.images.outputs.client_cache }}
+          cache-to: type=registry,ref=${{ steps.images.outputs.client_cache }},mode=max
 
       # ── VM 只負責 pull + up ───────────────────
       - name: 部署到 GCP VM
