@@ -39,8 +39,11 @@ export const useChatStore = defineStore('chat', () => {
         if (!authStore.user?.id) return
         if (socket.value) return
 
-        // 建立連線 (Socket.io 接受 http URL)
-        socket.value = io(`${config.public.apiBase}/chat`, {
+        // 取 origin（去掉 /api 路徑），接上 /chat namespace
+        // 生產：https://panda-map.com/api → origin = https://panda-map.com
+        // 開發：http://localhost:8080 → origin = http://localhost:8080
+        const socketBase = new URL(config.public.apiBase).origin
+        socket.value = io(`${socketBase}/chat`, {
             query: { userId: authStore.user.id }
         })
 

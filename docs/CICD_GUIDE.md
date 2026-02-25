@@ -229,6 +229,7 @@ docker compose -f docker-compose.prod.yml ps
 ```bash
 ssh-keygen -t ed25519 -C "github-actions" -f ~/.ssh/github_actions -N ""
 cat ~/.ssh/github_actions.pub >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys  # 權限不正確 SSH 會拒絕讀取
 cat ~/.ssh/github_actions   # 複製私鑰內容，稍後貼到 GitHub Secrets
 ```
 
