@@ -11,7 +11,7 @@ COPY backend/package.json ./backend/
 COPY frontend-client/package.json ./frontend-client/
 COPY frontend-admin/package.json ./frontend-admin/
 
-# 安裝所有依賴（npm workspaces）
+# 安裝所有依賴（含 devDeps，build 需要）
 RUN --mount=type=cache,target=/root/.npm npm ci
 
 # 複製原始碼並建置 shared
@@ -29,8 +29,17 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-# 複製建置產物和依賴
-COPY --from=builder /app/node_modules ./node_modules
+# 複製 package.json（npm workspaces 需要全部 workspace 的 package.json）
+COPY package.json package-lock.json ./
+COPY shared/package.json ./shared/
+COPY backend/package.json ./backend/
+COPY frontend-client/package.json ./frontend-client/
+COPY frontend-admin/package.json ./frontend-admin/
+
+# 只安裝 production deps（移除所有 devDependencies，大幅縮小 node_modules）
+RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev
+
+# 複製 shared 編譯產物和 backend 建置產物
 COPY --from=builder /app/shared ./shared
 COPY --from=builder /app/backend/dist ./dist
 

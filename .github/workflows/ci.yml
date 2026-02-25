@@ -8,7 +8,7 @@ on:
 
 jobs:
   # ─────────────────────────────────────────────
-  # 1. Shared package — TypeScript type check
+  # 1. Shared package — TypeScript type check + build
   # ─────────────────────────────────────────────
   shared-check:
     runs-on: ubuntu-latest
@@ -21,10 +21,16 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: npm ci
+      # build 本身就是 tsc，已含 type check
       - name: Build shared
         run: npm run build -w shared
-      - name: TypeScript type check
-        run: npm run type-check -w shared --if-present || npx tsc --noEmit -p shared/tsconfig.json
+      # 把 shared/dist 傳給後續 job，避免重複 build
+      - name: Upload shared build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: shared-dist
+          path: shared/dist/
+          retention-days: 1
 
   # ─────────────────────────────────────────────
   # 2. Backend — type check + build
@@ -41,8 +47,11 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: npm ci
-      - name: Build shared (required for runtime imports)
-        run: npm run build -w shared
+      - name: Download shared build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: shared-dist
+          path: shared/dist/
       - name: Build Backend (NestJS compile)
         run: npm run build -w backend
 
@@ -61,14 +70,18 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: npm ci
-      - name: Build shared
-        run: npm run build -w shared
+      - name: Download shared build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: shared-dist
+          path: shared/dist/
       - name: Unit tests
         run: npm run test:unit -w frontend-client
       - name: Build (type check included)
         run: npm run build -w frontend-client
         env:
           NITRO_PRESET: node
+          NODE_OPTIONS: --max-old-space-size=4096
 
   # ─────────────────────────────────────────────
   # 4. Frontend Admin — type check + unit tests + build
@@ -85,11 +98,14 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: npm ci
-      - name: Build shared
-        run: npm run build -w shared
+      - name: Download shared build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: shared-dist
+          path: shared/dist/
       - name: TypeScript type check
         run: npm run type-check -w frontend-admin
       - name: Unit tests
-        run: npm run test:unit -w frontend-admin
+        run: npm run test:unit -w frontend-admin -- --run
       - name: Build
         run: npm run build-only -w frontend-admin

@@ -1,13 +1,18 @@
 name: Deploy to GCP
 
 on:
-  push:
+  # 等 CI workflow 全部通過才觸發部署
+  workflow_run:
+    workflows: ["CI"]
     branches: [master]
+    types: [completed]
 
 jobs:
   deploy:
     name: SSH 部署到 GCP VM
     runs-on: ubuntu-latest
+    # CI 失敗時不部署
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: 部署到 GCP VM
