@@ -10,6 +10,7 @@ export class StorageService implements OnModuleInit {
   private bucketName: string;
 
   constructor(private configService: ConfigService) {
+    this.bucketName = this.configService.getOrThrow<string>('MINIO_BUCKET');
     this.minioClient = new Minio.Client({
       endPoint: this.configService.getOrThrow<string>('MINIO_ENDPOINT'),
       port: parseInt(this.configService.getOrThrow<string>('MINIO_PORT'), 10),
@@ -18,7 +19,12 @@ export class StorageService implements OnModuleInit {
       secretKey: this.configService.getOrThrow<string>('MINIO_SECRET_KEY'),
       pathStyle: true,
     });
-    this.bucketName = this.configService.getOrThrow<string>('MINIO_BUCKET');
+    // MinIO standalone 不支援 S3 的 getBucketRegionAsync，
+    // 預先填入 regionMap cache 避免 SDK 發出 region 探索請求
+    (this.minioClient as any).regionMap = {
+      [this.bucketName]: 'us-east-1',
+      '': 'us-east-1',
+    };
   }
 
   async onModuleInit() {
