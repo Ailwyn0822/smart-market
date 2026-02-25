@@ -4,6 +4,7 @@ import path from 'node:path'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
@@ -23,6 +24,7 @@ export default defineConfig({
     }),
     vue(),
     vueDevTools(),
+    visualizer({ open: false, filename: 'dist/stats.html', gzipSize: true, brotliSize: true }) as any,
   ],
   resolve: {
     alias: {

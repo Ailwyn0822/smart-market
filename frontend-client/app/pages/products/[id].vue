@@ -19,13 +19,12 @@
             </div>
 
             <!-- 找不到商品 -->
-            <div v-else-if="!product"
-                class="flex flex-col items-center justify-center py-32 gap-4 text-gray-400">
+            <div v-else-if="!product" class="flex flex-col items-center justify-center py-32 gap-4 text-gray-400">
                 <Icon name="material-symbols:search-off" class="text-6xl" />
-                <span class="font-bold text-xl">找不到此商品</span>
+                <span class="font-bold text-xl">{{ $t('products.not_found') }}</span>
                 <NuxtLink to="/products"
                     class="mt-2 bg-primary px-6 py-2 rounded-full border-2 border-content font-bold text-content shadow-[4px_4px_0px_#1c180d]">
-                    回到商品列表
+                    {{ $t('products.back_to_list') }}
                 </NuxtLink>
             </div>
 
@@ -51,7 +50,8 @@
                             <div class="text-center -rotate-12">
                                 <span class="block text-xs font-bold font-mono-card uppercase tracking-widest mb-1">{{
                                     $t('products.price') }}</span>
-                                <span class="font-marker text-4xl">${{ parseFloat(product.price || 0).toFixed(0) }}</span>
+                                <span class="font-marker text-4xl">${{ parseFloat(product.price || 0).toFixed(0)
+                                    }}</span>
                             </div>
                         </div>
                         <div
@@ -69,21 +69,24 @@
                     </div>
 
                     <!-- 賣家資訊卡片 -->
-                    <NuxtLink v-if="sellerInfo"
-                        :to="`/seller/${sellerInfo.id}`"
+                    <NuxtLink v-if="sellerInfo" :to="`/seller/${sellerInfo.id}`"
                         class="flex items-center gap-3 bg-white/80 border-2 border-content rounded-2xl px-4 py-3 shadow-[3px_3px_0px_#1c180d] hover:shadow-[1px_1px_0px_#1c180d] hover:translate-x-0.5 hover:translate-y-0.5 transition-all group/seller w-fit">
-                        <div class="size-10 rounded-full border-2 border-content overflow-hidden bg-gray-100 shrink-0 flex items-center justify-center">
+                        <div
+                            class="size-10 rounded-full border-2 border-content overflow-hidden bg-gray-100 shrink-0 flex items-center justify-center">
                             <NuxtImg v-if="sellerInfo.avatar" :src="sellerInfo.avatar" alt="seller"
                                 class="w-full h-full object-cover" />
                             <Icon v-else name="material-symbols:person" class="text-gray-400 text-xl" />
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">賣家</span>
-                            <span class="text-sm font-black text-content group-hover/seller:text-accent-blue transition-colors">
-                                {{ sellerInfo.name || '查看賣家' }}
+                            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">{{
+                                $t('products.seller_label') }}</span>
+                            <span
+                                class="text-sm font-black text-content group-hover/seller:text-accent-blue transition-colors">
+                                {{ sellerInfo.name || $t('products.view_seller') }}
                             </span>
                         </div>
-                        <Icon name="material-symbols:chevron-right" class="text-gray-400 ml-auto group-hover/seller:translate-x-1 transition-transform" />
+                        <Icon name="material-symbols:chevron-right"
+                            class="text-gray-400 ml-auto group-hover/seller:translate-x-1 transition-transform" />
                     </NuxtLink>
 
                     <!-- Description Box -->
@@ -111,7 +114,8 @@
                         <button @click="toggleFavorite"
                             class="w-full bg-white font-bold text-base py-3 px-6 rounded-2xl border-2 border-content shadow-[4px_4px_0px_#1c180d] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-2"
                             :class="isFavorited ? 'text-accent-red' : 'text-gray-500'">
-                            <Icon :name="isFavorited ? 'material-symbols:favorite' : 'material-symbols:favorite-outline'"
+                            <Icon
+                                :name="isFavorited ? 'material-symbols:favorite' : 'material-symbols:favorite-outline'"
                                 class="text-xl" />
                             {{ isFavorited ? $t('products.unfavorite') : $t('products.favorite') }}
                         </button>
@@ -125,22 +129,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useHead } from '#imports'
+import { useI18n } from '#imports'
 
-useHead({
-    link: [
-        { href: 'https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Courier+Prime:wght@400;700&display=swap', rel: 'stylesheet' }
-    ]
-})
-
-useSeoMeta({
-    title: () => product.value ? `${product.value.name} - Smart Market` : 'Smart Market',
-    ogTitle: () => product.value?.name,
-    description: () => product.value?.description?.slice(0, 160),
-    ogDescription: () => product.value?.description?.slice(0, 160),
-    ogImage: () => product.value?.imageUrl || product.value?.image,
-    ogType: 'website',
-})
-
+const { t } = useI18n()
 const config = useRuntimeConfig()
 const route = useRoute()
 const router = useRouter()
@@ -159,12 +150,56 @@ const { data: product, pending } = await useFetch<any>(
 const sellerInfo = computed(() => {
     const p = product.value
     if (!p) return null
-    // 支援多種 API 回傳格式：seller / user / sellerId / userId 等
     const id = p.seller?.id || p.user?.id || p.sellerId || p.userId || p.seller_id || p.user_id || null
     const name = p.seller?.name || p.seller?.username || p.user?.name || p.user?.username || p.sellerName || p.seller_name || null
     const avatar = p.seller?.avatar || p.seller?.picture || p.user?.avatar || p.user?.picture || p.sellerAvatar || null
     if (!id) return null
     return { id, name, avatar }
+})
+
+// JSON-LD Product schema
+const jsonLd = computed(() => {
+    if (!product.value) return null
+    const p = product.value
+    const schema: Record<string, any> = {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: p.name || p.title,
+        description: p.description,
+        image: p.imageUrl || p.image,
+        offers: {
+            '@type': 'Offer',
+            price: parseFloat(p.price || 0).toFixed(2),
+            priceCurrency: 'TWD',
+            availability: (p.stock ?? 1) > 0
+                ? 'https://schema.org/InStock'
+                : 'https://schema.org/OutOfStock',
+        },
+    }
+    if (sellerInfo.value?.name) {
+        schema.brand = { '@type': 'Brand', name: sellerInfo.value.name }
+    }
+    return schema
+})
+
+useHead({
+    link: [
+        { href: 'https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Courier+Prime:wght@400;700&display=swap', rel: 'stylesheet' }
+    ],
+    script: computed(() =>
+        jsonLd.value
+            ? [{ type: 'application/ld+json', innerHTML: JSON.stringify(jsonLd.value) }]
+            : []
+    ),
+})
+
+useSeoMeta({
+    title: () => product.value ? `${product.value.name} - Smart Market` : 'Smart Market',
+    ogTitle: () => product.value?.name,
+    description: () => product.value?.description?.slice(0, 160),
+    ogDescription: () => product.value?.description?.slice(0, 160),
+    ogImage: () => product.value?.imageUrl || product.value?.image,
+    ogType: 'website',
 })
 
 // 收藏狀態
@@ -177,7 +212,7 @@ if (authStore.isAuthenticated) {
             headers: { Authorization: `Bearer ${authStore.token}` }
         }).catch(() => null)
         if (favRes) isFavorited.value = favRes.isFavorited ?? false
-    } catch {}
+    } catch { }
 }
 
 async function toggleFavorite() {
@@ -192,17 +227,17 @@ async function toggleFavorite() {
                 headers: { Authorization: `Bearer ${authStore.token}` }
             })
             isFavorited.value = false
-            toast.success('已取消收藏')
+            toast.success(t('toast.remove_from_favorite'))
         } else {
             await $fetch(`${config.public.apiBase}/favorites/${productId}/favorite`, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${authStore.token}` }
             })
             isFavorited.value = true
-            toast.success('已加入收藏！')
+            toast.success(t('toast.add_to_favorite'))
         }
     } catch (e) {
-        toast.error('操作失敗，請稍後再試')
+        toast.error(t('toast.error_generic'))
     }
 }
 
@@ -210,6 +245,6 @@ function addToCart() {
     if (!product.value) return
     const cartStore = useCartStore()
     cartStore.addToCart(product.value, 1)
-    toast.success('已加入購物車！')
+    toast.success(t('toast.add_to_cart'))
 }
 </script>

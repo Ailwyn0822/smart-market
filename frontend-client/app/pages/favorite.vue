@@ -65,7 +65,8 @@
                                 <!-- 已下架遮罩 -->
                                 <div v-if="product.isActive === false"
                                     class="absolute inset-0 z-20 bg-black/50 flex items-center justify-center">
-                                    <span class="bg-gray-800 text-white text-xs font-black px-3 py-1 rounded-full border-2 border-white">
+                                    <span
+                                        class="bg-gray-800 text-white text-xs font-black px-3 py-1 rounded-full border-2 border-white">
                                         {{ $t('products.delisted') }}
                                     </span>
                                 </div>
@@ -123,10 +124,12 @@
 
 <script setup lang="ts">
 import { ref, watch, shallowRef } from 'vue'
+import { useI18n } from '#imports'
 import { useAuthStore } from '~/stores/auth'
 import { useCartStore } from '~/stores/cart'
 import { useToast } from '~/composables/useToast'
 
+const { t } = useI18n()
 const config = useRuntimeConfig()
 const authStore = useAuthStore()
 const cartStore = useCartStore()
@@ -186,7 +189,7 @@ function addToCart(product: Product) {
         imageUrl: product.imageUrl,
         stock: product.stock
     } as any, 1)
-    toast.success(`已將 ${product.name} 加入購物車！`)
+    toast.success(t('toast.add_to_cart'))
 }
 
 // 登入狀態改變時重新抓取

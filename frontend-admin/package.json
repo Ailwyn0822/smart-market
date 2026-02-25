@@ -39,6 +39,7 @@
     "jsdom": "^27.4.0",
     "npm-run-all2": "^8.0.4",
     "prettier": "3.8.1",
+    "rollup-plugin-visualizer": "^6.0.5",
     "typescript": "~5.9.3",
     "unplugin-auto-import": "^21.0.0",
     "unplugin-vue-components": "^31.0.0",

@@ -73,7 +73,7 @@
                             <div class="flex items-center gap-2">
                                 <Icon name="material-symbols:calendar-month" class="text-gray-400 text-xl" />
                                 <span class="font-bold text-gray-600">加入時間：{{ formatDate(storeData.seller.joinedAt)
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
 
@@ -169,10 +169,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, shallowRef, useTemplateRef } from 'vue'
 import { useIntersectionObserver } from '@vueuse/core'
+import { useI18n } from '#imports'
 import { useAuthStore } from '~/stores/auth'
 import { useChatStore } from '~/stores/chat'
 import { useToast } from '~/composables/useToast'
 import type { ApiProduct, ProductItem } from '~/types'
+
+const { t } = useI18n()
 
 const route = useRoute()
 const config = useRuntimeConfig()
@@ -214,7 +217,7 @@ function toggleFollow() {
     localStorage.setItem(`follow_seller_${route.params.id}`, String(isFollowing.value))
 
     // 顯示提示
-    toast.success(isFollowing.value ? '已加入關注！' : '已取消關注')
+    toast.success(isFollowing.value ? t('toast.follow_add') : t('toast.follow_remove'))
 }
 
 

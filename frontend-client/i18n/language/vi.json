@@ -141,7 +141,11 @@
     "search_placeholder": "Tìm kiếm tên, mô tả...",
     "favorite": "Thêm vào yêu thích",
     "unfavorite": "Bỏ yêu thích",
-    "delisted": "Đã gỡ bán"
+    "delisted": "Đã gỡ bán",
+    "not_found": "Không tìm thấy sản phẩm",
+    "back_to_list": "Quay lại danh sách",
+    "view_seller": "Xem người bán",
+    "seller_label": "Người bán"
   },
   "cart": {
     "title": "Giỏ hàng của tôi",
@@ -174,7 +178,9 @@
     "codes_expires": "Hạn sử dụng",
     "codes_no_limit": "Không giới hạn",
     "codes_use": "Dùng mã này",
-    "codes_off": "giảm"
+    "codes_off": "giảm",
+    "discount_success_amount": "Đã áp dụng mã giảm giá! Tiết kiệm ${amount}",
+    "discount_success": "Đã áp dụng mã giảm giá!"
   },
   "register": {
     "new_member": "Thành viên mới",
@@ -212,7 +218,10 @@
     "discount": "Giảm giá",
     "total": "Tổng cộng",
     "place_order": "Đặt hàng",
-    "qty": "Số lượng"
+    "qty": "Số lượng",
+    "pay_online": "Thanh toán trực tuyến (ECPay)",
+    "pay_cod": "Thanh toán khi nhận hàng",
+    "processing": "Đang xử lý..."
   },
   "buy_order": {
     "title": "Đơn hàng của tôi",
@@ -245,15 +254,31 @@
       "cod": "Thanh toán khi nhận hàng",
       "online": "Thanh toán trực tuyến"
     },
-    "confirm_receipt": "Xác nhận đã nhận hàng",
-    "review": "Đánh giá",
-    "reviewed": "Đã đánh giá",
     "review_modal": {
       "title": "Đánh giá giao dịch này",
       "comment_placeholder": "Chia sẻ trải nghiệm của bạn...",
       "submit": "Gửi đánh giá",
       "submitting": "Đang gửi...",
       "later": "Để sau"
+    },
+    "confirm_receipt": "Xác nhận đã nhận hàng",
+    "confirm_receipt_success": "Đã xác nhận nhận hàng! Bạn có thể đánh giá ngay bây giờ.",
+    "status_update_success": "Cập nhật trạng thái thành công",
+    "status_update_failed": "Cập nhật trạng thái thất bại",
+    "review": "Đánh giá",
+    "reviewed": "Đã đánh giá",
+    "review_modal_title": "Đánh giá giao dịch",
+    "write_review": "Viết cảm nghĩ của bạn về giao dịch này... (Tùy chọn)",
+    "submitting": "Đang gửi...",
+    "submit_review": "Xác nhận gửi đánh giá",
+    "later": "Để sau",
+    "review_success": "Gửi đánh giá thành công, cảm ơn phản hồi của bạn!",
+    "review_failed": "Gửi đánh giá thất bại",
+    "status_badge": {
+      "processing": "Đang chuẩn bị",
+      "shipped": "Đã giao hàng",
+      "out_for_delivery": "Đang giao hàng",
+      "delivered": "Đã nhận hàng"
     }
   },
   "sell_order": {
@@ -361,5 +386,68 @@
         "p2": "Người bán vui lòng đóng gói sản phẩm cẩn thận và gửi qua đơn vị vận chuyển tin cậy trong vòng 3 ngày làm việc sau khi người mua thanh toán, sau đó nhấn giao hàng trên nền tảng để đảm bảo trải nghiệm mua sắm tốt nhất cho cả hai bên."
       }
     }
+  },
+  "profile": {
+    "title": "Chỉnh sửa hồ sơ",
+    "click_to_upload": "Nhấn để tải hình đại diện",
+    "uploading": "Đang tải lên...",
+    "name_label": "Tên Name",
+    "name_placeholder": "Biệt danh của bạn",
+    "email_label": "Email",
+    "email_note": "Hiện chưa hỗ trợ thay đổi email",
+    "saving": "Đang lưu...",
+    "save_changes": "Lưu thay đổi",
+    "avatar_success": "Cập nhật hình đại diện thành công!",
+    "name_required": "Vui lòng nhập tên của bạn",
+    "save_success": "Lưu thành công!",
+    "save_error": "Lưu thất bại, vui lòng thử lại sau"
+  },
+  "toast": {
+    "add_to_cart": "Đã thêm vào giỏ hàng!",
+    "add_to_favorite": "Đã thêm vào yêu thích!",
+    "remove_from_favorite": "Đã bỏ khỏi yêu thích",
+    "login_required": "Vui lòng đăng nhập trước",
+    "error_generic": "Thao tác thất bại, vui lòng thử lại",
+    "order_success": "Đặt hàng thành công!",
+    "order_error": "Đặt hàng thất bại, vui lòng thử lại.",
+    "ecpay_redirect": "Đang chuyển hướng đến trang thanh toán ECPay...",
+    "status_updated": "Trạng thái đơn hàng đã được cập nhật",
+    "status_error": "Cập nhật trạng thái thất bại",
+    "review_success": "Đã gửi đánh giá, cảm ơn bạn!",
+    "review_error": "Gửi đánh giá thất bại",
+    "confirm_receipt": "Đã xác nhận nhận hàng! Bạn có thể để lại đánh giá.",
+    "follow_add": "Đã theo dõi!",
+    "follow_remove": "Đã bỏ theo dõi",
+    "chat_login_required": "Vui lòng đăng nhập để nhắn tin!",
+    "chat_self": "Không thể tự nhắn tin cho mình!",
+    "discount_empty": "Vui lòng nhập mã giảm giá",
+    "discount_success": "Mã giảm giá đã được áp dụng!",
+    "shipment_confirmed": "Đơn hàng đã được đánh dấu là đã gửi hàng!",
+    "upload_success": "Đăng sản phẩm thành công!",
+    "upload_error": "Đăng sản phẩm thất bại, vui lòng thử lại"
+  },
+  "menu": {
+    "notifications": "Thông báo",
+    "mark_all_read": "Đánh dấu tất cả là đã đọc",
+    "no_notifications": "Không có thông báo mới",
+    "profile_settings": "Cài đặt hồ sơ",
+    "buyer_center": "Trung tâm người mua",
+    "seller_center": "Trung tâm người bán",
+    "seller_dashboard": "Bảng điều khiển người bán",
+    "sales_orders": "Quản lý đơn hàng",
+    "my_products": "Sản phẩm của tôi",
+    "favorites": "Mục yêu thích"
+  },
+  "chat": {
+    "title": "Trò chuyện",
+    "messages": "Tin nhắn",
+    "search_placeholder": "Tìm kiếm tài khoản...",
+    "search_results": "Kết quả tìm kiếm",
+    "no_user_found": "Không tìm thấy tài khoản",
+    "no_messages": "Chưa có tin nhắn nào",
+    "search_to_start": "Tìm kiếm tài khoản để bắt đầu",
+    "click_to_start": "Nhấn để bắt đầu trò chuyện",
+    "say_hi": "Gửi lời chào đi!",
+    "type_message": "Nhập tin nhắn..."
   }
 }

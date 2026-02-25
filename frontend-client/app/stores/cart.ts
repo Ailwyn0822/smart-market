@@ -33,7 +33,7 @@ export const useCartStore = defineStore('cart', () => {
 
     // �?checkout.vue ??cart.vue 使用?�統一變數
     const subtotal = computed(() => c_subtotal.value)
-    const shipping = computed(() => items.value.length > 0 ? 5.00 : 0)
+    const shipping = computed(() => 0)
     const total = computed(() => {
         const calc = subtotal.value + shipping.value - discountAmount.value
         return calc > 0 ? calc : 0

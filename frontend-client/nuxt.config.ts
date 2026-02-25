@@ -1,7 +1,9 @@
+import { visualizer } from 'rollup-plugin-visualizer'
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ['@nuxtjs/tailwindcss', '@nuxt/image', '@nuxt/icon', '@pinia/nuxt', '@nuxtjs/i18n', '@nuxtjs/sitemap'],
+  modules: ['@nuxtjs/tailwindcss', '@nuxt/image', '@nuxt/icon', '@pinia/nuxt', '@nuxtjs/i18n', '@nuxtjs/sitemap', '@nuxt/test-utils/module'],
   sitemap: {
     sitemaps: true,
     sources: ['/api/__sitemap__/urls'],
@@ -54,8 +56,33 @@ export default defineNuxtConfig({
         { name: 'format-detection', content: 'telephone=no' }
       ],
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }
       ]
+    }
+  },
+  vite: {
+    plugins: [
+      visualizer({
+        open: false,
+        filename: '.output/stats.html',
+        gzipSize: true,
+        brotliSize: true
+      }) as any
+    ],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // Nuxt/Vue 核心庫
+            'vue-vendor': ['vue', 'vue-router', 'pinia'],
+            // 其他較大的依賴可以獨立分包
+            'socket-client': ['socket.io-client'],
+            'dayjs': ['dayjs']
+          }
+        }
+      }
     }
   }
 })

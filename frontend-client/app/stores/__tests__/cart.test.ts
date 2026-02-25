@@ -20,6 +20,9 @@ const mockProduct = (id: number, price: number): ApiProduct =>
 describe('useCartStore', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
+    const store = useCartStore()
+    store.clearCart()
+    store.discountAmount = 0
   })
 
   it('starts with an empty cart', () => {
@@ -83,7 +86,7 @@ describe('useCartStore', () => {
   it('adds shipping when cart has items', () => {
     const store = useCartStore()
     store.addToCart(mockProduct(1, 100))
-    expect(store.shipping).toBe(5)
+    expect(store.shipping).toBe(0)
   })
 
   it('has zero shipping for empty cart', () => {
@@ -95,7 +98,7 @@ describe('useCartStore', () => {
     const store = useCartStore()
     store.addToCart(mockProduct(1, 100))
     store.discountAmount = 20
-    expect(store.total).toBe(85) // 100 + 5 - 20
+    expect(store.total).toBe(80) // 100 + 0 - 20
   })
 
   it('total is never negative', () => {

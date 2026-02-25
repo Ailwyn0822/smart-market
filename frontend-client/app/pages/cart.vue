@@ -51,8 +51,8 @@
                                 <!-- 商品圖片 -->
                                 <div
                                     class="w-24 h-24 shrink-0 bg-gray-100 rounded-xl overflow-hidden border-2 border-dashed border-gray-300">
-                                    <img :src="item.product.imageUrl || item.product.image" :alt="item.product.name"
-                                        class="w-full h-full object-cover" />
+                                    <NuxtImg :src="item.product.imageUrl" :alt="item.product.name" format="webp"
+                                        loading="lazy" class="w-full h-full object-cover" />
                                 </div>
 
                                 <!-- 商品資訊 -->
@@ -68,7 +68,8 @@
                                     <div class="mt-2 flex items-center gap-4">
                                         <div
                                             class="flex items-center gap-2 bg-gray-50 rounded-lg border border-gray-200 px-2 py-1">
-                                            <button @click="cartStore.updateQuantity(item.product.id, item.quantity - 1)"
+                                            <button
+                                                @click="cartStore.updateQuantity(item.product.id, item.quantity - 1)"
                                                 class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-content rounded hover:bg-gray-200 transition-colors">
                                                 <Icon name="material-symbols:remove" class="text-sm" />
                                             </button>
@@ -80,7 +81,8 @@
                                                 <Icon name="material-symbols:add" class="text-sm" />
                                             </button>
                                         </div>
-                                        <span v-if="item.product.stock !== undefined && item.product.stock <= 3 && item.product.stock > 0"
+                                        <span
+                                            v-if="item.product.stock !== undefined && item.product.stock <= 3 && item.product.stock > 0"
                                             class="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded-md border border-orange-100">
                                             {{ $t('cart.last_one') }}
                                         </span>
@@ -123,8 +125,7 @@
                                         <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider">
                                             {{ $t('cart.discount_code') }}
                                         </label>
-                                        <button @click="openCodesModal"
-                                            :title="$t('cart.view_codes')"
+                                        <button @click="openCodesModal" :title="$t('cart.view_codes')"
                                             class="w-5 h-5 rounded-full bg-accent-blue text-white text-xs font-black inline-flex items-center justify-center border-2 border-content hover:bg-blue-700 transition-colors shrink-0">
                                             !
                                         </button>
@@ -143,8 +144,7 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <p v-if="discountMessage"
-                                        class="mt-1 text-xs font-bold"
+                                    <p v-if="discountMessage" class="mt-1 text-xs font-bold"
                                         :class="discountMessage.ok ? 'text-green-600' : 'text-accent-red'">
                                         {{ discountMessage.text }}
                                     </p>
@@ -169,7 +169,8 @@
                                 <!-- 總計 -->
                                 <div class="flex justify-between items-end border-t-2 border-content pt-4 mb-8">
                                     <span class="font-bold text-lg text-content">{{ $t('cart.total') }}</span>
-                                    <span class="font-black text-3xl text-content">${{ cartStore.total.toFixed(2) }}</span>
+                                    <span class="font-black text-3xl text-content">${{ cartStore.total.toFixed(2)
+                                    }}</span>
                                 </div>
 
                                 <!-- 結帳按鈕 -->
@@ -213,8 +214,7 @@
                         <Icon name="material-symbols:local-offer" class="text-xl" />
                         {{ $t('cart.codes_modal_title') }}
                     </h3>
-                    <button @click="showCodesModal = false"
-                        class="text-white hover:text-gray-200 transition-colors">
+                    <button @click="showCodesModal = false" class="text-white hover:text-gray-200 transition-colors">
                         <Icon name="material-symbols:close" class="text-2xl" />
                     </button>
                 </div>
@@ -223,8 +223,7 @@
                     <div v-if="loadingCodes" class="text-center py-8 text-gray-400 font-medium">
                         {{ $t('cart.codes_loading') }}
                     </div>
-                    <div v-else-if="availableCodes.length === 0"
-                        class="text-center py-8 text-gray-400 font-medium">
+                    <div v-else-if="availableCodes.length === 0" class="text-center py-8 text-gray-400 font-medium">
                         {{ $t('cart.codes_empty') }}
                     </div>
                     <div v-else class="space-y-3">
@@ -261,12 +260,9 @@
 
 <script setup lang="ts">
 import { useCartStore } from '~/stores/cart'
+import { useI18n } from '#imports'
 
-// ===== SEO =====
-useHead({
-    title: 'Cart | Smart Market',
-})
-
+const { t } = useI18n()
 const cartStore = useCartStore()
 const toast = useToast()
 
@@ -309,7 +305,7 @@ const selectCode = (code: string) => {
 const applyDiscount = async () => {
     const code = discountCode.value.trim().toUpperCase()
     if (!code) {
-        discountMessage.value = { ok: false, text: '請輸入折扣碼' }
+        discountMessage.value = { ok: false, text: t('toast.discount_empty') }
         return
     }
     try {
@@ -319,12 +315,12 @@ const applyDiscount = async () => {
         })
         cartStore.discountAmount = parseFloat(res.discountAmount)
         cartStore.appliedDiscountCode = res.code
-        discountMessage.value = { ok: true, text: `折扣碼套用成功！折抵 $${parseFloat(res.discountAmount).toFixed(0)}` }
-        toast.success('折扣碼套用成功！')
+        discountMessage.value = { ok: true, text: t('cart.discount_success_amount', { amount: parseFloat(res.discountAmount).toFixed(0) }) }
+        toast.success(t('cart.discount_success'))
     } catch (e: any) {
         cartStore.discountAmount = 0
         cartStore.appliedDiscountCode = ''
-        discountMessage.value = { ok: false, text: e?.data?.message || '折扣碼無效' }
+        discountMessage.value = { ok: false, text: e?.data?.message || t('toast.error_generic') }
     }
 }
 

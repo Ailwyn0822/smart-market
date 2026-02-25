@@ -1,4 +1,4 @@
-import { ref, watch, onUnmounted, toRef } from 'vue'
+import { ref, watch, onScopeDispose, getCurrentScope, toRef } from 'vue'
 import type { MaybeRefOrGetter } from 'vue'
 
 /**
@@ -15,13 +15,15 @@ export function useDebounce<T>(source: MaybeRefOrGetter<T>, delay: number = 300)
     watch(sourceRef, (val) => {
         if (timer) clearTimeout(timer)
         timer = setTimeout(() => {
-            debouncedValue.value = val
+            debouncedValue.value = val as T
         }, delay)
     })
 
-    onUnmounted(() => {
-        if (timer) clearTimeout(timer)
-    })
+    if (getCurrentScope()) {
+        onScopeDispose(() => {
+            if (timer) clearTimeout(timer)
+        })
+    }
 
     return debouncedValue
 }

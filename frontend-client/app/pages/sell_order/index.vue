@@ -27,17 +27,17 @@
                 <!-- Loading -->
                 <div v-if="isLoading" class="relative z-10 ml-8 flex flex-col items-center justify-center py-16 gap-3">
                     <Icon name="material-symbols:sync" class="text-5xl text-accent-red animate-spin" />
-                    <p class="font-bold text-gray-400">載入中...</p>
+                    <p class="font-bold text-gray-400">{{ $t("sell_order.loading") }}</p>
                 </div>
 
                 <!-- 未登入 -->
                 <div v-else-if="!authStore.isAuthenticated"
                     class="relative z-10 ml-8 flex flex-col items-center justify-center py-16 gap-4">
                     <Icon name="material-symbols:lock" class="text-5xl text-gray-300" />
-                    <p class="font-bold text-gray-400 text-lg">請先登入</p>
+                    <p class="font-bold text-gray-400 text-lg">{{ $t("sell_order.login_required") }}</p>
                     <NuxtLink to="/login"
                         class="inline-flex items-center gap-2 bg-primary px-5 py-2 rounded-lg border-2 border-content text-content font-bold text-sm shadow-stitch-sm hover:translate-y-0.5 hover:shadow-none transition-all">
-                        登入
+                        {{ $t("auth.login") }}
                     </NuxtLink>
                 </div>
 
@@ -45,10 +45,10 @@
                 <div v-else-if="orders.length === 0"
                     class="relative z-10 ml-8 flex flex-col items-center justify-center py-16 gap-4">
                     <Icon name="material-symbols:package-2-outline" class="text-6xl text-gray-300" />
-                    <p class="font-bold text-gray-400 text-lg">目前沒有銷售訂單</p>
+                    <p class="font-bold text-gray-400 text-lg">{{ $t("sell_order.empty") }}</p>
                     <NuxtLink to="/"
                         class="inline-flex items-center gap-2 bg-primary px-5 py-2 rounded-lg border-2 border-content text-content font-bold text-sm shadow-stitch-sm hover:translate-y-0.5 hover:shadow-none transition-all">
-                        回首頁
+                        {{ $t("sell_order.go_home") }}
                     </NuxtLink>
                 </div>
 
@@ -73,7 +73,8 @@
                                 <h3 class="font-black text-content text-sm truncate">{{ displayProductName(order) }}
                                 </h3>
                                 <p class="text-xs text-gray-400 font-mono-card">#{{ order.orderNumber }}</p>
-                                <p class="text-xs text-gray-400 mt-0.5">下單時間: {{ formatDate(order.createdAt) }}</p>
+                                <p class="text-xs text-gray-400 mt-0.5">{{ $t("sell_order.order_time") }}: {{
+                                    formatDate(order.createdAt) }}</p>
                             </div>
 
                             <!-- 金額 -->
@@ -87,7 +88,8 @@
                                 <span>{{ $t('buy_order.status.' + order.status) }}</span>
                                 <button v-if="order.status === 'processing'"
                                     @click.stop="updateStatus(order.id, 'out_for_delivery')"
-                                    class="bg-accent-blue text-white px-2 py-1 rounded bg-opacity-90 hover:bg-opacity-100 text-[12px]">確認出貨</button>
+                                    class="bg-accent-blue text-white px-2 py-1 rounded bg-opacity-90 hover:bg-opacity-100 text-[12px]">{{
+                                        $t("sell_order.confirm_shipment") }}</button>
                             </div>
                             <div class="w-full h-2.5 bg-gray-100 rounded-full border border-gray-200 overflow-hidden">
                                 <div class="h-full rounded-full transition-all duration-500" :class="{
@@ -99,10 +101,10 @@
                                 </div>
                             </div>
                             <div class="flex justify-between text-[10px] text-gray-300 mt-0.5">
-                                <span>處理中</span>
-                                <span>已出貨</span>
-                                <span>配送中</span>
-                                <span>已送達</span>
+                                <span>{{ $t("buy_order.status.processing") }}</span>
+                                <span>{{ $t("buy_order.status.shipped") }}</span>
+                                <span>{{ $t("buy_order.status.out_for_delivery") }}</span>
+                                <span>{{ $t("buy_order.status.delivered") }}</span>
                             </div>
                         </div>
                     </div>
@@ -114,8 +116,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted, shallowRef } from 'vue'
+import { useI18n } from '#imports'
 import { useAuthStore } from '~/stores/auth'
 
+const { t } = useI18n()
 useHead({ title: 'My Sales Orders | Smart Market' })
 
 const authStore = useAuthStore()
@@ -181,13 +185,13 @@ async function updateStatus(orderId: number, status: string) {
         })
         fetchOrders()
         if (status === 'out_for_delivery') {
-            toast.success('訂單已標記為出貨（配送中）！')
+            toast.success(t('toast.shipment_confirmed'))
         } else {
-            toast.success('狀態更新成功')
+            toast.success(t('toast.status_updated'))
         }
     } catch (e) {
         console.error(e)
-        toast.error('狀態更新失敗')
+        toast.error(t('toast.status_error'))
     }
 }
 

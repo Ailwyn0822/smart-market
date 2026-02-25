@@ -141,7 +141,11 @@
     "search_placeholder": "Search by name or description...",
     "favorite": "Add to Favorites",
     "unfavorite": "Remove from Favorites",
-    "delisted": "Delisted"
+    "delisted": "Delisted",
+    "not_found": "Product not found",
+    "back_to_list": "Back to product list",
+    "view_seller": "View Seller",
+    "seller_label": "Seller"
   },
   "cart": {
     "title": "My Cart",
@@ -174,7 +178,9 @@
     "codes_expires": "Expires",
     "codes_no_limit": "No limit",
     "codes_use": "Use this code",
-    "codes_off": "off"
+    "codes_off": "off",
+    "discount_success_amount": "Discount applied! Saved ${amount}",
+    "discount_success": "Discount applied!"
   },
   "register": {
     "new_member": "New Member",
@@ -212,7 +218,10 @@
     "discount": "Discount",
     "total": "Total",
     "place_order": "Place Order",
-    "qty": "Quantity"
+    "qty": "Quantity",
+    "pay_online": "Online Payment (ECPay)",
+    "pay_cod": "Cash on Delivery",
+    "processing": "Processing..."
   },
   "buy_order": {
     "title": "My Orders",
@@ -245,15 +254,31 @@
       "cod": "Cash on Delivery",
       "online": "Online Payment"
     },
-    "confirm_receipt": "Confirm Receipt",
-    "review": "Review",
-    "reviewed": "Reviewed",
     "review_modal": {
       "title": "Rate This Transaction",
       "comment_placeholder": "Share your experience...",
       "submit": "Submit Review",
       "submitting": "Submitting...",
       "later": "Maybe Later"
+    },
+    "confirm_receipt": "Confirm Receipt",
+    "confirm_receipt_success": "Receipt confirmed! You can now review the order.",
+    "status_update_success": "Status updated successfully",
+    "status_update_failed": "Failed to update status",
+    "review": "Review",
+    "reviewed": "Reviewed",
+    "review_modal_title": "Review this transaction",
+    "write_review": "Write your thoughts about this transaction... (Optional)",
+    "submitting": "Submitting...",
+    "submit_review": "Submit Review",
+    "later": "Later",
+    "review_success": "Review submitted successfully, thank you!",
+    "review_failed": "Failed to submit review",
+    "status_badge": {
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "out_for_delivery": "Out for delivery",
+      "delivered": "Delivered"
     }
   },
   "sell_order": {
@@ -361,5 +386,68 @@
         "p2": "Sellers should securely package and ship the item using a trusted logistics provider within three working days after the buyer's payment, then click ship on the platform."
       }
     }
+  },
+  "profile": {
+    "title": "Edit Profile",
+    "click_to_upload": "Click to upload avatar",
+    "uploading": "Uploading...",
+    "name_label": "Name",
+    "name_placeholder": "Your nickname",
+    "email_label": "Email",
+    "email_note": "Email modification is currently not supported",
+    "saving": "Saving...",
+    "save_changes": "Save Changes",
+    "avatar_success": "Avatar successfully updated!",
+    "name_required": "Please enter your name",
+    "save_success": "Saved successfully!",
+    "save_error": "Save failed, please try again"
+  },
+  "toast": {
+    "add_to_cart": "Added to cart!",
+    "add_to_favorite": "Added to favorites!",
+    "remove_from_favorite": "Removed from favorites",
+    "login_required": "Please log in first",
+    "error_generic": "Operation failed, please try again",
+    "order_success": "Order placed!",
+    "order_error": "Order failed, please try again.",
+    "ecpay_redirect": "Redirecting to ECPay payment page...",
+    "status_updated": "Order status updated",
+    "status_error": "Failed to update status",
+    "review_success": "Review submitted, thank you!",
+    "review_error": "Failed to submit review",
+    "confirm_receipt": "Receipt confirmed! You can now leave a review.",
+    "follow_add": "Now following!",
+    "follow_remove": "Unfollowed",
+    "chat_login_required": "Please log in to chat with sellers!",
+    "chat_self": "You can't chat with yourself!",
+    "discount_empty": "Please enter a discount code",
+    "discount_success": "Discount code applied!",
+    "shipment_confirmed": "Order marked as shipped (In Transit)!",
+    "upload_success": "Product listed successfully!",
+    "upload_error": "Failed to list product, please try again"
+  },
+  "menu": {
+    "notifications": "Notifications",
+    "mark_all_read": "Mark all as read",
+    "no_notifications": "No notifications",
+    "profile_settings": "Profile Settings",
+    "buyer_center": "Buyer Center",
+    "seller_center": "Seller Center",
+    "seller_dashboard": "Seller Dashboard",
+    "sales_orders": "Sales Orders",
+    "my_products": "My Products",
+    "favorites": "My Favorites"
+  },
+  "chat": {
+    "title": "Chat",
+    "messages": "Messages",
+    "search_placeholder": "Search account...",
+    "search_results": "Search Results",
+    "no_user_found": "Account not found",
+    "no_messages": "No messages yet",
+    "search_to_start": "Search account to start chat",
+    "click_to_start": "Click to start chat",
+    "say_hi": "Say hi!",
+    "type_message": "Type a message..."
   }
 }

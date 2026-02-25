@@ -29,12 +29,12 @@
                         class="absolute right-0 top-12 w-80 max-h-96 overflow-y-auto bg-white rounded-2xl shadow-xl border-2 border-content z-[60] flex flex-col">
                         <div
                             class="p-3 border-b-2 border-content/10 flex justify-between items-center sticky top-0 bg-white z-10">
-                            <span class="font-bold text-content text-sm">通知中心</span>
+                            <span class="font-bold text-content text-sm">{{ $t('menu.notifications') }}</span>
                             <button v-if="unreadCount > 0" @click.stop="markAllAsRead"
-                                class="text-xs text-accent-blue hover:underline">全部標為已讀</button>
+                                class="text-xs text-accent-blue hover:underline">{{ $t('menu.mark_all_read') }}</button>
                         </div>
                         <div v-if="notifications.length === 0" class="p-6 text-center text-sm text-gray-500">
-                            目前沒有通知
+                            {{ $t('menu.no_notifications') }}
                         </div>
                         <div v-else class="flex flex-col">
                             <div v-for="notif in notifications" :key="notif.id"
@@ -99,7 +99,7 @@
                             <button @click="handleAction('/profile')"
                                 class="w-full text-left px-3 py-2 text-sm font-bold text-content hover:bg-gray-100 rounded-xl flex items-center gap-3 transition-colors">
                                 <Icon name="material-symbols:manage-accounts-outline" class="text-lg" />
-                                個人資料設定
+                                {{ $t('menu.profile_settings') }}
                             </button>
                         </div>
                         <div class="h-px bg-gray-100 my-1 mx-2"></div>
@@ -109,7 +109,7 @@
                             <div
                                 class="px-3 py-1 flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-wider">
                                 <Icon name="material-symbols:shopping-bag-outline" class="text-base" />
-                                買家中心
+                                {{ $t('menu.buyer_center') }}
                             </div>
                             <button @click="handleAction('/cart')"
                                 class="w-full text-left px-3 py-2 text-sm font-bold text-content hover:bg-accent-blue/10 hover:text-accent-blue rounded-xl flex items-center gap-3 transition-colors">
@@ -126,7 +126,7 @@
                             <button @click="handleAction('/favorite')"
                                 class="w-full text-left px-3 py-2 text-sm font-bold text-content hover:bg-accent-red/10 hover:text-accent-red rounded-xl flex items-center gap-3 transition-colors">
                                 <Icon name="material-symbols:favorite-outline" class="text-lg" />
-                                我的收藏
+                                {{ $t('menu.favorites') }}
                             </button>
                         </div>
 
@@ -137,24 +137,24 @@
                             <div
                                 class="px-3 py-1 flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-wider">
                                 <Icon name="material-symbols:storefront-outline" class="text-base" />
-                                賣家中心
+                                {{ $t('menu.seller_center') }}
                             </div>
                             <button @click="handleAction('/seller/dashboard')"
                                 class="w-full text-left px-3 py-2 text-sm font-bold text-content hover:bg-accent-blue/10 hover:text-accent-blue rounded-xl flex items-center gap-3 transition-colors">
                                 <Icon name="material-symbols:insert-chart-outline" class="text-lg" />
-                                賣家儀表板
+                                {{ $t('menu.seller_dashboard') }}
                             </button>
 
                             <button @click="handleAction('/sell_order')"
                                 class="w-full text-left px-3 py-2 text-sm font-bold text-content hover:bg-primary/10 hover:text-yellow-600 rounded-xl flex items-center gap-3 transition-colors">
                                 <Icon name="material-symbols:list-alt" class="text-lg" />
-                                銷售訂單管理
+                                {{ $t('menu.sales_orders') }}
                             </button>
 
                             <button @click="handleAction('/commodity')"
                                 class="w-full text-left px-3 py-2 text-sm font-bold text-content hover:bg-accent-blue/10 hover:text-accent-blue rounded-xl flex items-center gap-3 transition-colors">
                                 <Icon name="material-symbols:folder-open" class="text-lg" />
-                                我的商品
+                                {{ $t('menu.my_products') }}
                             </button>
                         </div>
 

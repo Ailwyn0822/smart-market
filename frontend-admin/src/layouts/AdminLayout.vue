@@ -8,38 +8,49 @@
           <span class="logo-text">Smart Market</span>
         </div>
 
-        <el-menu
-          :default-active="activeMenu"
-          router
-          class="sidebar-menu"
-          background-color="#001529"
-          text-color="#ccc"
-          active-text-color="#fff"
-        >
+        <el-menu :default-active="activeMenu" router class="sidebar-menu" background-color="#001529" text-color="#ccc"
+          active-text-color="#fff">
           <el-menu-item index="/admin/dashboard">
-            <el-icon><House /></el-icon>
+            <el-icon>
+              <House />
+            </el-icon>
             <span>儀表板</span>
           </el-menu-item>
 
           <el-sub-menu index="management">
             <template #title>
-              <el-icon><Setting /></el-icon>
+              <el-icon>
+                <Setting />
+              </el-icon>
               <span>內容管理</span>
             </template>
 
             <el-menu-item index="/admin/categories">
-              <el-icon><Menu /></el-icon>
+              <el-icon>
+                <Menu />
+              </el-icon>
               <span>類別管理</span>
             </el-menu-item>
 
             <el-menu-item index="/admin/products">
-              <el-icon><ShoppingBag /></el-icon>
+              <el-icon>
+                <ShoppingBag />
+              </el-icon>
               <span>商品管理</span>
             </el-menu-item>
 
             <el-menu-item index="/admin/users">
-              <el-icon><User /></el-icon>
+              <el-icon>
+                <User />
+              </el-icon>
               <span>會員管理</span>
+            </el-menu-item>
+
+            <el-menu-item index="/admin/orders">
+              <el-icon>
+                <List />
+              </el-icon>
+              <span>訂單管理</span>
             </el-menu-item>
           </el-sub-menu>
         </el-menu>
@@ -71,7 +82,7 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
-import { House, Setting, Menu, ShoppingBag, User } from '@element-plus/icons-vue'
+import { House, Setting, Menu, ShoppingBag, User, List } from '@element-plus/icons-vue'
 import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()

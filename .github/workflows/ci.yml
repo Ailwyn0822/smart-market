@@ -10,79 +10,63 @@ jobs:
   # ─────────────────────────────────────────────
   # 1. Shared package — TypeScript type check
   # ─────────────────────────────────────────────
-  shared-build:
+  shared-check:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./shared
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
           cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: npm ci
-      - name: Build shared (compile to dist/)
-        run: npm run build
+      - name: Build shared
+        run: npm run build -w shared
       - name: TypeScript type check
-        run: npx tsc --noEmit
+        run: npm run type-check -w shared --if-present || npx tsc --noEmit -p shared/tsconfig.json
 
   # ─────────────────────────────────────────────
   # 2. Backend — type check + build
   # ─────────────────────────────────────────────
   backend-check:
-    needs: shared-build
+    needs: shared-check
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./backend
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
           cache-dependency-path: package-lock.json
-      - name: Install shared dependencies
-        working-directory: ./shared
+      - name: Install dependencies
         run: npm ci
       - name: Build shared (required for runtime imports)
-        working-directory: ./shared
-        run: npm run build
-      - name: Install backend dependencies
-        run: npm ci
-      - name: Build (NestJS compile)
-        run: npm run build
+        run: npm run build -w shared
+      - name: Build Backend (NestJS compile)
+        run: npm run build -w backend
 
   # ─────────────────────────────────────────────
   # 3. Frontend Client — unit tests + build
   # ─────────────────────────────────────────────
   client-check:
-    needs: shared-build
+    needs: shared-check
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend-client
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
           cache-dependency-path: package-lock.json
-      - name: Install shared dependencies
-        working-directory: ./shared
+      - name: Install dependencies
         run: npm ci
-      - name: Install frontend-client dependencies
-        run: npm ci
-      - name: Nuxt prepare
-        run: npm run postinstall
+      - name: Build shared
+        run: npm run build -w shared
       - name: Unit tests
-        run: npm run test:unit
+        run: npm run test:unit -w frontend-client
       - name: Build (type check included)
-        run: npm run build
+        run: npm run build -w frontend-client
         env:
           NITRO_PRESET: node
 
@@ -90,26 +74,22 @@ jobs:
   # 4. Frontend Admin — type check + unit tests + build
   # ─────────────────────────────────────────────
   admin-check:
-    needs: shared-build
+    needs: shared-check
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend-admin
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
           cache-dependency-path: package-lock.json
-      - name: Install shared dependencies
-        working-directory: ./shared
+      - name: Install dependencies
         run: npm ci
-      - name: Install frontend-admin dependencies
-        run: npm ci
+      - name: Build shared
+        run: npm run build -w shared
       - name: TypeScript type check
-        run: npm run type-check
+        run: npm run type-check -w frontend-admin
       - name: Unit tests
-        run: npm run test:unit
+        run: npm run test:unit -w frontend-admin
       - name: Build
-        run: npm run build-only
+        run: npm run build-only -w frontend-admin

@@ -42,7 +42,7 @@
                                 </div>
 
                                 <!-- Preview Image -->
-                                <img v-if="formData.imageUrl" :src="formData.imageUrl"
+                                <NuxtImg v-if="formData.imageUrl" :src="formData.imageUrl" format="webp"
                                     class="absolute inset-0 w-full h-full object-cover z-10" />
 
                                 <!-- Upload Prompt -->
@@ -94,7 +94,8 @@
                             <select v-model="formData.category"
                                 class="w-full bg-white/80 border-0 rounded-lg px-4 py-3 text-gray-800 focus:ring-2 focus:ring-primary focus:bg-white transition-all shadow-sm appearance-none cursor-pointer">
                                 <option value="">{{ $t('upload.form.category_placeholder') }}</option>
-                                <option v-for="cat in categories" :key="cat.id" :value="cat.name">{{ cat.icon }} {{ cat.name }}</option>
+                                <option v-for="cat in categories" :key="cat.id" :value="cat.name">{{ cat.icon }} {{
+                                    cat.name }}</option>
                             </select>
                             <Icon name="material-symbols:expand-more"
                                 class="absolute right-3 top-1/2 -translate-y-1/2 text-pink-400 pointer-events-none" />
@@ -158,7 +159,9 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth';
+import { validateProductForm } from '@/utils/validation';
 
+const { t } = useI18n();
 const config = useRuntimeConfig();
 const authStore = useAuthStore();
 const toast = useToast();
@@ -198,7 +201,7 @@ const handleDrop = (event: DragEvent) => {
 
 const processFile = async (file: File) => {
     if (!file.type.startsWith('image/')) {
-        toast.error('請上傳圖片檔案');
+        toast.error('Please upload an image file.');
         return;
     }
 
@@ -217,8 +220,8 @@ const processFile = async (file: File) => {
     try {
         const token = authStore.token;
         if (!token) {
-            toast.error('請先登入');
-            return;
+            toast.error(t('toast.login_required'));
+            isLoading.value = false;
         }
 
         const response = await $fetch<{
@@ -246,15 +249,23 @@ const processFile = async (file: File) => {
         }
     } catch (error) {
         console.error('Failed to analyze image:', error);
-        toast.error('圖片分析失敗，請再試一次');
+        toast.error(t('toast.error_generic'));
     } finally {
         isLoading.value = false;
     }
 };
 
 const submitForm = async () => {
-    if (!formData.name || !formData.description || !formData.category || !formData.price || !formData.imageUrl) {
-        toast.error('請填寫所有欄位');
+    const { isValid } = validateProductForm({
+        name: formData.name,
+        description: formData.description,
+        category: formData.category,
+        price: formData.price,
+        imageUrl: formData.imageUrl
+    });
+
+    if (!isValid) {
+        toast.error(t('toast.error_generic'));
         return;
     }
 
@@ -263,7 +274,8 @@ const submitForm = async () => {
     try {
         const token = authStore.token;
         if (!token) {
-            toast.error('請先登入');
+            toast.error(t('toast.login_required'));
+            isLoading.value = false;
             return;
         }
 
@@ -282,7 +294,7 @@ const submitForm = async () => {
             }
         });
 
-        toast.success('商品上架成功！');
+        toast.success(t('toast.upload_success'));
         Object.assign(formData, {
             name: '',
             description: '',
@@ -293,7 +305,7 @@ const submitForm = async () => {
         });
     } catch (error) {
         console.error('Failed to upload product:', error);
-        toast.error('上架失敗，請再試一次');
+        toast.error(t('toast.upload_error'));
     } finally {
         isLoading.value = false;
     }

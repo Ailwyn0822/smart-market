@@ -7,7 +7,7 @@
                 class="inline-flex items-center gap-2 mb-6 font-bold text-content hover:text-accent-red transition-colors group">
                 <Icon name="material-symbols:arrow-back"
                     class="text-xl group-hover:-translate-x-1 transition-transform" />
-                返回賣家訂單
+                {{ $t("sell_order.go_home") }}
             </NuxtLink>
 
             <!-- 主筆記本容器 -->
@@ -33,16 +33,16 @@
                     <!-- Loading -->
                     <div v-if="isLoading" class="flex flex-col items-center justify-center py-16 gap-3">
                         <Icon name="material-symbols:sync" class="text-5xl text-accent-red animate-spin" />
-                        <p class="font-bold text-gray-400">載入中...</p>
+                        <p class="font-bold text-gray-400">{{ $t("sell_order.loading") }}</p>
                     </div>
 
                     <!-- 404 -->
                     <div v-else-if="!order" class="flex flex-col items-center justify-center py-16 gap-4">
                         <Icon name="material-symbols:package-2-outline" class="text-6xl text-gray-300" />
-                        <p class="font-bold text-gray-400 text-lg">找不到此訂單</p>
+                        <p class="font-bold text-gray-400 text-lg">{{ $t("sell_order.not_found") }}</p>
                         <NuxtLink to="/sell_order"
                             class="inline-flex items-center gap-2 bg-primary px-5 py-2 rounded-lg border-2 border-content text-content font-bold text-sm shadow-stitch-sm hover:translate-y-0.5 hover:shadow-none transition-all">
-                            返回賣家訂單
+                            {{ $t("sell_order.go_home") }}
                         </NuxtLink>
                     </div>
 
@@ -56,10 +56,11 @@
                                 class="inline-flex items-center gap-2 bg-white border-2 border-content rounded-full px-5 py-2 shadow-stitch-sm">
                                 <Icon name="material-symbols:receipt-long" class="text-accent-red text-xl" />
                                 <span class="font-black text-content text-xl font-mono-card">#{{ order.orderNumber
-                                    }}</span>
+                                }}</span>
                             </div>
                             <div class="text-right">
-                                <p class="text-xs font-bold uppercase tracking-widest text-gray-400">下單時間</p>
+                                <p class="text-xs font-bold uppercase tracking-widest text-gray-400">{{
+                                    $t("sell_order.order_time") }}</p>
                                 <p class="font-bold text-content">{{ formatDate(order.createdAt) }}</p>
                             </div>
                         </div>
@@ -69,11 +70,11 @@
                             <h3 class="flex justify-between items-center gap-2 font-black text-content mb-4">
                                 <span class="flex items-center gap-2">
                                     <Icon name="material-symbols:local-shipping" class="text-accent-blue text-xl" />
-                                    訂單處理狀態
+                                    {{ $t("sell_order.order_status") }}
                                 </span>
                                 <button v-if="order.status === 'processing'" @click="updateStatus('out_for_delivery')"
                                     class="bg-accent-blue text-white px-4 py-1.5 rounded-lg border-2 border-content shadow-stitch-sm hover:translate-y-0.5 hover:shadow-none transition-all text-sm">
-                                    確認出貨
+                                    {{ $t("sell_order.confirm_shipment") }}
                                 </button>
                             </h3>
                             <div
@@ -86,10 +87,14 @@
                                 }"></div>
                             </div>
                             <div class="flex justify-between text-[10px] font-bold text-gray-400">
-                                <span :class="{ 'text-accent-blue': order.status === 'processing' }">處理中</span>
-                                <span :class="{ 'text-accent-blue': order.status === 'shipped' }">已出貨</span>
-                                <span :class="{ 'text-accent-blue': order.status === 'out_for_delivery' }">配送中</span>
-                                <span :class="{ 'text-green-500': order.status === 'delivered' }">已送達</span>
+                                <span :class="{ 'text-accent-blue': order.status === 'processing' }">{{
+                                    $t("sell_order.status.processing") }}</span>
+                                <span :class="{ 'text-accent-blue': order.status === 'shipped' }">{{
+                                    $t("sell_order.status.shipped") }}</span>
+                                <span :class="{ 'text-accent-blue': order.status === 'out_for_delivery' }">{{
+                                    $t("sell_order.status.out_for_delivery") }}</span>
+                                <span :class="{ 'text-green-500': order.status === 'delivered' }">{{
+                                    $t("sell_order.status.delivered") }}</span>
                             </div>
                         </div>
 
@@ -100,7 +105,7 @@
                             <div class="lg:col-span-3 space-y-3">
                                 <h3 class="flex items-center gap-2 font-black text-content">
                                     <Icon name="material-symbols:inventory-2" class="text-accent-red text-xl" />
-                                    購買品項
+                                    {{ $t("buy_order.detail.items") }}
                                 </h3>
 
                                 <div v-for="item in order.items" :key="item.id"
@@ -116,7 +121,8 @@
                                     <!-- 商品資訊 -->
                                     <div class="flex-1 min-w-0">
                                         <p class="font-black text-content text-sm truncate">{{ item.productName }}</p>
-                                        <p class="text-xs text-gray-400 mt-0.5">數量: {{ item.quantity }}</p>
+                                        <p class="text-xs text-gray-400 mt-0.5">{{ $t("sell_order.detail.qty") }}: {{
+                                            item.quantity }}</p>
                                     </div>
                                     <!-- 金額 -->
                                     <span class="font-black text-accent-red shrink-0">
@@ -138,20 +144,20 @@
                                         <h3
                                             class="flex items-center gap-2 font-black text-content mb-4 text-center justify-center">
                                             <Icon name="material-symbols:receipt-long" class="text-content text-xl" />
-                                            小計金額
+                                            {{ $t("buy_order.detail.payment_summary") }}
                                         </h3>
                                         <div class="space-y-2 text-sm font-bold text-content">
                                             <div class="flex justify-between">
-                                                <span>商品總價</span>
+                                                <span>{{ $t("buy_order.detail.subtotal") }}</span>
                                                 <span>${{ subtotal }}</span>
                                             </div>
                                             <div class="flex justify-between text-gray-600">
-                                                <span>運費/其他</span>
+                                                <span>{{ $t("buy_order.detail.shipping") }}</span>
                                                 <span>${{ shippingFee }}</span>
                                             </div>
                                             <div
                                                 class="pt-2 border-t-2 border-content/30 flex justify-between text-base font-black">
-                                                <span>總計</span>
+                                                <span>{{ $t("buy_order.detail.total") }}</span>
                                                 <span>${{ (+order.totalAmount).toFixed(2) }}</span>
                                             </div>
                                         </div>
@@ -166,7 +172,7 @@
                                     <h3
                                         class="flex items-center gap-2 font-black text-content mb-3 bg-white/80 w-fit pr-2">
                                         <Icon name="material-symbols:location-on" class="text-accent-red text-xl" />
-                                        買家收件資訊
+                                        {{ $t("buy_order.detail.delivered_to") }}
                                     </h3>
                                     <div class="font-bold text-content text-sm leading-6 bg-white/80 w-fit pr-4">
                                         <p>{{ order.recipientName }}</p>
@@ -262,13 +268,13 @@ async function updateStatus(status: string) {
         })
         await fetchOrder()
         if (status === 'out_for_delivery') {
-            toast.success('訂單已標記為出貨（配送中）！')
+            toast.success(t("toast.shipment_confirmed"))
         } else {
-            toast.success('狀態更新成功')
+            toast.success(t("toast.status_updated"))
         }
     } catch (e) {
         console.error(e)
-        toast.error('狀態更新失敗')
+        toast.error(t("toast.status_error"))
     }
 }
 

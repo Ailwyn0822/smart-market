@@ -32,7 +32,7 @@
                             {{ activeContactName }}
                         </template>
                         <template v-else>
-                            訊息通知
+                            {{ $t('chat.messages') }}
                         </template>
                     </span>
                 </div>
@@ -54,16 +54,18 @@
                     <!-- 搜尋框 -->
                     <div class="p-3 border-b-2 border-content/10 shrink-0">
                         <div class="relative">
-                            <Icon name="material-symbols:search" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
+                            <Icon name="material-symbols:search"
+                                class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
                             <input v-model="searchQuery" @input="onSearchInput" type="text"
-                                placeholder="搜尋帳號..."
+                                :placeholder="$t('chat.search_placeholder')"
                                 class="w-full pl-9 pr-4 py-2 rounded-xl border-2 border-dashed border-gray-300 focus:border-content bg-gray-50 text-sm font-bold outline-none transition-all" />
                         </div>
                     </div>
 
                     <!-- 搜尋結果 -->
-                    <div v-if="searchQuery.trim() && searchResults.length > 0" class="overflow-y-auto flex-1 p-3 space-y-2">
-                        <p class="text-xs font-bold text-gray-400 px-1 mb-2">搜尋結果</p>
+                    <div v-if="searchQuery.trim() && searchResults.length > 0"
+                        class="overflow-y-auto flex-1 p-3 space-y-2">
+                        <p class="text-xs font-bold text-gray-400 px-1 mb-2">{{ $t('chat.search_results') }}</p>
                         <div v-for="user in searchResults" :key="user.id" @click="startChatWith(user)"
                             class="bg-white p-3 rounded-2xl border-2 border-dashed border-gray-300 hover:border-content hover:shadow-stitch-sm transition-all cursor-pointer flex items-center gap-3">
                             <NuxtImg
@@ -71,10 +73,12 @@
                                 class="w-10 h-10 rounded-full border-2 border-content bg-gray-100 object-cover shrink-0"
                                 loading="lazy" format="webp" />
                             <div class="flex-1 min-w-0">
-                                <h4 class="font-bold text-content text-sm truncate">{{ user.name || user.username }}</h4>
+                                <h4 class="font-bold text-content text-sm truncate">{{ user.name || user.username }}
+                                </h4>
                                 <p class="text-xs text-gray-400 truncate">@{{ user.username }}</p>
                             </div>
-                            <Icon name="material-symbols:chat-bubble-outline" class="text-accent-blue text-lg shrink-0" />
+                            <Icon name="material-symbols:chat-bubble-outline"
+                                class="text-accent-blue text-lg shrink-0" />
                         </div>
                     </div>
 
@@ -82,7 +86,7 @@
                     <div v-else-if="searchQuery.trim() && !isSearching && searchResults.length === 0"
                         class="flex flex-col items-center justify-center flex-1 gap-2 text-gray-400 p-4">
                         <Icon name="material-symbols:person-search" class="text-4xl" />
-                        <span class="font-bold text-sm">找不到此帳號</span>
+                        <span class="font-bold text-sm">{{ $t('chat.no_user_found') }}</span>
                     </div>
 
                     <!-- 歷史聊天列表 -->
@@ -90,11 +94,12 @@
                         <div v-if="chatStore.contacts.length === 0"
                             class="flex flex-col items-center justify-center h-full gap-2 text-gray-400">
                             <Icon name="material-symbols:speaker-notes-off-outline" class="text-5xl" />
-                            <span class="font-bold">目前沒有任何訊息</span>
-                            <p class="text-xs text-center">搜尋帳號開始聊天</p>
+                            <span class="font-bold">{{ $t('chat.no_messages') }}</span>
+                            <p class="text-xs text-center">{{ $t('chat.search_to_start') }}</p>
                         </div>
 
-                        <div v-for="contact in chatStore.contacts" :key="contact.id" @click="chatStore.openChat(contact)"
+                        <div v-for="contact in chatStore.contacts" :key="contact.id"
+                            @click="chatStore.openChat(contact)"
                             class="bg-white p-3 rounded-2xl border-2 border-dashed border-gray-300 hover:border-content hover:shadow-stitch-sm transition-all cursor-pointer flex items-center gap-3 relative">
                             <NuxtImg
                                 :src="contact.avatar || 'https://api.dicebear.com/7.x/notionists/svg?seed=' + contact.name"
@@ -102,7 +107,9 @@
                                 loading="lazy" format="webp" />
                             <div class="flex-1 min-w-0">
                                 <h4 class="font-bold text-content text-sm truncate">{{ contact.name }}</h4>
-                                <p class="text-xs text-gray-500 truncate mt-0.5">{{ contact.lastMessage || '點擊開始對話' }}</p>
+                                <p class="text-xs text-gray-500 truncate mt-0.5">{{ contact.lastMessage ||
+                                    $t('chat.click_to_start')
+                                    }}</p>
                             </div>
                             <span v-if="contact.unreadCount"
                                 class="bg-accent-red text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
@@ -119,7 +126,7 @@
                         <div v-if="chatStore.currentMessages.length === 0"
                             class="flex flex-col items-center justify-center h-full text-gray-400 gap-2">
                             <Icon name="material-symbols:waving-hand-outline" class="text-4xl" />
-                            <span class="text-sm font-bold">打個招呼吧！</span>
+                            <span class="text-sm font-bold">{{ $t('chat.say_hi') }}</span>
                         </div>
 
                         <div v-for="msg in chatStore.currentMessages" :key="msg.id" class="flex flex-col"
@@ -129,17 +136,18 @@
                             <div class="max-w-[75%] px-4 py-2.5 rounded-2xl border-2 border-content relative"
                                 :class="msg.senderId === authStore.user?.id ? 'bg-primary rounded-tr-sm shadow-[2px_2px_0px_#1c180d]' : 'bg-white rounded-tl-sm shadow-[-2px_2px_0px_#1c180d]'">
                                 <p class="text-sm font-bold text-content whitespace-pre-wrap word-break">{{ msg.content
-                                }}</p>
+                                    }}</p>
                             </div>
                             <!-- 顯示時間 -->
                             <span class="text-[10px] text-gray-400 mt-1 mx-1 font-bold">{{ formatTime(msg.createdAt)
-                            }}</span>
+                                }}</span>
                         </div>
                     </div>
 
                     <!-- 輸入區 -->
                     <div class="p-3 bg-white border-t-2 border-content flex gap-2 shrink-0">
-                        <input v-model="inputText" @keyup.enter="send" type="text" placeholder="輸入訊息..."
+                        <input v-model="inputText" @keyup.enter="send" type="text"
+                            :placeholder="$t('chat.type_message')"
                             class="flex-1 bg-gray-100 border-2 border-transparent focus:border-content focus:bg-white rounded-xl px-4 py-2 text-sm font-bold outline-none transition-all" />
                         <button @click="send"
                             class="w-10 h-10 bg-accent-blue rounded-xl flex items-center justify-center border-2 border-content text-white hover:bg-blue-600 active:translate-y-0.5 transition-all">

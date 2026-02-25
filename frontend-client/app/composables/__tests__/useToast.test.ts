@@ -1,8 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { clearNuxtData } from '#imports'
 import { useToast } from '../useToast'
 
 describe('useToast', () => {
   beforeEach(() => {
+    const { toasts } = useToast()
+    toasts.value = []
     vi.useFakeTimers()
   })
 

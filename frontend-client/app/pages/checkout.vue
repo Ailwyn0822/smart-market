@@ -39,7 +39,7 @@
                                 </div>
                                 <div class="col-span-1 md:col-span-2 space-y-2">
                                     <label class="font-bold text-content ml-1">{{ $t('checkout.shipping_address')
-                                    }}</label>
+                                        }}</label>
                                     <input v-model="form.address" class="w-full input-crayon rounded-xl p-3 text-base"
                                         placeholder="123 Treehouse Lane" type="text" />
                                 </div>
@@ -151,11 +151,18 @@
                         </div>
 
                         <!-- 結帳按鈕 -->
-                        <button :disabled="!isFormValid || cartStore.items.length === 0" @click="submitOrder"
+                        <button :disabled="!isFormValid || cartStore.items.length === 0 || isSubmitting"
+                            @click="submitOrder"
                             class="w-full bg-accent-red hover:bg-[#ff5252] disabled:bg-gray-300 disabled:shadow-none disabled:active:translate-y-0 text-white text-lg font-black py-4 rounded-xl shadow-[4px_4px_0px_#1c180d] border-2 border-content active:shadow-none active:translate-y-1 transition-all flex items-center justify-center gap-3 relative overflow-hidden group mb-4">
-                            <span class="relative z-10">{{ $t('checkout.place_order') }}</span>
-                            <Icon name="material-symbols:check-circle"
-                                class="relative z-10 group-hover:translate-x-1 transition-transform" />
+                            <template v-if="isSubmitting">
+                                <Icon name="line-md:loading-loop" class="relative z-10 text-xl animate-spin" />
+                                <span class="relative z-10">處理中...</span>
+                            </template>
+                            <template v-else>
+                                <span class="relative z-10">{{ $t('checkout.place_order') }}</span>
+                                <Icon name="material-symbols:check-circle"
+                                    class="relative z-10 group-hover:translate-x-1 transition-transform" />
+                            </template>
                             <div
                                 class="absolute top-0 left-0 w-full h-full bg-white opacity-0 group-hover:opacity-10 transition-opacity">
                             </div>
@@ -207,7 +214,7 @@ function buildOrderPayload(paymentMethod: string) {
             imageUrl: i.product.imageUrl,
             quantity: i.quantity,
             price: i.product.price,
-            sellerId: i.product.user?.id || i.product.userId
+            sellerId: i.product.userId
         }))
     }
 }
@@ -230,6 +237,9 @@ async function submitOrder() {
             )
             orderNumber.value = res.orderNumber || ''
             cartStore.clearCart()
+
+            // 通知使用者即將跳轉
+            toast.success('正在跳轉至綠界金流頁面，請稍候...')
 
             // 自動送出綠界表單
             const tempDiv = document.createElement('div')

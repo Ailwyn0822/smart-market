@@ -5,6 +5,7 @@ import { Order, OrderStatus, PaymentMethod } from './entities/order.entity';
 import { OrderItem } from './entities/order-item.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { Between } from 'typeorm';
+import { In } from 'typeorm';
 import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
@@ -133,6 +134,30 @@ export class OrdersService {
         await this.orderItemsRepo.delete({});
         await this.ordersRepo.delete({});
         return { success: true, message: '所有訂單已清空' };
+    }
+
+    async getAllOrders(page = 1, limit = 20, keyword?: string, status?: string): Promise<{ items: Order[]; total: number }> {
+        const qb = this.ordersRepo.createQueryBuilder('order')
+            .leftJoinAndSelect('order.items', 'item')
+            .orderBy('order.createdAt', 'DESC');
+
+        if (keyword) {
+            qb.andWhere('(order.orderNumber ILIKE :kw OR order.recipientEmail ILIKE :kw OR order.recipientName ILIKE :kw)', { kw: `%${keyword}%` });
+        }
+        if (status) {
+            qb.andWhere('order.status = :status', { status });
+        }
+
+        const total = await qb.getCount();
+        const items = await qb.skip((page - 1) * limit).take(limit).getMany();
+        return { items, total };
+    }
+
+    async adminUpdateStatus(id: number, status: string): Promise<Order> {
+        const order = await this.ordersRepo.findOne({ where: { id } });
+        if (!order) throw new NotFoundException('Order not found');
+        order.status = status as OrderStatus;
+        return this.ordersRepo.save(order);
     }
 
     async getSellerDashboard(sellerId: string) {

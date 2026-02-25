@@ -3,7 +3,7 @@
         <main class="flex-grow layout-container max-w-4xl mx-auto w-full px-4 sm:px-8 lg:px-12 py-12">
             <div class="mb-8 flex items-center gap-4">
                 <Icon name="material-symbols:manage-accounts" class="text-5xl text-accent-blue" />
-                <h1 class="text-4xl font-black text-content uppercase tracking-tight">個人資料編輯</h1>
+                <h1 class="text-4xl font-black text-content uppercase tracking-tight">{{ $t('profile.title') }}</h1>
             </div>
 
             <div class="bg-white p-8 rounded-2xl border-4 border-content shadow-[8px_8px_0px_#1c180d]">
@@ -25,7 +25,7 @@
                                 <div v-if="isUploading"
                                     class="absolute inset-0 bg-black/60 rounded-full flex flex-col items-center justify-center transition-opacity z-10">
                                     <Icon name="line-md:loading-loop" class="text-white text-4xl mb-1" />
-                                    <span class="text-white text-xs font-bold">上傳中...</span>
+                                    <span class="text-white text-xs font-bold">{{ $t('profile.uploading') }}</span>
                                 </div>
 
                                 <div v-else
@@ -33,7 +33,8 @@
                                     <Icon name="material-symbols:camera-alt" class="text-white text-3xl" />
                                 </div>
                             </div>
-                            <p class="text-xs font-bold text-gray-500 text-center">點擊圖片上傳大頭貼</p>
+                            <p class="text-xs font-bold text-gray-500 text-center">{{ $t('profile.click_to_upload') }}
+                            </p>
                             <input type="file" ref="fileInput" class="hidden" accept="image/*"
                                 @change="handleFileUpload" />
                         </div>
@@ -41,24 +42,25 @@
                         <!-- 欄位區域 -->
                         <div class="w-full md:w-2/3 flex flex-col gap-6">
                             <div>
-                                <label class="block text-sm font-black text-gray-500 uppercase tracking-wider mb-2">名稱
-                                    Name</label>
+                                <label class="block text-sm font-black text-gray-500 uppercase tracking-wider mb-2">{{
+                                    $t('profile.name_label') }}</label>
                                 <div
                                     class="form-input-strip p-1 flex items-center bg-white border-2 border-content rounded-lg shadow-[2px_3px_0px_#e5e7eb] focus-within:shadow-[3px_4px_0px_#1c180d] focus-within:-rotate-[0.5deg] transition-all">
-                                    <input type="text" v-model="formData.name" placeholder="您的暱稱" required
+                                    <input type="text" v-model="formData.name"
+                                        :placeholder="$t('profile.name_placeholder')" required
                                         class="w-full border-none focus:ring-0 bg-transparent px-4 py-2 text-lg font-bold placeholder-gray-300 text-content outline-none" />
                                 </div>
                             </div>
 
                             <div>
-                                <label class="block text-sm font-black text-gray-500 uppercase tracking-wider mb-2">電子郵件
-                                    Email</label>
+                                <label class="block text-sm font-black text-gray-500 uppercase tracking-wider mb-2">{{
+                                    $t('profile.email_label') }}</label>
                                 <div
                                     class="p-1 flex items-center bg-gray-100 border-2 border-gray-300 rounded-lg opacity-80 cursor-not-allowed">
                                     <input type="email" :value="profile?.email" disabled
                                         class="w-full border-none focus:ring-0 bg-transparent px-4 py-2 text-lg font-bold text-gray-500 outline-none cursor-not-allowed" />
                                 </div>
-                                <p class="mt-1 text-xs text-gray-400">目前不支援修改電子郵件</p>
+                                <p class="mt-1 text-xs text-gray-400">{{ $t('profile.email_note') }}</p>
                             </div>
 
                             <!-- 儲存按鈕 -->
@@ -67,7 +69,8 @@
                                     class="bg-accent-blue hover:bg-[#3dbdb4] text-white px-10 py-3 rounded-xl font-black text-xl shadow-[4px_4px_0px_#1c180d] border-2 border-content flex items-center justify-center gap-3 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_#1c180d] transition-all -rotate-1">
                                     <Icon v-if="isSubmitting" name="line-md:loading-loop" class="text-2xl" />
                                     <Icon v-else name="material-symbols:save" class="text-2xl" />
-                                    <span class="uppercase tracking-tight">{{ isSubmitting ? '儲存中...' : '儲存變更' }}</span>
+                                    <span class="uppercase tracking-tight">{{ isSubmitting ? $t('profile.saving') :
+                                        $t('profile.save_changes') }}</span>
                                 </button>
                             </div>
                         </div>
@@ -83,6 +86,9 @@
 import { watch } from 'vue';
 import { useAuthStore } from '~/stores/auth';
 import { useToast } from '~/composables/useToast';
+import { useI18n } from '#imports';
+
+const { t } = useI18n();
 
 const config = useRuntimeConfig();
 const authStore = useAuthStore();
@@ -175,9 +181,9 @@ async function handleFileUpload(event: Event) {
         }
         await refresh();
 
-        toast.success('大頭貼上傳成功，已自動為您儲存');
+        toast.success(t('profile.avatar_success'));
     } catch (e) {
-        toast.error('圖片上傳失敗，請再試一次');
+        toast.error(t('toast.error_generic'));
         console.error(e);
     } finally {
         isUploading.value = false;
@@ -187,7 +193,7 @@ async function handleFileUpload(event: Event) {
 
 async function saveProfile() {
     if (!formData.name) {
-        toast.error('名稱不能為空');
+        toast.error(t('profile.name_required'));
         return;
     }
 
@@ -199,7 +205,7 @@ async function saveProfile() {
             body: formData
         });
 
-        toast.success('個人資料更新成功！');
+        toast.success(t('profile.save_success'));
         // 手動更新 authStore 中的 user data
         if (authStore.user) {
             authStore.user.name = formData.name;
@@ -207,7 +213,7 @@ async function saveProfile() {
         }
         await refresh();
     } catch (e: any) {
-        toast.error(e.response?._data?.message || '更新失敗，請稍後再試');
+        toast.error(e.response?._data?.message || t('profile.save_error'));
         console.error(e);
     } finally {
         isSubmitting.value = false;

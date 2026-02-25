@@ -111,7 +111,7 @@ export const useChatStore = defineStore('chat', () => {
 
     function sendMessage(targetId: string, content: string) {
         if (!socket.value || !isConnected.value) {
-            useToast().error('WebSocket 未連線')
+            useToast().error('WebSocket connection failed')
             return
         }
         socket.value.emit('sendMessage', { receiverId: targetId, content })

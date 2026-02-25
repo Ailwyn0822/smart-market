@@ -56,7 +56,7 @@
                                 class="inline-flex items-center gap-2 bg-white border-2 border-content rounded-full px-5 py-2 shadow-stitch-sm">
                                 <Icon name="material-symbols:receipt-long" class="text-accent-purple text-xl" />
                                 <span class="font-black text-content text-xl font-mono-card">#{{ order.orderNumber
-                                }}</span>
+                                    }}</span>
                             </div>
                             <div class="text-right">
                                 <p class="text-xs font-bold uppercase tracking-widest text-gray-400">
@@ -74,18 +74,18 @@
                                 </span>
                                 <button v-if="order.status === 'out_for_delivery'" @click="updateStatus('delivered')"
                                     class="bg-accent-blue text-white px-4 py-1.5 rounded-lg border-2 border-content shadow-stitch-sm hover:translate-y-0.5 hover:shadow-none transition-all text-sm">
-                                    確認收貨
+                                    {{ $t('buy_order.confirm_receipt') }}
                                 </button>
                                 <button v-if="order.status === 'delivered' && !isReviewed"
                                     @click="showReviewModal = true"
                                     class="bg-accent-red text-white px-4 py-1.5 rounded-lg border-2 border-content shadow-stitch-sm hover:translate-y-0.5 hover:shadow-none transition-all text-sm font-bold flex items-center gap-1">
                                     <Icon name="material-symbols:star" class="text-white" />
-                                    給予評價
+                                    {{ $t('buy_order.review') }}
                                 </button>
                                 <span v-if="order.status === 'delivered' && isReviewed"
                                     class="bg-gray-200 text-gray-500 px-4 py-1.5 rounded-lg border border-gray-300 text-sm font-bold flex items-center gap-1 cursor-not-allowed">
                                     <Icon name="material-symbols:check-circle" />
-                                    已評價
+                                    {{ $t('buy_order.reviewed') }}
                                 </span>
                             </h3>
                             <div
@@ -98,10 +98,14 @@
                                 }"></div>
                             </div>
                             <div class="flex justify-between text-[10px] font-bold text-gray-400">
-                                <span :class="{ 'text-accent-blue': order.status === 'processing' }">備貨中</span>
-                                <span :class="{ 'text-accent-blue': order.status === 'shipped' }">已出貨</span>
-                                <span :class="{ 'text-accent-blue': order.status === 'out_for_delivery' }">配送中</span>
-                                <span :class="{ 'text-green-500': order.status === 'delivered' }">已收貨</span>
+                                <span :class="{ 'text-accent-blue': order.status === 'processing' }">{{
+                                    $t('buy_order.status_badge.processing') }}</span>
+                                <span :class="{ 'text-accent-blue': order.status === 'shipped' }">{{
+                                    $t('buy_order.status_badge.shipped') }}</span>
+                                <span :class="{ 'text-accent-blue': order.status === 'out_for_delivery' }">{{
+                                    $t('buy_order.status_badge.out_for_delivery') }}</span>
+                                <span :class="{ 'text-green-500': order.status === 'delivered' }">{{
+                                    $t('buy_order.status_badge.delivered') }}</span>
                             </div>
                         </div>
 
@@ -212,7 +216,7 @@
 
                     <h2 class="text-2xl font-black text-content mb-6 flex items-center gap-2">
                         <Icon name="material-symbols:star" class="text-accent-red" />
-                        評價賣家與商品
+                        {{ $t('buy_order.review_modal_title') }}
                     </h2>
 
                     <!-- 評分星星 -->
@@ -227,16 +231,16 @@
                     <!-- 評價內容 -->
                     <textarea v-model="reviewForm.comment" rows="4"
                         class="w-full bg-[#fdfcf0] rounded-xl border-2 border-content p-4 font-bold text-sm focus:outline-none focus:bg-white transition-colors resize-none placeholder-gray-400 mb-6"
-                        placeholder="寫下您對這次交易的感想... (選填)"></textarea>
+                        :placeholder="$t('buy_order.write_review')"></textarea>
 
                     <div class="flex flex-col gap-3">
                         <button @click="submitReview" :disabled="isSubmittingReview"
                             class="w-full bg-accent-blue text-white font-black py-3 rounded-xl border-2 border-content shadow-stitch-sm hover:translate-y-0.5 hover:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                            {{ isSubmittingReview ? '送出中...' : '確認送出評價' }}
+                            {{ isSubmittingReview ? $t('buy_order.submitting') : $t('buy_order.submit_review') }}
                         </button>
                         <button @click="showReviewModal = false"
                             class="w-full bg-gray-100 text-gray-500 font-bold py-3 rounded-xl border-2 border-transparent hover:border-gray-300 transition-all">
-                            稍後再說
+                            {{ $t('buy_order.later') }}
                         </button>
                     </div>
                 </div>
@@ -335,13 +339,13 @@ async function updateStatus(status: string) {
         })
         await fetchOrder()
         if (status === 'delivered') {
-            toast.success('確認收貨成功！您現在可以為訂單留下評價。')
+            toast.success(t('buy_order.confirm_receipt_success'))
         } else {
-            toast.success('狀態更新成功')
+            toast.success(t('buy_order.status_update_success'))
         }
     } catch (e) {
         console.error(e)
-        toast.error('狀態更新失敗')
+        toast.error(t('buy_order.status_update_failed'))
     }
 }
 
@@ -371,10 +375,10 @@ async function submitReview() {
         })
         isReviewed.value = true
         showReviewModal.value = false
-        toast.success('評價送出成功，感謝您的回饋！')
+        toast.success(t('buy_order.review_success'))
     } catch (e) {
         console.error('Failed to submit review', e)
-        toast.error('評價送出失敗')
+        toast.error(t('buy_order.review_failed'))
     } finally {
         isSubmittingReview.value = false
     }
