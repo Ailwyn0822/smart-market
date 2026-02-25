@@ -23,7 +23,7 @@
 ## 架構概覽
 
 ```
-Internet → Nginx (80/443)
+Internet → Nginx (80/443) 
             ├── panda-map.com/               → sm_client  (Nuxt SSR, port 3000)
             ├── panda-map.com/api/_nuxt_icon/ → sm_client  (Nuxt icon 內部 API)
             ├── panda-map.com/api/            → sm_backend (NestJS, port 8080) 
