@@ -56,9 +56,20 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # 檢查 GHCR 上的 image 是否已存在（初次部署時全部不存在，要強制 build）
+      - name: Check images exist in GHCR
+        id: image_check
+        run: |
+          check() {
+            docker manifest inspect "$1" > /dev/null 2>&1 && echo "true" || echo "false"
+          }
+          echo "backend=$(check ghcr.io/${{ github.repository_owner }}/smart-market-backend:latest)" >> $GITHUB_OUTPUT
+          echo "client=$(check ghcr.io/${{ github.repository_owner }}/smart-market-client:latest)"   >> $GITHUB_OUTPUT
+          echo "admin=$(check ghcr.io/${{ github.repository_owner }}/smart-market-admin:latest)"     >> $GITHUB_OUTPUT
+
       # ── Backend ──────────────────────────────
       - name: Build & Push backend
-        if: steps.filter.outputs.backend == 'true'
+        if: steps.filter.outputs.backend == 'true' || steps.image_check.outputs.backend == 'false'
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -71,7 +82,7 @@ jobs:
 
       # ── Admin ────────────────────────────────
       - name: Build & Push admin
-        if: steps.filter.outputs.admin == 'true'
+        if: steps.filter.outputs.admin == 'true' || steps.image_check.outputs.admin == 'false'
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -85,7 +96,7 @@ jobs:
 
       # ── Client（最慢，放最後）────────────────
       - name: Build & Push client
-        if: steps.filter.outputs.client == 'true'
+        if: steps.filter.outputs.client == 'true' || steps.image_check.outputs.client == 'false'
         uses: docker/build-push-action@v6
         with:
           context: .
