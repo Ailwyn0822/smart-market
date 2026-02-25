@@ -65,7 +65,7 @@ services:
       context: .
       dockerfile: Dockerfile.admin
       args:
-        VITE_API_BASE: ${VITE_API_BASE:-http://localhost:8080}
+        VITE_API_BASE: https://panda-map.com/api
     container_name: sm_admin
     restart: always
     networks:

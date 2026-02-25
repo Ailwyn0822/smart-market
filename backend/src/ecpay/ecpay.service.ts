@@ -41,6 +41,9 @@ export class EcpayService {
             itemName = itemName.substring(0, 195) + '...';
         }
 
+        const apiBase = this.configService.get<string>('ECPAY_API_BASE', 'http://localhost:8080');
+        const frontendBase = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
+
         const parameters = {
             MerchantID: merchantId,
             MerchantTradeNo: TradeNo,
@@ -48,11 +51,11 @@ export class EcpayService {
             TotalAmount: Math.round(orderData.amount || 0).toString(),
             TradeDesc: 'Smart Market Order',
             ItemName: itemName,
-            ReturnURL: 'http://localhost:8080/ecpay/return',
+            ReturnURL: `${apiBase}/ecpay/return`,
             ChoosePayment: 'ALL',
             EncryptType: '1',
-            ClientBackURL: 'http://localhost:3000/order_completed',
-            OrderResultURL: 'http://localhost:8080/ecpay/result',
+            ClientBackURL: `${frontendBase}/order_completed`,
+            OrderResultURL: `${apiBase}/ecpay/result`,
         };
 
         return create.payment_client.aio_check_out_all(parameters);
