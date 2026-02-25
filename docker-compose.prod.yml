@@ -22,9 +22,6 @@ services:
     container_name: sm_minio
     restart: always
     command: server /data --console-address ":9001"
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
-      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
     env_file: .env.prod
     volumes:
       - minio_data:/data
