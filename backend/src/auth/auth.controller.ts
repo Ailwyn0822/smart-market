@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Req, Res, Body, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
 import { GoogleOAuthGuard } from './google-oauth.guard';
 import { LineOAuthGuard } from './line-oauth.guard';
 import { AuthService } from './auth.service';
@@ -7,7 +8,10 @@ import { AuthService } from './auth.service';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private configService: ConfigService,
+  ) {}
 
   @Post('register')
   @ApiOperation({ summary: '本地帳號註冊', description: '使用 email/password 建立新帳號，成功後自動登入' })
@@ -36,7 +40,8 @@ export class AuthController {
   // 注意：這裡多加了 @Res() res，讓我們可以控制跳轉
   async googleAuthRedirect(@Req() req: any, @Res() res: any) {
     const { access_token, user } = await this.authService.login(req.user);
-    const redirectUrl = `http://localhost:3000?token=${access_token}&user=${encodeURIComponent(JSON.stringify(user))}`;
+    const frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
+    const redirectUrl = `${frontendUrl}?token=${access_token}&user=${encodeURIComponent(JSON.stringify(user))}`;
     return res.redirect(redirectUrl);
   }
 
@@ -50,7 +55,8 @@ export class AuthController {
   @UseGuards(LineOAuthGuard)
   async lineAuthRedirect(@Req() req: any, @Res() res: any) {
     const { access_token, user } = await this.authService.login(req.user);
-    const redirectUrl = `http://localhost:3000?token=${access_token}&user=${encodeURIComponent(JSON.stringify(user))}`;
+    const frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
+    const redirectUrl = `${frontendUrl}?token=${access_token}&user=${encodeURIComponent(JSON.stringify(user))}`;
     return res.redirect(redirectUrl);
   }
 }
