@@ -149,6 +149,7 @@ export const useChatStore = defineStore('chat', () => {
 
     function closeChat() {
         isOpen.value = false
+        activeContactId.value = null
     }
 
     function backToList() {
