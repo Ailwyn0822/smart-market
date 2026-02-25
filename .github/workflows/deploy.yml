@@ -25,8 +25,10 @@ jobs:
             git fetch origin master
             git reset --hard origin/master
 
-            # 重新建置並啟動容器（依序 build 避免 OOM）
-            docker compose -f docker-compose.prod.yml build --no-parallel
+            # 依序 build 各服務避免 OOM（docker compose v2 不支援 --no-parallel）
+            docker compose -f docker-compose.prod.yml build backend
+            docker compose -f docker-compose.prod.yml build admin
+            docker compose -f docker-compose.prod.yml build client
             docker compose -f docker-compose.prod.yml up -d
 
             # 清理舊的 image 節省磁碟空間
