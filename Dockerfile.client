@@ -12,7 +12,7 @@ COPY frontend-client/package.json ./frontend-client/
 COPY frontend-admin/package.json ./frontend-admin/
 
 # 安裝所有依賴（npm workspaces）
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm npm ci
 
 # 複製原始碼並建置 shared
 COPY shared/ ./shared/
@@ -21,7 +21,7 @@ RUN npm run build --workspace=shared
 # 複製 frontend-client 並建置（Nuxt SSR）
 COPY frontend-client/ ./frontend-client/
 WORKDIR /app/frontend-client
-RUN npm run build
+RUN NODE_OPTIONS="--max-old-space-size=1536" npm run build
 
 # ============================
 # Stage 2: Production Runner

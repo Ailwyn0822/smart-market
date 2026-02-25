@@ -12,7 +12,7 @@ COPY frontend-client/package.json ./frontend-client/
 COPY frontend-admin/package.json ./frontend-admin/
 
 # 安裝所有依賴（npm workspaces）
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm npm ci
 
 # 複製原始碼並建置 shared
 COPY shared/ ./shared/

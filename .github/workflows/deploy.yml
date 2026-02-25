@@ -16,7 +16,7 @@ jobs:
           host: ${{ secrets.GCP_HOST }}
           username: ${{ secrets.GCP_USER }}
           key: ${{ secrets.GCP_SSH_KEY }}
-          command_timeout: 30m
+          command_timeout: 60m
           script: |
             set -e
             cd ~/smart-market
@@ -25,8 +25,9 @@ jobs:
             git fetch origin master
             git reset --hard origin/master
 
-            # 重新建置並啟動容器（有變更的才重建）
-            docker compose -f docker-compose.prod.yml up -d --build
+            # 重新建置並啟動容器（依序 build 避免 OOM）
+            docker compose -f docker-compose.prod.yml build --no-parallel
+            docker compose -f docker-compose.prod.yml up -d
 
             # 清理舊的 image 節省磁碟空間
             docker image prune -f
