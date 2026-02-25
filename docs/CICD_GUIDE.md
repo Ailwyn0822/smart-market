@@ -278,7 +278,9 @@ git pull origin master  # 測試
 - 等 CI **全部通過**後才觸發（`workflow_run` trigger）
 - 在 GitHub Actions 上 build Docker image（只 build 有改動的 service）
 - Push 到 GHCR（`ghcr.io/ailwyn0822/smart-market-{backend,client,admin}:latest`）
-- SSH 進 VM：`docker pull` + `docker compose up -d`（VM 不做任何 build）
+- SSH 進 VM：
+  1. 自動執行 DB schema 遷移（`ALTER TYPE ... ADD VALUE IF NOT EXISTS`，冪等安全）
+  2. `docker pull` + `docker compose up -d`（VM 不做任何 build）
 - Docker layer cache 存在 GHCR，第二次以後 build 快很多
 
 **部署時間（有 layer cache 後）：**
@@ -433,6 +435,16 @@ docker compose -f docker-compose.prod.yml restart backend
 # 等 backend 完全啟動
 nano ~/smart-market/.env.prod   # NODE_ENV=production
 docker compose -f docker-compose.prod.yml restart backend
+```
+
+### 新增 enum 值（如 `pending_payment`）
+
+Deploy workflow 會在每次部署時自動執行 `ALTER TYPE ... ADD VALUE IF NOT EXISTS`，正常情況不需手動操作。
+
+若需要手動補跑：
+```bash
+docker exec sm_db psql -U postgres -d smart_market \
+  -c "ALTER TYPE orders_status_enum ADD VALUE IF NOT EXISTS 'pending_payment' BEFORE 'processing';"
 ```
 
 ### OAuth 登入後跳轉到 localhost
