@@ -145,7 +145,38 @@
     "not_found": "Product not found",
     "back_to_list": "Back to product list",
     "view_seller": "View Seller",
-    "seller_label": "Seller"
+    "seller_label": "Seller",
+    "reviews_title": "Product Reviews",
+    "no_reviews": "No reviews yet. Be the first to review!",
+    "load_more_reviews": "Load More Reviews",
+    "loading_more": "Loading...",
+    "qa_title": "Q&A",
+    "qa_placeholder": "Any questions? Ask here...",
+    "qa_ask": "Ask",
+    "qa_login_to_ask": "Sign in to ask a question",
+    "qa_no_questions": "No questions yet. Ask one!",
+    "qa_seller_reply": "Seller's Reply",
+    "qa_answer_placeholder": "Enter reply...",
+    "qa_reply": "Reply",
+    "qa_asked": "Question submitted!",
+    "qa_answered": "Reply submitted!",
+    "cannot_favorite_own": "Cannot add your own product to favorites",
+    "cannot_buy_own": "Cannot add your own product to cart",
+    "qa_seller_restriction": "Bạn là người bán sản phẩm này và không thể đặt câu hỏi",
+    "no_results": "No products found"
+  },
+  "coupons": {
+    "title": "Coupons",
+    "available": "Available Coupons",
+    "empty": "No coupons available",
+    "discount_amount": "Discount ${amount}",
+    "copy": "Copy",
+    "valid_until": "Valid until: {date}",
+    "used_count": "Used: {current} / {max} times",
+    "unlimited_usage": "Unlimited usage",
+    "go_to_cart": "Go to cart to use",
+    "copy_success": "Coupon {code} copied! Go to cart to apply.",
+    "page_title": "Coupons | Smart Market"
   },
   "cart": {
     "title": "My Cart",
@@ -232,7 +263,9 @@
       "processing": "Processing",
       "shipped": "Shipped",
       "out_for_delivery": "Out for Delivery",
-      "delivered": "Delivered"
+      "delivered": "Delivered",
+      "cancel_requested": "Cancellation Requested",
+      "cancelled": "Cancelled"
     },
     "loading": "Loading...",
     "login_required": "Please login to view orders",
@@ -278,8 +311,18 @@
       "processing": "Processing",
       "shipped": "Shipped",
       "out_for_delivery": "Out for delivery",
-      "delivered": "Delivered"
-    }
+      "delivered": "Delivered",
+      "cancel_requested": "Cancellation Requested",
+      "cancelled": "Cancelled"
+    },
+    "print_invoice": "Print Invoice",
+    "request_cancel": "Request Cancellation",
+    "cancel_pending": "Awaiting Seller Approval",
+    "cancelled": "Order Cancelled",
+    "cancel_request_sent": "Cancellation request sent, awaiting seller approval",
+    "cancel_request_failed": "Failed to request cancellation, please try again",
+    "seller_review_title": "Seller Service Rating",
+    "seller_review_placeholder": "Describe your overall shopping experience... (Optional)"
   },
   "sell_order": {
     "title": "Sales Orders",
@@ -288,7 +331,23 @@
     "empty": "No sales orders yet",
     "go_home": "Go Home",
     "order_time": "Order Date",
-    "confirm_shipment": "Confirm Shipment"
+    "confirm_shipment": "Confirm Shipment",
+    "order_status": "Shipping Status",
+    "status": {
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "out_for_delivery": "Out for Delivery",
+      "delivered": "Delivered"
+    },
+    "detail": {
+      "qty": "Qty"
+    },
+    "cancel_approve": "Approve Cancellation",
+    "cancel_reject": "Reject Cancellation",
+    "cancel_approved": "Cancellation approved",
+    "cancel_rejected": "Cancellation rejected, order continues",
+    "cancelled": "Order Cancelled",
+    "not_found": "Order not found"
   },
   "seller": {
     "loading": "Loading seller info...",
@@ -303,7 +362,30 @@
     "no_products": "No products listed yet",
     "reviews_title": "Buyer Reviews",
     "no_reviews": "No reviews yet!",
-    "reviews_end": "That's all! 🎉"
+    "reviews_end": "That's all! 🎉",
+    "products_all_shown": "All {count} products shown 🎉"
+  },
+  "invoice": {
+    "back": "Back to Order",
+    "print": "Print / Save as PDF",
+    "title": "Order Invoice",
+    "date": "Date",
+    "recipient_info": "Recipient Info",
+    "payment_info": "Payment Info",
+    "payment_method_label": "Payment Method",
+    "cod": "Cash on Delivery",
+    "online": "Online Payment",
+    "order_status_label": "Order Status",
+    "col_product": "Product Name",
+    "col_qty": "Qty",
+    "col_unit_price": "Unit Price",
+    "col_subtotal": "Subtotal",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "total": "Total",
+    "thanks": "Thank you for shopping at Smart Market!",
+    "note": "This is an electronic invoice...",
+    "not_found": "Order not found"
   },
   "favorite": {
     "title": "My Favorites",
@@ -437,7 +519,8 @@
     "seller_dashboard": "Seller Dashboard",
     "sales_orders": "Sales Orders",
     "my_products": "My Products",
-    "favorites": "My Favorites"
+    "favorites": "My Favorites",
+    "coupons": "Coupons"
   },
   "chat": {
     "title": "Chat",

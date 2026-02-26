@@ -107,9 +107,9 @@
                         </h3>
 
                         <!-- 若購物車有東西 -->
-                        <div v-if="cartStore.items.length > 0"
+                        <div v-if="checkoutItems.length > 0"
                             class="space-y-4 mb-6 relative z-10 flex-1 overflow-y-auto pr-2 custom-scrollbar">
-                            <div v-for="item in cartStore.items" :key="item.product.id" class="flex items-center gap-3">
+                            <div v-for="item in checkoutItems" :key="item.product.id" class="flex items-center gap-3">
                                 <div
                                     class="w-12 h-12 bg-white border border-gray-200 rounded-lg overflow-hidden shrink-0">
                                     <NuxtImg v-if="item.product.imageUrl" :src="item.product.imageUrl"
@@ -151,7 +151,7 @@
                         </div>
 
                         <!-- 結帳按鈕 -->
-                        <button :disabled="!isFormValid || cartStore.items.length === 0 || isSubmitting"
+                        <button :disabled="!isFormValid || checkoutItems.length === 0 || isSubmitting"
                             @click="submitOrder"
                             class="w-full bg-accent-red hover:bg-[#ff5252] disabled:bg-gray-300 disabled:shadow-none disabled:active:translate-y-0 text-white text-lg font-black py-4 rounded-xl shadow-[4px_4px_0px_#1c180d] border-2 border-content active:shadow-none active:translate-y-1 transition-all flex items-center justify-center gap-3 relative overflow-hidden group mb-4">
                             <template v-if="isSubmitting">
@@ -185,6 +185,11 @@ const authStore = useAuthStore()
 const config = useRuntimeConfig()
 const toast = useToast()
 
+// 結帳只使用選中賣家的商品
+const checkoutItems = computed(() =>
+    cartStore.selectedSellerId ? cartStore.selectedItems : cartStore.items
+)
+
 const form = ref({
     name: '',
     email: '',
@@ -208,7 +213,7 @@ function buildOrderPayload(paymentMethod: string) {
         shippingAddress: form.value.address,
         paymentMethod,
         amount: cartStore.total,
-        items: cartStore.items.map(i => ({
+        items: checkoutItems.value.map(i => ({
             productId: i.product.id,
             name: i.product.name,
             imageUrl: i.product.imageUrl,
@@ -236,7 +241,7 @@ async function submitOrder() {
                 { method: 'POST', body: payload, headers: getAuthHeaders() }
             )
             orderNumber.value = res.orderNumber || ''
-            cartStore.clearCart()
+            cartStore.clearSelectedItems()
 
             // 通知使用者即將跳轉
             toast.success('正在跳轉至綠界金流頁面，請稍候...')
@@ -256,7 +261,7 @@ async function submitOrder() {
                 { method: 'POST', body: payload, headers: getAuthHeaders() }
             )
             orderNumber.value = res.orderNumber || ''
-            cartStore.clearCart()
+            cartStore.clearSelectedItems()
             await navigateTo({ path: '/order_completed', query: { orderNumber: res.orderNumber } })
         }
     } catch (error) {

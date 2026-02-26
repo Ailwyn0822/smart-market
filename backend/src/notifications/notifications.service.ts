@@ -43,4 +43,9 @@ export class NotificationsService {
         await this.notificationsRepo.update({ userId, isRead: false }, { isRead: true });
         return { success: true };
     }
+
+    async markOneAsRead(notificationId: number, userId: string) {
+        await this.notificationsRepo.update({ id: notificationId, userId }, { isRead: true });
+        return { success: true };
+    }
 }

@@ -12,12 +12,12 @@
         <div class="flex items-center gap-2">
             <!-- 鈴鐺通知 (已登入狀態下顯示) -->
             <div v-if="authStore.isAuthenticated"
-                class="relative cursor-pointer flex items-center justify-center size-10 rounded-full border-2 border-transparent hover:bg-gray-100 transition-colors"
+                class="relative cursor-pointer flex items-center justify-center size-10 rounded-full border-2 border-transparent hover:bg-gray-100 transition-colors group"
                 @click="toggleNotificationMenu">
-                <Icon name="material-symbols:notifications-outline" class="text-2xl text-content" />
+                <Icon name="material-symbols:notifications-outline" class="text-2xl text-content group-hover:text-accent-red transition-colors" />
                 <div v-if="unreadCount > 0"
-                    class="absolute top-1 right-1 size-4 bg-accent-red rounded-full text-[10px] text-white flex items-center justify-center font-bold border-2 border-white">
-                    {{ unreadCount > 9 ? '9+' : unreadCount }}
+                    class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-accent-red rounded-full text-[10px] text-white flex items-center justify-center font-bold border-2 border-white shadow-sm">
+                    {{ unreadCount > 99 ? '99+' : unreadCount }}
                 </div>
 
                 <!-- 鈴鐺下拉菜單 -->
@@ -122,6 +122,12 @@
                                 class="w-full text-left px-3 py-2 text-sm font-bold text-content hover:bg-accent-red/10 hover:text-accent-red rounded-xl flex items-center gap-3 transition-colors">
                                 <Icon name="material-symbols:favorite-outline" class="text-lg" />
                                 {{ $t('menu.favorites') }}
+                            </button>
+
+                            <button @click="handleAction('/coupons')"
+                                class="w-full text-left px-3 py-2 text-sm font-bold text-content hover:bg-accent-purple/10 hover:text-accent-purple rounded-xl flex items-center gap-3 transition-colors">
+                                <Icon name="material-symbols:sell-outline" class="text-lg" />
+                                {{ $t('menu.coupons') }}
                             </button>
                         </div>
 
@@ -255,13 +261,26 @@ async function markAllAsRead() {
     }
 }
 
-function handleNotificationClick(notif: any) {
-    // 這裡通常會發送已讀請求
+async function handleNotificationClick(notif: any) {
+    if (!notif.isRead) {
+        try {
+            await $fetch(`${config.public.apiBase}/notifications/${notif.id}/read`, {
+                method: 'PATCH',
+                headers: { Authorization: `Bearer ${authStore.token}` }
+            });
+            notif.isRead = true;
+            if (unreadCount.value > 0) unreadCount.value--;
+        } catch (e) {
+            console.error('Failed to mark notification as read', e);
+        }
+    }
     closeMenu();
     if (notif.type === 'order_update' && notif.referenceId) {
         router.push(`/buy_order/${notif.referenceId}`);
     } else if (notif.type === 'new_review') {
         router.push(`/sell_order`);
+    } else if (notif.type === 'product_deactivated') {
+        router.push(`/commodity`);
     } else {
         router.push(`/`);
     }

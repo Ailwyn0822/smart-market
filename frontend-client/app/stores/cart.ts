@@ -7,17 +7,28 @@ export interface CartItem {
 }
 
 export const useCartStore = defineStore('cart', () => {
-    // ?�試�?cookie 讀?��?始�?
+    // 嘗試從 cookie 讀取初始值
     const cartCookie = useCookie<CartItem[]>('smart_market_cart', { default: () => [] })
     const items = ref<CartItem[]>(cartCookie.value || [])
 
-    // ?��??��??�扣?��?費�?�?
+    // 折扣碼、費用相關
     const discountAmount = ref<number>(0)
     const appliedDiscountCode = ref<string>('')
 
-    // ??�� items 變�?並寫??cookie
+    // 多賣家分組：目前選中的賣家 ID（null = 未選擇）
+    const selectedSellerId = ref<string | null>(null)
+
+    // 監聽 items 變化並寫回 cookie
     watch(items, (newItems) => {
         cartCookie.value = newItems
+    }, { deep: true })
+
+    // 當商品被移除後，若選中的賣家已無商品則清除選擇
+    watch(items, (newItems) => {
+        if (selectedSellerId.value) {
+            const hasItems = newItems.some(i => i.product.userId === selectedSellerId.value)
+            if (!hasItems) selectedSellerId.value = null
+        }
     }, { deep: true })
 
     const c_totalItems = computed(() => {
@@ -31,8 +42,22 @@ export const useCartStore = defineStore('cart', () => {
         }, 0)
     })
 
-    // �?checkout.vue ??cart.vue 使用?�統一變數
-    const subtotal = computed(() => c_subtotal.value)
+    // 選中賣家的商品清單
+    const selectedItems = computed(() => {
+        if (!selectedSellerId.value) return []
+        return items.value.filter(i => i.product.userId === selectedSellerId.value)
+    })
+
+    // 選中賣家的小計
+    const selectedSubtotal = computed(() => {
+        return selectedItems.value.reduce((acc, item) => {
+            const price = typeof item.product.price === 'string' ? parseFloat(item.product.price) : Number(item.product.price)
+            return acc + (price * item.quantity)
+        }, 0)
+    })
+
+    // 給 checkout.vue 與 cart.vue 使用的統一變數（基於選中賣家）
+    const subtotal = computed(() => selectedSellerId.value ? selectedSubtotal.value : c_subtotal.value)
     const shipping = computed(() => 0)
     const total = computed(() => {
         const calc = subtotal.value + shipping.value - discountAmount.value
@@ -51,10 +76,8 @@ export const useCartStore = defineStore('cart', () => {
     function updateQuantity(productId: number, quantity: number) {
         const existing = items.value.find(i => i.product.id === productId)
         if (existing) {
+            if (quantity < 1) return  // 數量最小值為 1，不允許低於 1
             existing.quantity = quantity
-            if (existing.quantity <= 0) {
-                removeFromCart(productId)
-            }
         }
     }
 
@@ -64,7 +87,37 @@ export const useCartStore = defineStore('cart', () => {
 
     function clearCart() {
         items.value = []
+        selectedSellerId.value = null
     }
 
-    return { items, c_totalItems, c_subtotal, subtotal, shipping, discountAmount, appliedDiscountCode, total, addToCart, updateQuantity, removeFromCart, clearCart }
+    // 只清除選中賣家的商品（結帳後使用）
+    function clearSelectedItems() {
+        if (!selectedSellerId.value) return
+        items.value = items.value.filter(i => i.product.userId !== selectedSellerId.value)
+        selectedSellerId.value = null
+    }
+
+    function selectSeller(sellerId: string | null) {
+        selectedSellerId.value = sellerId
+    }
+
+    return {
+        items,
+        c_totalItems,
+        c_subtotal,
+        selectedSellerId,
+        selectedItems,
+        selectedSubtotal,
+        subtotal,
+        shipping,
+        discountAmount,
+        appliedDiscountCode,
+        total,
+        addToCart,
+        updateQuantity,
+        removeFromCart,
+        clearCart,
+        clearSelectedItems,
+        selectSeller,
+    }
 })

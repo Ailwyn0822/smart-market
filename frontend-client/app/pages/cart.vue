@@ -18,7 +18,7 @@
                 <!-- 主要內容：左欄（商品列表）+ 右欄（結帳摘要） -->
                 <div class="relative z-10 flex flex-col lg:flex-row gap-10">
 
-                    <!-- ===== 左欄：商品列表 ===== -->
+                    <!-- ===== 左欄：商品列表（依賣家分組） ===== -->
                     <div class="flex-1 space-y-6">
                         <h2 class="text-3xl font-black text-content mb-6 flex items-center gap-3">
                             <Icon name="material-symbols:shopping-bag" class="text-4xl text-accent-red" />
@@ -36,63 +36,93 @@
                             </NuxtLink>
                         </div>
 
-                        <!-- 商品列表 -->
+                        <!-- 多賣家分組商品列表 -->
                         <template v-else>
-                            <div v-for="(item, index) in cartStore.items" :key="item.product.id" :class="[
-                                'bg-white rounded-2xl p-4 flex gap-4 items-center relative group',
-                                crayonBorderClass(index)
-                            ]">
-                                <!-- 刪除按鈕 -->
-                                <button @click="cartStore.removeFromCart(item.product.id)"
-                                    class="absolute -top-3 -right-3 bg-red-100 hover:bg-accent-red text-accent-red hover:text-white rounded-full p-1 border-2 border-red-200 hover:border-accent-red transition-colors z-20">
-                                    <Icon name="material-symbols:close" class="text-lg" />
-                                </button>
+                            <div v-for="group in groupedBySeller" :key="group.sellerId" class="space-y-3">
 
-                                <!-- 商品圖片 -->
-                                <div
-                                    class="w-24 h-24 shrink-0 bg-gray-100 rounded-xl overflow-hidden border-2 border-dashed border-gray-300">
-                                    <NuxtImg :src="item.product.imageUrl" :alt="item.product.name" format="webp"
-                                        loading="lazy" class="w-full h-full object-cover" />
-                                </div>
+                                <!-- 賣家群組標頭 -->
+                                <label
+                                    class="flex items-center gap-3 cursor-pointer bg-white/60 px-4 py-2 rounded-xl border-2 border-dashed border-gray-300 hover:border-content transition-colors group"
+                                    :class="{ 'border-accent-blue bg-accent-blue/10': cartStore.selectedSellerId === group.sellerId }">
+                                    <!-- Checkbox -->
+                                    <input type="checkbox"
+                                        :checked="cartStore.selectedSellerId === group.sellerId"
+                                        @change="toggleSellerSelection(group.sellerId)"
+                                        class="w-5 h-5 rounded border-2 border-content accent-accent-blue cursor-pointer" />
+                                    <Icon name="material-symbols:storefront" class="text-lg text-gray-500" />
+                                    <span class="font-bold text-sm text-content flex-1">
+                                        {{ group.sellerName || '賣家 ' + group.sellerId.slice(0, 8) }}
+                                    </span>
+                                    <span class="text-xs text-gray-400 font-medium">
+                                        {{ group.items.length }} 件商品
+                                    </span>
+                                </label>
 
-                                <!-- 商品資訊 -->
-                                <div class="flex-grow">
-                                    <div class="flex justify-between items-start">
-                                        <h3 class="font-bold text-lg text-content">{{ item.product.name }}</h3>
-                                        <span :class="['font-black text-xl', priceColorClass(index)]">
-                                            ${{ parseFloat(String(item.product.price)).toFixed(2) }}
-                                        </span>
+                                <!-- 該賣家的商品 -->
+                                <div v-for="(item, index) in group.items" :key="item.product.id" :class="[
+                                    'bg-white rounded-2xl p-4 flex gap-4 items-center relative group ml-4',
+                                    crayonBorderClass(index)
+                                ]">
+                                    <!-- 刪除按鈕 -->
+                                    <button @click="cartStore.removeFromCart(item.product.id)"
+                                        class="absolute -top-3 -right-3 bg-red-100 hover:bg-accent-red text-accent-red hover:text-white rounded-full p-1 border-2 border-red-200 hover:border-accent-red transition-colors z-20">
+                                        <Icon name="material-symbols:close" class="text-lg" />
+                                    </button>
+
+                                    <!-- 商品圖片 -->
+                                    <div
+                                        class="w-24 h-24 shrink-0 bg-gray-100 rounded-xl overflow-hidden border-2 border-dashed border-gray-300">
+                                        <NuxtImg :src="item.product.imageUrl" :alt="item.product.name" format="webp"
+                                            loading="lazy" class="w-full h-full object-cover" />
                                     </div>
 
-                                    <!-- 數量控制 + 庫存標籤 -->
-                                    <div class="mt-2 flex items-center gap-4">
-                                        <div
-                                            class="flex items-center gap-2 bg-gray-50 rounded-lg border border-gray-200 px-2 py-1">
-                                            <button
-                                                @click="cartStore.updateQuantity(item.product.id, item.quantity - 1)"
-                                                class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-content rounded hover:bg-gray-200 transition-colors">
-                                                <Icon name="material-symbols:remove" class="text-sm" />
-                                            </button>
-                                            <span class="font-bold text-sm w-4 text-center">{{ item.quantity }}</span>
-                                            <button
-                                                @click="cartStore.updateQuantity(item.product.id, Math.min(item.quantity + 1, item.product.stock ?? 999))"
-                                                :disabled="item.product.stock !== undefined && item.quantity >= item.product.stock"
-                                                class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-content rounded hover:bg-gray-200 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
-                                                <Icon name="material-symbols:add" class="text-sm" />
-                                            </button>
+                                    <!-- 商品資訊 -->
+                                    <div class="flex-grow">
+                                        <div class="flex justify-between items-start">
+                                            <h3 class="font-bold text-lg text-content">{{ item.product.name }}</h3>
+                                            <span :class="['font-black text-xl', priceColorClass(index)]">
+                                                ${{ parseFloat(String(item.product.price)).toFixed(2) }}
+                                            </span>
                                         </div>
-                                        <span
-                                            v-if="item.product.stock !== undefined && item.product.stock <= 3 && item.product.stock > 0"
-                                            class="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded-md border border-orange-100">
-                                            {{ $t('cart.last_one') }}
-                                        </span>
-                                        <span v-else-if="item.product.stock === undefined || item.product.stock > 3"
-                                            class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-md border border-green-100">
-                                            {{ $t('cart.in_stock') }}
-                                        </span>
+
+                                        <!-- 數量控制 + 庫存標籤 -->
+                                        <div class="mt-2 flex items-center gap-4">
+                                            <div
+                                                class="flex items-center gap-2 bg-gray-50 rounded-lg border border-gray-200 px-2 py-1">
+                                                <button
+                                                    @click="cartStore.updateQuantity(item.product.id, item.quantity - 1)"
+                                                    :disabled="item.quantity <= 1"
+                                                    class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-content rounded hover:bg-gray-200 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+                                                    <Icon name="material-symbols:remove" class="text-sm" />
+                                                </button>
+                                                <span class="font-bold text-sm w-4 text-center">{{ item.quantity }}</span>
+                                                <button
+                                                    @click="cartStore.updateQuantity(item.product.id, Math.min(item.quantity + 1, item.product.stock ?? 999))"
+                                                    :disabled="item.product.stock !== undefined && item.quantity >= item.product.stock"
+                                                    class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-content rounded hover:bg-gray-200 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+                                                    <Icon name="material-symbols:add" class="text-sm" />
+                                                </button>
+                                            </div>
+                                            <span
+                                                v-if="item.product.stock !== undefined && item.product.stock <= 3 && item.product.stock > 0"
+                                                class="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded-md border border-orange-100">
+                                                {{ $t('cart.last_one') }}
+                                            </span>
+                                            <span v-else-if="item.product.stock === undefined || item.product.stock > 3"
+                                                class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-md border border-green-100">
+                                                {{ $t('cart.in_stock') }}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- 多賣家提示 -->
+                            <p v-if="groupedBySeller.length > 1"
+                                class="text-xs text-gray-500 font-medium bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2 flex items-center gap-2">
+                                <Icon name="material-symbols:info-outline" class="text-sm text-yellow-600 shrink-0" />
+                                結帳時每次只能選擇一家賣家的商品。請勾選欲結帳的賣家群組。
+                            </p>
                         </template>
 
                         <!-- 繼續購物 -->
@@ -118,6 +148,13 @@
                                     <Icon name="material-symbols:receipt-long" class="text-accent-purple" />
                                     {{ $t('cart.summary') }}
                                 </h3>
+
+                                <!-- 選中賣家提示 -->
+                                <div v-if="cartStore.items.length > 0 && !cartStore.selectedSellerId"
+                                    class="mb-4 bg-yellow-50 border-2 border-yellow-300 rounded-xl p-3 text-xs font-bold text-yellow-700 flex items-center gap-2">
+                                    <Icon name="material-symbols:warning-outline" class="text-base shrink-0" />
+                                    請先在左側勾選一家賣家的商品
+                                </div>
 
                                 <!-- 折扣碼 -->
                                 <div class="mb-6">
@@ -175,7 +212,8 @@
 
                                 <!-- 結帳按鈕 -->
                                 <button @click="checkout"
-                                    class="w-full bg-primary hover:bg-yellow-400 text-content text-lg font-black py-4 rounded-xl shadow-stitch border-2 border-content active:shadow-none active:translate-y-1 transition-all flex items-center justify-center gap-3 relative overflow-hidden group">
+                                    :disabled="cartStore.items.length === 0 || !cartStore.selectedSellerId"
+                                    class="w-full bg-primary hover:bg-yellow-400 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none text-content text-lg font-black py-4 rounded-xl shadow-stitch border-2 border-content active:shadow-none active:translate-y-1 transition-all flex items-center justify-center gap-3 relative overflow-hidden group">
                                     <span class="relative z-10">{{ $t('cart.checkout_now') }}</span>
                                     <Icon name="material-symbols:arrow-forward"
                                         class="relative z-10 group-hover:translate-x-1 transition-transform" />
@@ -259,6 +297,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed, shallowRef } from 'vue'
 import { useCartStore } from '~/stores/cart'
 import { useI18n } from '#imports'
 
@@ -284,6 +323,33 @@ const priceColorClasses = ['text-accent-blue', 'text-accent-red', 'text-accent-p
 const crayonBorderClass = (index: number) => crayonBorderClasses[index % crayonBorderClasses.length]
 const priceColorClass = (index: number) => priceColorClasses[index % priceColorClasses.length]
 
+// ===== 賣家分組 =====
+interface SellerGroup {
+    sellerId: string
+    sellerName: string
+    items: typeof cartStore.items
+}
+
+const groupedBySeller = computed<SellerGroup[]>(() => {
+    const groups = new Map<string, SellerGroup>()
+    for (const item of cartStore.items) {
+        const sellerId = item.product.userId || 'unknown'
+        if (!groups.has(sellerId)) {
+            groups.set(sellerId, { sellerId, sellerName: '', items: [] })
+        }
+        groups.get(sellerId)!.items.push(item)
+    }
+    return [...groups.values()]
+})
+
+function toggleSellerSelection(sellerId: string) {
+    if (cartStore.selectedSellerId === sellerId) {
+        cartStore.selectSeller(null)
+    } else {
+        cartStore.selectSeller(sellerId)
+    }
+}
+
 // ===== 折扣碼 Modal =====
 const openCodesModal = async () => {
     showCodesModal.value = true
@@ -296,9 +362,10 @@ const openCodesModal = async () => {
     }
 }
 
-const selectCode = (code: string) => {
+const selectCode = async (code: string) => {
     discountCode.value = code
     showCodesModal.value = false
+    await applyDiscount()
 }
 
 // ===== 折扣碼驗證（串接後端） =====
@@ -325,6 +392,10 @@ const applyDiscount = async () => {
 }
 
 const checkout = () => {
+    if (!cartStore.selectedSellerId) {
+        toast.warning('請先勾選要結帳的賣家群組')
+        return
+    }
     navigateTo('/checkout')
 }
 </script>

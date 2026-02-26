@@ -72,10 +72,28 @@
                                     <Icon name="material-symbols:local-shipping" class="text-accent-blue text-xl" />
                                     {{ $t("sell_order.order_status") }}
                                 </span>
+                                <!-- 確認出貨 -->
                                 <button v-if="order.status === 'processing'" @click="updateStatus('out_for_delivery')"
                                     class="bg-accent-blue text-white px-4 py-1.5 rounded-lg border-2 border-content shadow-stitch-sm hover:translate-y-0.5 hover:shadow-none transition-all text-sm">
                                     {{ $t("sell_order.confirm_shipment") }}
                                 </button>
+                                <!-- 取消申請 — 賣家同意/拒絕 -->
+                                <div v-if="order.status === 'cancel_requested'" class="flex gap-2">
+                                    <button @click="respondCancel(true)" :disabled="isCancelResponding"
+                                        class="bg-accent-red text-white px-3 py-1.5 rounded-lg border-2 border-content text-sm font-bold disabled:opacity-50 shadow-stitch-sm hover:translate-y-0.5 hover:shadow-none transition-all">
+                                        {{ $t('sell_order.cancel_approve') }}
+                                    </button>
+                                    <button @click="respondCancel(false)" :disabled="isCancelResponding"
+                                        class="bg-gray-100 text-gray-600 px-3 py-1.5 rounded-lg border-2 border-gray-300 text-sm font-bold disabled:opacity-50">
+                                        {{ $t('sell_order.cancel_reject') }}
+                                    </button>
+                                </div>
+                                <!-- 已取消 -->
+                                <span v-if="order.status === 'cancelled'"
+                                    class="bg-gray-100 text-gray-500 px-4 py-1.5 rounded-lg border border-gray-300 text-sm font-bold flex items-center gap-1">
+                                    <Icon name="material-symbols:cancel" />
+                                    {{ $t('sell_order.cancelled') }}
+                                </span>
                             </h3>
                             <div
                                 class="w-full h-3 bg-gray-100 rounded-full border border-gray-200 overflow-hidden mb-2">
@@ -83,7 +101,9 @@
                                     'bg-accent-blue w-1/4': order.status === 'processing',
                                     'bg-accent-blue w-2/4': order.status === 'shipped',
                                     'bg-accent-blue w-3/4': order.status === 'out_for_delivery',
-                                    'bg-green-400 w-full': order.status === 'delivered'
+                                    'bg-green-400 w-full': order.status === 'delivered',
+                                    'bg-yellow-400 w-1/4': order.status === 'cancel_requested',
+                                    'bg-gray-300 w-full': order.status === 'cancelled',
                                 }"></div>
                             </div>
                             <div class="flex justify-between text-[10px] font-bold text-gray-400">
@@ -222,6 +242,7 @@ interface Order {
 
 const order = ref<Order | null>(null)
 const isLoading = shallowRef(false)
+const isCancelResponding = shallowRef(false)
 
 const { t } = useI18n()
 useHead({ title: computed(() => order.value ? `Sales #${order.value.orderNumber} | Smart Market` : 'Smart Market') })
@@ -275,6 +296,24 @@ async function updateStatus(status: string) {
     } catch (e) {
         console.error(e)
         toast.error(t("toast.status_error"))
+    }
+}
+
+async function respondCancel(approve: boolean) {
+    if (!order.value || isCancelResponding.value) return
+    isCancelResponding.value = true
+    try {
+        await $fetch(`${config.public.apiBase}/orders/${order.value.id}/cancel-respond`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${authStore.token}` },
+            body: { approve }
+        })
+        toast.success(approve ? t('sell_order.cancel_approved') : t('sell_order.cancel_rejected'))
+        await fetchOrder()
+    } catch {
+        toast.error(t('toast.error_generic'))
+    } finally {
+        isCancelResponding.value = false
     }
 }
 

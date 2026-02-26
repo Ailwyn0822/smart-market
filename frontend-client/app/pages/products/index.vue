@@ -39,7 +39,7 @@
                 <div v-if="displayProducts.length === 0 && !pending"
                     class="flex flex-col items-center justify-center py-24 gap-4 text-gray-400">
                     <Icon name="material-symbols:search-off" class="text-6xl" />
-                    <span class="font-bold text-lg">找不到相關商品</span>
+                    <span class="font-bold text-lg">{{ $t('products.no_results') }}</span>
                 </div>
 
                 <!--
@@ -83,6 +83,7 @@ const debouncedKeyword = useDebounce(() => searchQuery.value.trim(), 300)
 
 const categoryParam = computed(() => (route.query.category as string) || undefined)
 const keywordParam = computed(() => debouncedKeyword.value || undefined)
+const maxPriceParam = computed(() => route.query.maxPrice ? Number(route.query.maxPrice) : undefined)
 
 // ── 視窗尺寸 & 捲動位置（VueUse 響應式）────────────
 const { width, height: windowHeight } = useWindowSize()
@@ -115,6 +116,7 @@ const loadMore = async () => {
                 query: {
                     keyword: keywordParam.value,
                     category: categoryParam.value,
+                    maxPrice: maxPriceParam.value,
                     page: page.value,
                     limit: PAGE_SIZE,
                 },
@@ -140,7 +142,7 @@ const resetAndLoad = () => {
     loadMore()
 }
 
-watch([categoryParam, keywordParam], resetAndLoad)
+watch([categoryParam, keywordParam, maxPriceParam], resetAndLoad)
 
 // ── 虛擬渲染核心 ──────────────────────────────────
 // gridRef 讓我們知道商品列表從頁面哪個 Y 位置開始
@@ -189,7 +191,7 @@ const virtualState = computed(() => {
 const handleWindowScroll = () => {
     const scrolled = window.scrollY + window.innerHeight
     const docHeight = document.documentElement.scrollHeight
-    if (docHeight - scrolled < 600) loadMore()
+    if (docHeight - scrolled < 300) loadMore()
 }
 
 onMounted(() => {

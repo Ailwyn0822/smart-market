@@ -44,7 +44,28 @@
       "Bash(node -e \":*)",
       "Bash(docker exec sm_db psql -U postgres -d smart_market -c \"DELETE FROM users WHERE email = ''line_Ue59101477da0e8890ac829e9c1b55ab7@smart-market.com'';\")",
       "Bash(cat /c/Users/asd66/Documents/GitHub/smart-market/frontend-admin/.env.*)",
-      "Bash(npm view ecpay-aio-node versions --json)"
+      "Bash(npm view ecpay-aio-node versions --json)",
+      "WebFetch(domain:platform.tripo3d.ai)",
+      "WebFetch(domain:apidog.com)",
+      "Bash(python3 -c \"print\\(''hello''\\)\")",
+      "Bash(python /tmp/write_seller_page.py)",
+      "Bash(powershell -Command \":*)",
+      "Bash(cmd.exe /c \"echo test\")",
+      "Bash(powershell.exe -File \"C:\\\\Temp\\\\test.ps1\")",
+      "Bash(node -e \"require\\(''fs''\\).writeFileSync\\(''C:/Temp/write_seller.js'', ''console.log\\(42\\)''\\)\")",
+      "Bash(node C:/Temp/write_seller.js)",
+      "Bash(powershell.exe -Command \"New-Item -ItemType Directory -Force -Path ''C:\\\\Temp'' | Out-Null; ''ok''\")",
+      "Bash(powershell.exe -Command \":*)",
+      "Bash(python -c \"import base64; print\\(base64.b64encode\\(b''hello world''\\).decode\\(\\)\\)\")",
+      "Bash(node -e:*)",
+      "Bash(python -c \":*)",
+      "Bash(python -c \"import base64; data = open\\(''C:/Users/asd66/Documents/GitHub/smart-market/frontend-client/app/pages/seller/[id].vue'', ''rb''\\).read\\(\\) if False else b''test''; print\\(len\\(data\\)\\)\")",
+      "Bash(powershell.exe -Command \"[System.IO.Directory]::CreateDirectory\\(''C:\\\\Temp''\\) | Out-Null; Write-Host ''ok''\")",
+      "Bash(ls -d backend/src/*/)",
+      "Bash(npx tsc --noEmit)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\asd66\\Documents\\GitHub\\smart-market\\frontend-client\\app\\pages\\seller"
     ]
   }
 }

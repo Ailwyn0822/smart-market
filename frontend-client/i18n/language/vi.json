@@ -145,7 +145,38 @@
     "not_found": "Không tìm thấy sản phẩm",
     "back_to_list": "Quay lại danh sách",
     "view_seller": "Xem người bán",
-    "seller_label": "Người bán"
+    "seller_label": "Người bán",
+    "reviews_title": "Đánh giá sản phẩm",
+    "no_reviews": "Chưa có đánh giá, hãy mua và để lại đánh giá đầu tiên!",
+    "load_more_reviews": "Tải thêm đánh giá",
+    "loading_more": "Đang tải...",
+    "qa_title": "Hỏi & Đáp",
+    "qa_placeholder": "Bạn có câu hỏi? Nhập tại đây...",
+    "qa_ask": "Hỏi",
+    "qa_login_to_ask": "Đăng nhập để đặt câu hỏi",
+    "qa_no_questions": "Chưa có câu hỏi nào, hãy hỏi ngay!",
+    "qa_seller_reply": "Phản hồi của người bán",
+    "qa_answer_placeholder": "Nhập phản hồi...",
+    "qa_reply": "Trả lời",
+    "qa_asked": "Đã gửi câu hỏi!",
+    "qa_answered": "Đã gửi phản hồi!",
+    "cannot_favorite_own": "Không thể yêu thích sản phẩm của mình",
+    "cannot_buy_own": "Không thể mua sản phẩm của mình",
+    "qa_seller_restriction": "You are the seller of this product and cannot ask questions here",
+    "no_results": "Không tìm thấy sản phẩm"
+  },
+  "coupons": {
+    "title": "Phiếu giảm giá",
+    "available": "Phiếu giảm giá khả dụng",
+    "empty": "Hiện không có phiếu giảm giá",
+    "discount_amount": "Giảm ${amount}",
+    "copy": "Sao chép",
+    "valid_until": "Hiệu lực đến: {date}",
+    "used_count": "Đã dùng: {current} / {max} lần",
+    "unlimited_usage": "Không giới hạn số lần dùng",
+    "go_to_cart": "Đến giỏ hàng để dùng",
+    "copy_success": "Đã sao chép mã {code}, đến giỏ hàng để áp dụng!",
+    "page_title": "Phiếu giảm giá | Smart Market"
   },
   "cart": {
     "title": "Giỏ hàng của tôi",
@@ -232,7 +263,9 @@
       "processing": "Đang xử lý",
       "shipped": "Đã giao",
       "out_for_delivery": "Đang giao hàng",
-      "delivered": "Đã giao thành công"
+      "delivered": "Đã giao thành công",
+      "cancel_requested": "Đang yêu cầu hủy",
+      "cancelled": "Đã hủy"
     },
     "loading": "Đang tải...",
     "login_required": "Vui lòng đăng nhập để xem đơn hàng",
@@ -278,8 +311,18 @@
       "processing": "Đang chuẩn bị",
       "shipped": "Đã giao hàng",
       "out_for_delivery": "Đang giao hàng",
-      "delivered": "Đã nhận hàng"
-    }
+      "delivered": "Đã nhận hàng",
+      "cancel_requested": "Đang yêu cầu hủy",
+      "cancelled": "Đã hủy"
+    },
+    "print_invoice": "In hóa đơn",
+    "request_cancel": "Yêu cầu hủy",
+    "cancel_pending": "Đang chờ người bán xác nhận hủy",
+    "cancelled": "Đơn hàng đã hủy",
+    "cancel_request_sent": "Đã gửi yêu cầu hủy, đang chờ người bán xác nhận",
+    "cancel_request_failed": "Gửi yêu cầu hủy thất bại, vui lòng thử lại",
+    "seller_review_title": "Đánh giá dịch vụ người bán",
+    "seller_review_placeholder": "Mô tả trải nghiệm mua sắm của bạn... (Tùy chọn)"
   },
   "sell_order": {
     "title": "Đơn hàng bán",
@@ -288,7 +331,23 @@
     "empty": "Chưa có đơn hàng bán",
     "go_home": "Về trang chủ",
     "order_time": "Thời gian đặt hàng",
-    "confirm_shipment": "Xác nhận giao hàng"
+    "confirm_shipment": "Xác nhận giao hàng",
+    "order_status": "Trạng thái vận chuyển",
+    "status": {
+      "processing": "Đang chuẩn bị",
+      "shipped": "Đã giao hàng",
+      "out_for_delivery": "Đang giao hàng",
+      "delivered": "Đã giao thành công"
+    },
+    "detail": {
+      "qty": "Số lượng"
+    },
+    "cancel_approve": "Đồng ý hủy",
+    "cancel_reject": "Từ chối hủy",
+    "cancel_approved": "Đã đồng ý hủy đơn hàng",
+    "cancel_rejected": "Đã từ chối yêu cầu hủy, đơn hàng tiếp tục",
+    "cancelled": "Đơn hàng đã hủy",
+    "not_found": "Không tìm thấy đơn hàng"
   },
   "seller": {
     "loading": "Đang tải thông tin người bán...",
@@ -303,7 +362,30 @@
     "no_products": "Chưa có sản phẩm nào",
     "reviews_title": "Đánh giá từ người mua",
     "no_reviews": "Chưa có đánh giá!",
-    "reviews_end": "Đã hết! 🎉"
+    "reviews_end": "Đã hết! 🎉",
+    "products_all_shown": "Đã hiển thị tất cả {count} sản phẩm 🎉"
+  },
+  "invoice": {
+    "back": "Quay lại đơn hàng",
+    "print": "In / Lưu PDF",
+    "title": "Hóa đơn đặt hàng",
+    "date": "Ngày",
+    "recipient_info": "Thông tin người nhận",
+    "payment_info": "Thông tin thanh toán",
+    "payment_method_label": "Phương thức thanh toán",
+    "cod": "Thanh toán khi nhận hàng",
+    "online": "Thanh toán trực tuyến",
+    "order_status_label": "Trạng thái đơn hàng",
+    "col_product": "Tên sản phẩm",
+    "col_qty": "Số lượng",
+    "col_unit_price": "Đơn giá",
+    "col_subtotal": "Tổng phụ",
+    "subtotal": "Tổng phụ",
+    "shipping": "Phí vận chuyển",
+    "total": "Tổng cộng",
+    "thanks": "Cảm ơn bạn đã mua sắm tại Smart Market!",
+    "note": "Đây là hóa đơn điện tử...",
+    "not_found": "Không tìm thấy đơn hàng"
   },
   "favorite": {
     "title": "Yêu thích của tôi",
@@ -437,7 +519,8 @@
     "seller_dashboard": "Bảng điều khiển người bán",
     "sales_orders": "Quản lý đơn hàng",
     "my_products": "Sản phẩm của tôi",
-    "favorites": "Mục yêu thích"
+    "favorites": "Mục yêu thích",
+    "coupons": "Phiếu giảm giá"
   },
   "chat": {
     "title": "Trò chuyện",

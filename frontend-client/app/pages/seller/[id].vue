@@ -102,7 +102,7 @@
                         所有刊登商品
                     </h2>
 
-                    <div v-if="storeData.products.length === 0"
+                    <div v-if="displayedProducts.length === 0 && !isProductLoading"
                         class="flex flex-col items-center justify-center py-16 gap-4 bg-white rounded-3xl border-2 border-dashed border-gray-300">
                         <Icon name="material-symbols:box-outline" class="text-6xl text-gray-300" />
                         <p class="font-bold text-gray-400 text-lg">該賣家目前沒有上架商品</p>
@@ -110,6 +110,20 @@
 
                     <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         <ProductCard v-for="item in mappedProducts" :key="item.id" :item="item" />
+                    </div>
+
+                    <!-- Infinite scroll 哨兵 -->
+                    <div ref="productSentinel" class="h-4 mt-6"></div>
+
+                    <!-- 載入中 -->
+                    <div v-if="isProductLoading" class="flex justify-center py-8">
+                        <Icon name="line-md:loading-loop" class="text-4xl text-primary" />
+                    </div>
+
+                    <!-- 已全部顯示 -->
+                    <div v-if="!productHasMore && displayedProducts.length > 0 && !isProductLoading"
+                        class="text-center py-6 text-sm text-gray-400 font-bold">
+                        {{ $t('seller.products_all_shown', { count: displayedProducts.length }) }}
                     </div>
                 </div>
             </div>
@@ -195,10 +209,18 @@ interface SellerInfo {
 interface StoreData {
     seller: SellerInfo
     products: ApiProduct[]
+    hasMore: boolean
 }
 
 const storeData = ref<StoreData | null>(null)
 const isLoading = shallowRef(true)
+
+// 商品分頁 infinite scroll
+const displayedProducts = ref<ApiProduct[]>([])
+const productPage = ref(1)
+const productHasMore = shallowRef(false)
+const isProductLoading = shallowRef(false)
+const productSentinel = useTemplateRef<HTMLElement>('productSentinel')
 
 // 關注邏輯 (結合 LocalStorage 狀態保留)
 const isFollowing = shallowRef(false)
@@ -270,6 +292,35 @@ useIntersectionObserver(
     { rootMargin: '100px' }
 )
 
+async function fetchMoreProducts() {
+    if (!productHasMore.value || isProductLoading.value) return
+    isProductLoading.value = true
+    productPage.value++
+    try {
+        const data = await $fetch<{ items: ApiProduct[], hasMore: boolean }>(
+            `${config.public.apiBase}/users/${route.params.id}/products?page=${productPage.value}&limit=12`
+        )
+        displayedProducts.value.push(...data.items)
+        productHasMore.value = data.hasMore
+    } catch (e) {
+        console.error('Failed to fetch more products', e)
+        productPage.value--
+    } finally {
+        isProductLoading.value = false
+    }
+}
+
+useIntersectionObserver(
+    productSentinel,
+    (entries) => {
+        const isIntersecting = entries[0]?.isIntersecting ?? false
+        if (isIntersecting && productHasMore.value && !isProductLoading.value) {
+            fetchMoreProducts()
+        }
+    },
+    { rootMargin: '100px' }
+)
+
 useHead({ title: computed(() => storeData.value ? `${storeData.value.seller.name} 的商店 | Smart Market` : '賣家商店 | Smart Market') })
 
 // 沿用與首頁相同的卡片顏色輪替機制
@@ -285,8 +336,7 @@ function getCardStyle(id: number) {
 }
 
 const mappedProducts = computed<ProductItem[]>(() => {
-    if (!storeData.value) return []
-    return storeData.value.products.map(p => {
+    return displayedProducts.value.map(p => {
         const style = getCardStyle(p.id)
         return {
             id: p.id,
@@ -327,6 +377,9 @@ async function fetchStore() {
     try {
         const data = await $fetch<StoreData>(`${config.public.apiBase}/users/${route.params.id}/store`)
         storeData.value = data
+        displayedProducts.value = [...data.products]
+        productPage.value = 1
+        productHasMore.value = data.hasMore
     } catch (e) {
         console.error('Failed to fetch store data', e)
         storeData.value = null

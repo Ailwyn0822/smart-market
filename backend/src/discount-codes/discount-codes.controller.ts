@@ -1,8 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { DiscountCodesService } from './discount-codes.service';
 import { CreateDiscountCodeDto } from './dto/create-discount-code.dto';
 import { UpdateDiscountCodeDto } from './dto/update-discount-code.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
+import { UserRole } from '@smart-market/shared';
 
 @ApiTags('discount-codes')
 @Controller('discount-codes')
@@ -18,6 +22,10 @@ export class DiscountCodesController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: '建立折扣碼（Admin）' })
   create(@Body() createDiscountCodeDto: CreateDiscountCodeDto) {
     return this.discountCodesService.create(createDiscountCodeDto);
   }
@@ -35,11 +43,19 @@ export class DiscountCodesController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: '更新折扣碼（Admin）' })
   update(@Param('id') id: string, @Body() updateDiscountCodeDto: UpdateDiscountCodeDto) {
     return this.discountCodesService.update(+id, updateDiscountCodeDto);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: '刪除折扣碼（Admin）' })
   remove(@Param('id') id: string) {
     return this.discountCodesService.remove(+id);
   }

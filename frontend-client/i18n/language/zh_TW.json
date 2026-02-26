@@ -145,7 +145,38 @@
     "not_found": "找不到此商品",
     "back_to_list": "回到商品列表",
     "view_seller": "查看賣家",
-    "seller_label": "賣家"
+    "seller_label": "賣家",
+    "reviews_title": "商品評價",
+    "no_reviews": "目前還沒有評價，快去購買並留下第一則評價吧！",
+    "load_more_reviews": "載入更多評價",
+    "loading_more": "載入中...",
+    "qa_title": "買家問答",
+    "qa_placeholder": "有問題嗎？輸入您的問題...",
+    "qa_ask": "提問",
+    "qa_login_to_ask": "登入後才能提問",
+    "qa_no_questions": "目前還沒有問題，趕快提問吧！",
+    "qa_seller_reply": "賣家回覆",
+    "qa_answer_placeholder": "輸入回覆...",
+    "qa_reply": "回覆",
+    "qa_asked": "提問成功！",
+    "qa_answered": "回覆成功！",
+    "cannot_favorite_own": "不能收藏自己的商品",
+    "cannot_buy_own": "不能購買自己的商品",
+    "qa_seller_restriction": "您是此商品的賣家，無法自問自答",
+    "no_results": "找不到相關商品"
+  },
+  "coupons": {
+    "title": "優惠券",
+    "available": "可用優惠券",
+    "empty": "目前沒有可用的優惠券",
+    "discount_amount": "折扣 ${amount}",
+    "copy": "複製",
+    "valid_until": "有效期：{date}",
+    "used_count": "已使用：{current} / {max} 次",
+    "unlimited_usage": "無使用次數限制",
+    "go_to_cart": "前往購物車使用",
+    "copy_success": "已複製折扣碼 {code}，請前往購物車使用！",
+    "page_title": "優惠券 | Smart Market"
   },
   "cart": {
     "title": "我的購物車",
@@ -232,7 +263,9 @@
       "processing": "處理中",
       "shipped": "已出貨",
       "out_for_delivery": "配送中",
-      "delivered": "已送達"
+      "delivered": "已送達",
+      "cancel_requested": "申請取消中",
+      "cancelled": "已取消"
     },
     "loading": "載入中...",
     "login_required": "請先登入查看訂單",
@@ -278,17 +311,43 @@
       "processing": "備貨中",
       "shipped": "已出貨",
       "out_for_delivery": "配送中",
-      "delivered": "已收貨"
-    }
+      "delivered": "已收貨",
+      "cancel_requested": "申請取消中",
+      "cancelled": "已取消"
+    },
+    "print_invoice": "列印發票",
+    "request_cancel": "申請取消",
+    "cancel_pending": "等待賣家確認取消",
+    "cancelled": "訂單已取消",
+    "cancel_request_sent": "取消申請已送出，等待賣家確認",
+    "cancel_request_failed": "申請取消失敗，請稍後再試",
+    "seller_review_title": "賣家服務評分",
+    "seller_review_placeholder": "描述您的整體購物體驗... (選填)"
   },
   "sell_order": {
     "title": "賣家訂單",
     "loading": "載入中...",
     "login_required": "請先登入",
     "empty": "目前沒有銷售訂單",
-    "go_home": "回首頁",
+    "go_home": "返回訂單列表",
     "order_time": "下單時間",
-    "confirm_shipment": "確認出貨"
+    "confirm_shipment": "確認出貨",
+    "order_status": "配送狀態",
+    "status": {
+      "processing": "備貨中",
+      "shipped": "已出貨",
+      "out_for_delivery": "配送中",
+      "delivered": "已送達"
+    },
+    "detail": {
+      "qty": "數量"
+    },
+    "cancel_approve": "同意取消",
+    "cancel_reject": "拒絕取消",
+    "cancel_approved": "已同意取消訂單",
+    "cancel_rejected": "已拒絕取消申請，訂單繼續",
+    "cancelled": "訂單已取消",
+    "not_found": "找不到此訂單"
   },
   "seller": {
     "loading": "載入賣家資訊中...",
@@ -303,7 +362,30 @@
     "no_products": "該賣家目前沒有上架商品",
     "reviews_title": "來自買家的評價",
     "no_reviews": "目前沒有評價喔！",
-    "reviews_end": "已經到底囉 🎉"
+    "reviews_end": "已經到底囉 🎉",
+    "products_all_shown": "已顯示全部 {count} 件商品 🎉"
+  },
+  "invoice": {
+    "back": "返回訂單",
+    "print": "列印 / 儲存為 PDF",
+    "title": "訂單發票",
+    "date": "日期",
+    "recipient_info": "收件人資訊",
+    "payment_info": "付款資訊",
+    "payment_method_label": "付款方式",
+    "cod": "貨到付款",
+    "online": "線上支付",
+    "order_status_label": "訂單狀態",
+    "col_product": "商品名稱",
+    "col_qty": "數量",
+    "col_unit_price": "單價",
+    "col_subtotal": "小計",
+    "subtotal": "小計",
+    "shipping": "運費",
+    "total": "總計",
+    "thanks": "感謝您在 Smart Market 購物！",
+    "note": "此為電子發票，可截圖或列印作為購物憑證。",
+    "not_found": "找不到此訂單"
   },
   "favorite": {
     "title": "我的收藏",
@@ -437,7 +519,8 @@
     "seller_dashboard": "賣家儀表板",
     "sales_orders": "銷售訂單管理",
     "my_products": "我的商品",
-    "favorites": "我的收藏"
+    "favorites": "我的收藏",
+    "coupons": "折價券"
   },
   "chat": {
     "title": "聊聊",

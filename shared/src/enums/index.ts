@@ -5,6 +5,8 @@ export enum OrderStatus {
   SHIPPED = 'shipped',
   OUT_FOR_DELIVERY = 'out_for_delivery',
   DELIVERED = 'delivered',
+  CANCEL_REQUESTED = 'cancel_requested',
+  CANCELLED = 'cancelled',
 }
 
 // 付款方式（抽離自 backend/src/orders/entities/order.entity.ts）

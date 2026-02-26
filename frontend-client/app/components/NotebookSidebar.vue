@@ -62,11 +62,11 @@
                                 </h4>
                                 <div class="px-2">
                                     <input class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                                        max="100" min="0" type="range" v-model="priceValue" />
+                                        max="5000" min="0" type="range" v-model="priceValue" />
                                     <div class="flex justify-between mt-2 font-bold text-sm text-content">
                                         <span>$0</span>
                                         <span>${{ priceValue }}</span>
-                                        <span>$100+</span>
+                                        <span>$5000+</span>
                                     </div>
                                 </div>
                             </div>
@@ -85,12 +85,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef, onMounted } from 'vue'
+import { ref, shallowRef, onMounted, watch } from 'vue'
 
 const config = useRuntimeConfig()
 const route = useRoute()
 const router = useRouter()
-const priceValue = ref(40)
+
+// 從 URL 初始化，沒有 maxPrice 時預設 5000（顯示全部）
+const priceValue = ref(route.query.maxPrice ? Number(route.query.maxPrice) : 5000)
+
+const debouncedPriceUpdate = useDebounce(() => priceValue.value, 400)
+
+watch(debouncedPriceUpdate, (val) => {
+    const query = { ...route.query }
+    if (val >= 5000) {
+        delete query.maxPrice
+    } else {
+        query.maxPrice = String(val)
+    }
+    router.push({ path: route.path, query })
+})
 
 const categories = ref<{ id?: number; name: string }[]>([])
 const loadingCategories = shallowRef(false)

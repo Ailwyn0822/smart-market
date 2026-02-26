@@ -54,10 +54,11 @@ export class UsersService {
     const user = await this.usersRepository.findOne({ where: { id: userId } });
     if (!user) return null;
 
-    const products = await this.productRepository.find({
-      where: { userId },
+    const [products, total] = await this.productRepository.findAndCount({
+      where: { userId, isActive: true },
       relations: ['category'],
       order: { createdAt: 'DESC' },
+      take: 12,
     });
 
     const reviews = await this.reviewRepository.find({ where: { sellerId: userId } });
@@ -73,9 +74,28 @@ export class UsersService {
         avatar: user.avatar,
         joinedAt: user.createdAt,
         rating: Math.round(avgRating * 10) / 10,
-        totalProducts: products.length,
+        totalProducts: total,
       },
       products,
+      hasMore: total > 12,
+    };
+  }
+
+  // 賣家商品分頁
+  async findSellerProducts(userId: string, page: number, limit: number) {
+    const [items, total] = await this.productRepository.findAndCount({
+      where: { userId, isActive: true },
+      relations: ['category'],
+      order: { createdAt: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+    return {
+      items,
+      total,
+      page,
+      limit,
+      hasMore: page * limit < total,
     };
   }
 

@@ -20,11 +20,13 @@ export class AiService {
     this.genAI = new GoogleGenerativeAI(this.configService.getOrThrow<string>('GEMINI_API_KEY'));
   }
 
-  async analyzeProductImage(imageBuffer: Buffer, mimeType: string): Promise<AiAnalysisResult> {
+  async analyzeProductImage(imageBuffer: Buffer, mimeType: string, categoryNames: string[]): Promise<AiAnalysisResult> {
     try {
       console.log('Initializing Gemini model...');
       const model = this.genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
       console.log('Gemini model initialized.');
+
+      const categoryList = categoryNames.join('、');
 
       const prompt = `
       你是一個專業的電商平台內容審核員與商品管理員。
@@ -41,7 +43,7 @@ export class AiService {
         "reason": "若 flagged 為 true，說明偵測到的不當內容（否則省略此欄位）",
         "name": "若未被標記，填入商品繁體中文名稱（簡短有力）；若被標記則填入空字串",
         "description": "若未被標記，填入商品的詳細描述（50字以內）；若被標記則填入空字串",
-        "category": "若未被標記，填入商品分類（例如: 3C, 食品, 服飾...）；若被標記則填入空字串",
+        "category": "若未被標記，從以下選項中選出最符合的分類名稱（必須完全一致，不得自創）：${categoryList}；若被標記則填入空字串",
         "price": 若未被標記，填入預估台幣售價（純數字）；若被標記則填入 0
       }
     `;

@@ -44,6 +44,9 @@ export class Order {
     @Column({ nullable: true })
     shippingAddress: string;
 
+    @Column({ type: 'varchar', nullable: true })
+    cancelRequestedBy: string | null; // 'buyer' | 'seller'
+
     @OneToMany(() => OrderItem, (item) => item.order, {
         cascade: true,
         eager: true,

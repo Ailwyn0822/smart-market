@@ -91,10 +91,10 @@
                         icon="material-symbols:category-outline" positionClass="lg:top-32 lg:right-10 z-30"
                         widthClass="lg:w-[320px]" rotationClass="rotate-more-left" tapeRotation="rotate-12">
                         <div class="relative">
-                            <select v-model="formData.category"
+                            <select v-model="formData.categoryId"
                                 class="w-full bg-white/80 border-0 rounded-lg px-4 py-3 text-gray-800 focus:ring-2 focus:ring-primary focus:bg-white transition-all shadow-sm appearance-none cursor-pointer">
-                                <option value="">{{ $t('upload.form.category_placeholder') }}</option>
-                                <option v-for="cat in categories" :key="cat.id" :value="cat.name">{{ cat.icon }} {{
+                                <option :value="0">{{ $t('upload.form.category_placeholder') }}</option>
+                                <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.icon }} {{
                                     cat.name }}</option>
                             </select>
                             <Icon name="material-symbols:expand-more"
@@ -175,7 +175,7 @@ const { data: categories } = await useFetch<{ id: number; name: string; icon: st
 
 const formData = reactive({
     name: '',
-    category: '',
+    categoryId: 0,
     description: '',
     price: '',
     stock: '',
@@ -243,7 +243,9 @@ const processFile = async (file: File) => {
         if (response && response.aiAnalysis) {
             formData.name = response.aiAnalysis.name;
             formData.description = response.aiAnalysis.description;
-            formData.category = response.aiAnalysis.category;
+            // AI 回傳分類名稱，找對應的 id
+            const matched = (categories.value || []).find(c => c.name === response.aiAnalysis.category);
+            formData.categoryId = matched ? matched.id : 0;
             formData.price = response.aiAnalysis.price.toString();
             formData.imageUrl = response.imageUrl; // Use URL from server
         }
@@ -265,7 +267,7 @@ const submitForm = async () => {
     const { isValid } = validateProductForm({
         name: formData.name,
         description: formData.description,
-        category: formData.category,
+        categoryId: formData.categoryId,
         price: formData.price,
         imageUrl: formData.imageUrl
     });
@@ -290,8 +292,8 @@ const submitForm = async () => {
             body: {
                 name: formData.name,
                 description: formData.description,
-                category: formData.category,
-                price: formData.price,
+                categoryId: Number(formData.categoryId),
+                price: Number(formData.price),
                 stock: formData.stock ? Number(formData.stock) : 1,
                 imageUrl: formData.imageUrl
             },
@@ -304,7 +306,7 @@ const submitForm = async () => {
         Object.assign(formData, {
             name: '',
             description: '',
-            category: '',
+            categoryId: 0,
             price: '',
             stock: '',
             imageUrl: ''

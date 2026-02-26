@@ -58,10 +58,17 @@
                                 <span class="font-black text-content text-xl font-mono-card">#{{ order.orderNumber
                                     }}</span>
                             </div>
-                            <div class="text-right">
-                                <p class="text-xs font-bold uppercase tracking-widest text-gray-400">
-                                    {{ $t('buy_order.detail.date_placed') }}</p>
-                                <p class="font-bold text-content">{{ formatDate(order.createdAt) }}</p>
+                            <div class="flex flex-col items-end gap-2">
+                                <div class="text-right">
+                                    <p class="text-xs font-bold uppercase tracking-widest text-gray-400">
+                                        {{ $t('buy_order.detail.date_placed') }}</p>
+                                    <p class="font-bold text-content">{{ formatDate(order.createdAt) }}</p>
+                                </div>
+                                <a :href="`/invoice/${order.id}`" target="_blank" rel="noopener"
+                                    class="inline-flex items-center gap-1.5 text-xs font-bold text-gray-400 hover:text-accent-purple transition-colors border border-dashed border-gray-300 hover:border-accent-purple px-3 py-1.5 rounded-lg">
+                                    <Icon name="material-symbols:print" class="text-sm" />
+                                    {{ $t('buy_order.print_invoice') }}
+                                </a>
                             </div>
                         </div>
 
@@ -72,12 +79,32 @@
                                     <Icon name="material-symbols:local-shipping" class="text-accent-blue text-xl" />
                                     {{ $t('buy_order.detail.shipping_status') }}
                                 </span>
+                                <!-- 確認收貨 -->
                                 <button v-if="order.status === 'out_for_delivery'" @click="updateStatus('delivered')"
                                     class="bg-accent-blue text-white px-4 py-1.5 rounded-lg border-2 border-content shadow-stitch-sm hover:translate-y-0.5 hover:shadow-none transition-all text-sm">
                                     {{ $t('buy_order.confirm_receipt') }}
                                 </button>
+                                <!-- 申請取消 -->
+                                <button v-if="order.status === 'processing'" @click="requestCancel"
+                                    :disabled="isCancelRequesting"
+                                    class="bg-gray-100 text-gray-600 px-4 py-1.5 rounded-lg border-2 border-gray-300 hover:border-content shadow-none transition-all text-sm font-bold disabled:opacity-50">
+                                    {{ $t('buy_order.request_cancel') }}
+                                </button>
+                                <!-- 取消申請中 -->
+                                <span v-if="order.status === 'cancel_requested'"
+                                    class="bg-yellow-100 text-yellow-700 px-4 py-1.5 rounded-lg border border-yellow-300 text-sm font-bold flex items-center gap-1">
+                                    <Icon name="material-symbols:schedule" />
+                                    {{ $t('buy_order.cancel_pending') }}
+                                </span>
+                                <!-- 已取消 -->
+                                <span v-if="order.status === 'cancelled'"
+                                    class="bg-gray-100 text-gray-500 px-4 py-1.5 rounded-lg border border-gray-300 text-sm font-bold flex items-center gap-1">
+                                    <Icon name="material-symbols:cancel" />
+                                    {{ $t('buy_order.cancelled') }}
+                                </span>
+                                <!-- 評價 -->
                                 <button v-if="order.status === 'delivered' && !isReviewed"
-                                    @click="showReviewModal = true"
+                                    @click="openReviewModal"
                                     class="bg-accent-red text-white px-4 py-1.5 rounded-lg border-2 border-content shadow-stitch-sm hover:translate-y-0.5 hover:shadow-none transition-all text-sm font-bold flex items-center gap-1">
                                     <Icon name="material-symbols:star" class="text-white" />
                                     {{ $t('buy_order.review') }}
@@ -94,7 +121,9 @@
                                     'bg-accent-blue w-1/4': order.status === 'processing',
                                     'bg-accent-blue w-2/4': order.status === 'shipped',
                                     'bg-accent-blue w-3/4': order.status === 'out_for_delivery',
-                                    'bg-green-400 w-full': order.status === 'delivered'
+                                    'bg-green-400 w-full': order.status === 'delivered',
+                                    'bg-yellow-400 w-1/4': order.status === 'cancel_requested',
+                                    'bg-gray-300 w-full': order.status === 'cancelled',
                                 }"></div>
                             </div>
                             <div class="flex justify-between text-[10px] font-bold text-gray-400">
@@ -208,7 +237,7 @@
             <div v-if="showReviewModal"
                 class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
                 <div
-                    class="bg-white rounded-3xl border-4 border-content shadow-[8px_8px_0px_#f4c025] w-full max-w-md p-6 relative">
+                    class="bg-white rounded-3xl border-4 border-content shadow-[8px_8px_0px_#f4c025] w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
                     <button @click="showReviewModal = false"
                         class="absolute top-4 right-4 text-gray-400 hover:text-content">
                         <Icon name="material-symbols:close" class="text-3xl" />
@@ -219,19 +248,47 @@
                         {{ $t('buy_order.review_modal_title') }}
                     </h2>
 
-                    <!-- 評分星星 -->
-                    <div class="flex justify-center gap-2 mb-6">
-                        <button v-for="star in 5" :key="star" @click="reviewForm.rating = star"
-                            class="text-4xl transition-colors hover:scale-110"
-                            :class="star <= reviewForm.rating ? 'text-accent-red' : 'text-gray-300'">
-                            <Icon name="material-symbols:star-rounded" />
-                        </button>
+                    <!-- 每個商品的評分 -->
+                    <div v-for="(item, idx) in productReviews" :key="idx"
+                        class="mb-5 pb-5 border-b-2 border-dashed border-gray-100">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div
+                                class="w-10 h-10 rounded-full border-2 border-content bg-gray-100 overflow-hidden shrink-0 flex items-center justify-center">
+                                <NuxtImg v-if="item.productImageUrl" :src="item.productImageUrl"
+                                    class="w-full h-full object-cover" loading="lazy" />
+                                <Icon v-else name="material-symbols:image" class="text-gray-300 text-xl" />
+                            </div>
+                            <p class="font-black text-sm text-content flex-1 truncate">{{ item.productName }}</p>
+                        </div>
+                        <div class="flex gap-1 mb-2">
+                            <button v-for="star in 5" :key="star" @click="item.rating = star"
+                                class="text-3xl transition-transform hover:scale-110"
+                                :class="star <= item.rating ? 'text-accent-red' : 'text-gray-300'">
+                                <Icon name="material-symbols:star-rounded" />
+                            </button>
+                        </div>
+                        <textarea v-model="item.comment" rows="2"
+                            class="w-full bg-[#fdfcf0] rounded-xl border-2 border-content p-3 font-bold text-sm focus:outline-none focus:bg-white transition-colors resize-none placeholder-gray-400"
+                            :placeholder="$t('buy_order.write_review')"></textarea>
                     </div>
 
-                    <!-- 評價內容 -->
-                    <textarea v-model="reviewForm.comment" rows="4"
-                        class="w-full bg-[#fdfcf0] rounded-xl border-2 border-content p-4 font-bold text-sm focus:outline-none focus:bg-white transition-colors resize-none placeholder-gray-400 mb-6"
-                        :placeholder="$t('buy_order.write_review')"></textarea>
+                    <!-- 賣家整體評分 -->
+                    <div class="mb-6 bg-accent-blue/5 rounded-2xl border-2 border-dashed border-accent-blue/30 p-4">
+                        <h3 class="flex items-center gap-2 font-black text-content mb-3 text-sm">
+                            <Icon name="material-symbols:storefront-outline" class="text-accent-blue text-base" />
+                            {{ $t('buy_order.seller_review_title') }}
+                        </h3>
+                        <div class="flex gap-1 mb-2">
+                            <button v-for="star in 5" :key="star" @click="sellerReview.rating = star"
+                                class="text-3xl transition-transform hover:scale-110"
+                                :class="star <= sellerReview.rating ? 'text-accent-red' : 'text-gray-300'">
+                                <Icon name="material-symbols:star-rounded" />
+                            </button>
+                        </div>
+                        <textarea v-model="sellerReview.comment" rows="2"
+                            class="w-full bg-white rounded-xl border-2 border-content p-3 font-bold text-sm focus:outline-none transition-colors resize-none placeholder-gray-400"
+                            :placeholder="$t('buy_order.seller_review_placeholder')"></textarea>
+                    </div>
 
                     <div class="flex flex-col gap-3">
                         <button @click="submitReview" :disabled="isSubmittingReview"
@@ -261,6 +318,7 @@ const toast = useToast()
 
 interface OrderItem {
     id: number
+    productId?: number
     productName: string
     productImageUrl?: string
     quantity: number
@@ -286,10 +344,30 @@ const isLoading = shallowRef(false)
 const isReviewed = shallowRef(false)
 const showReviewModal = shallowRef(false)
 const isSubmittingReview = shallowRef(false)
-const reviewForm = ref({
-    rating: 5,
-    comment: ''
-})
+const isCancelRequesting = shallowRef(false)
+
+interface ProductReviewItem {
+    productId: number | undefined
+    productName: string
+    productImageUrl: string | undefined
+    rating: number
+    comment: string
+}
+const productReviews = ref<ProductReviewItem[]>([])
+const sellerReview = ref({ rating: 5, comment: '' })
+
+function openReviewModal() {
+    if (!order.value) return
+    productReviews.value = order.value.items.map(item => ({
+        productId: item.productId,
+        productName: item.productName,
+        productImageUrl: item.productImageUrl,
+        rating: 5,
+        comment: ''
+    }))
+    sellerReview.value = { rating: 5, comment: '' }
+    showReviewModal.value = true
+}
 
 const { t } = useI18n()
 useHead({ title: computed(() => order.value ? `${t('buy_order.detail.title')} #${order.value.orderNumber} | Smart Market` : 'Smart Market') })
@@ -364,14 +442,22 @@ async function submitReview() {
     if (!order.value || isSubmittingReview.value) return
     isSubmittingReview.value = true
     try {
-        await $fetch(`${config.public.apiBase}/reviews`, {
+        const items = [
+            ...productReviews.value.map(r => ({
+                productId: r.productId,
+                rating: r.rating,
+                comment: r.comment || '讚！',
+            })),
+            {
+                productId: undefined,
+                rating: sellerReview.value.rating,
+                comment: sellerReview.value.comment || '很棒的賣家！',
+            },
+        ]
+        await $fetch(`${config.public.apiBase}/reviews/bulk`, {
             method: 'POST',
             headers: { Authorization: `Bearer ${authStore.token}` },
-            body: {
-                orderId: order.value.id,
-                rating: reviewForm.value.rating,
-                comment: reviewForm.value.comment || '讚！'
-            }
+            body: { orderId: order.value.id, items }
         })
         isReviewed.value = true
         showReviewModal.value = false
@@ -381,6 +467,23 @@ async function submitReview() {
         toast.error(t('buy_order.review_failed'))
     } finally {
         isSubmittingReview.value = false
+    }
+}
+
+async function requestCancel() {
+    if (!order.value || isCancelRequesting.value) return
+    isCancelRequesting.value = true
+    try {
+        await $fetch(`${config.public.apiBase}/orders/${order.value.id}/cancel-request`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${authStore.token}` },
+        })
+        toast.success(t('buy_order.cancel_request_sent'))
+        await fetchOrder()
+    } catch (e) {
+        toast.error(t('buy_order.cancel_request_failed'))
+    } finally {
+        isCancelRequesting.value = false
     }
 }
 

@@ -22,6 +22,7 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { EcpayModule } from './ecpay/ecpay.module';
 import { DiscountCodesModule } from './discount-codes/discount-codes.module';
 import { SeedModule } from './seed/seed.module';
+import { ProductQuestionsModule } from './product-questions/product-questions.module';
 
 // --------------------------------------------------------
 // 2. @Module 裝飾器：這是 NestJS 定義「模組」的方式
@@ -80,6 +81,7 @@ import { SeedModule } from './seed/seed.module';
     EcpayModule,
     DiscountCodesModule,
     SeedModule,
+    ProductQuestionsModule,
   ],
   controllers: [AppController], // 路由控制器 (處理網址請求的)
   providers: [AppService], // 服務提供者 (寫邏輯的)

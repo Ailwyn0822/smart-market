@@ -1,4 +1,4 @@
-import { Controller, Get, Req, UseGuards, Sse, MessageEvent, Patch } from '@nestjs/common';
+import { Controller, Get, Req, UseGuards, Sse, MessageEvent, Patch, Param } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import type { Request } from 'express';
@@ -24,6 +24,13 @@ export class NotificationsController {
     async markAsRead(@Req() req: Request) {
         const userId = (req.user as any).sub || (req.user as any).userId;
         return this.notificationsService.markAllAsRead(userId);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Patch(':id/read')
+    async markOneAsRead(@Req() req: Request, @Param('id') id: string) {
+        const userId = (req.user as any).sub || (req.user as any).userId;
+        return this.notificationsService.markOneAsRead(Number(id), userId);
     }
 
     // SSE Endpoint

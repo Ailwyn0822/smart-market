@@ -52,6 +52,13 @@
               </el-icon>
               <span>訂單管理</span>
             </el-menu-item>
+
+            <el-menu-item index="/admin/coupons">
+              <el-icon>
+                <Ticket />
+              </el-icon>
+              <span>折扣碼管理</span>
+            </el-menu-item>
           </el-sub-menu>
         </el-menu>
       </el-aside>
@@ -82,7 +89,7 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
-import { House, Setting, Menu, ShoppingBag, User, List } from '@element-plus/icons-vue'
+import { House, Setting, Menu, ShoppingBag, User, List, Ticket } from '@element-plus/icons-vue'
 import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()

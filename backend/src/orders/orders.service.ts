@@ -40,7 +40,22 @@ export class OrdersService {
             })) as OrderItem[],
         });
 
-        return this.ordersRepo.save(order);
+        const savedOrder = await this.ordersRepo.save(order);
+
+        // COD 下單時立即通知賣家（線上付款等付款回調再通知）
+        if (dto.paymentMethod === PaymentMethod.COD && dto.items.length > 0) {
+            const sellerId = dto.items[0].sellerId;
+            if (sellerId) {
+                this.notificationsService.createNotification(
+                    sellerId,
+                    `您有一筆新訂單 (${orderNumber})，請盡快處理！`,
+                    'order_update',
+                    savedOrder.id.toString()
+                ).catch(e => console.error('Failed to notify seller for new COD order:', e));
+            }
+        }
+
+        return savedOrder;
     }
 
     async handlePaymentCallback(orderNumber: string, rtnCode: string): Promise<void> {
@@ -51,6 +66,27 @@ export class OrdersService {
             // 付款成功 → 更新為處理中
             order.status = OrderStatus.PROCESSING;
             await this.ordersRepo.save(order);
+
+            // 通知買家付款成功
+            this.notificationsService.createNotification(
+                order.userId,
+                `您的訂單 (${order.orderNumber}) 付款成功，賣家將盡快為您處理！`,
+                'order_update',
+                order.id.toString()
+            ).catch(e => console.error('Failed to notify buyer for payment success:', e));
+
+            // 通知賣家有新訂單（線上付款完成後）
+            if (order.items && order.items.length > 0) {
+                const sellerId = order.items[0].sellerId;
+                if (sellerId) {
+                    this.notificationsService.createNotification(
+                        sellerId,
+                        `您有一筆新訂單 (${order.orderNumber})，買家已完成付款，請盡快處理！`,
+                        'order_update',
+                        order.id.toString()
+                    ).catch(e => console.error('Failed to notify seller for payment success:', e));
+                }
+            }
         } else {
             // 付款失敗 → 刪除待付款訂單
             await this.orderItemsRepo.delete({ orderId: order.id });
@@ -118,6 +154,15 @@ export class OrdersService {
         const saved = await this.ordersRepo.save(targetOrder);
 
         // 發送通知邏輯
+        const statusLabelMap: Record<string, string> = {
+            processing: '處理中',
+            shipped: '已出貨',
+            out_for_delivery: '配送中',
+            delivered: '已送達',
+            pending_payment: '待付款',
+        };
+        const statusLabel = statusLabelMap[status] ?? status;
+
         try {
             // 如果是買家自己確認收貨，通知賣家
             if (userId === targetOrder.userId) {
@@ -134,7 +179,7 @@ export class OrdersService {
                 // 如果是賣家出貨等操作，通知買家
                 await this.notificationsService.createNotification(
                     targetOrder.userId,
-                    `您的訂單 (${targetOrder.orderNumber}) 狀態已更新為：${status}`,
+                    `您的訂單 (${targetOrder.orderNumber}) 狀態已更新為：${statusLabel}`,
                     'order_update',
                     targetOrder.id.toString()
                 );
@@ -144,6 +189,66 @@ export class OrdersService {
         }
 
         return saved;
+    }
+
+    // 買家申請取消
+    async requestCancellation(userId: string, orderId: number): Promise<Order> {
+        const order = await this.ordersRepo.findOne({ where: { id: orderId, userId } });
+        if (!order) throw new NotFoundException('找不到此訂單或您無權限操作');
+        if (order.status !== OrderStatus.PROCESSING) {
+            throw new NotFoundException('只有處理中的訂單可申請取消');
+        }
+        order.status = OrderStatus.CANCEL_REQUESTED;
+        order.cancelRequestedBy = 'buyer';
+        const saved = await this.ordersRepo.save(order);
+
+        // 通知賣家
+        if (order.items.length > 0) {
+            const sellerId = order.items[0].sellerId;
+            await this.notificationsService.createNotification(
+                sellerId,
+                `買家申請取消訂單 (${order.orderNumber})，請進入訂單頁確認。`,
+                'order_update',
+                order.id.toString()
+            ).catch(() => { });
+        }
+        return saved;
+    }
+
+    // 賣家同意/拒絕取消
+    async respondCancellation(sellerId: string, orderId: number, approve: boolean): Promise<Order> {
+        const order = await this.ordersRepo
+            .createQueryBuilder('order')
+            .leftJoinAndSelect('order.items', 'item')
+            .where('order.id = :orderId', { orderId })
+            .andWhere('item.sellerId = :sellerId', { sellerId })
+            .getOne();
+        if (!order) throw new NotFoundException('找不到此訂單或您無權限操作');
+        if (order.status !== OrderStatus.CANCEL_REQUESTED) {
+            throw new NotFoundException('此訂單目前不在待取消狀態');
+        }
+
+        if (approve) {
+            order.status = OrderStatus.CANCELLED;
+            await this.ordersRepo.save(order);
+            await this.notificationsService.createNotification(
+                order.userId,
+                `您的訂單 (${order.orderNumber}) 已被賣家同意取消。`,
+                'order_update',
+                order.id.toString()
+            ).catch(() => { });
+        } else {
+            order.status = OrderStatus.PROCESSING;
+            order.cancelRequestedBy = null;
+            await this.ordersRepo.save(order);
+            await this.notificationsService.createNotification(
+                order.userId,
+                `您的訂單 (${order.orderNumber}) 取消申請已被賣家拒絕，訂單繼續進行中。`,
+                'order_update',
+                order.id.toString()
+            ).catch(() => { });
+        }
+        return this.ordersRepo.findOne({ where: { id: orderId } }) as Promise<Order>;
     }
 
     async clearAll() {

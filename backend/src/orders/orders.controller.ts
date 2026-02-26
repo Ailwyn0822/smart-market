@@ -100,6 +100,26 @@ export class OrdersController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Post(':id/cancel-request')
+    @ApiOperation({ summary: '買家申請取消訂單' })
+    requestCancellation(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
+        const userId: string = req.user.sub || req.user.id || req.user.userId;
+        return this.ordersService.requestCancellation(userId, id);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post(':id/cancel-respond')
+    @ApiOperation({ summary: '賣家同意/拒絕取消申請', description: 'body: { approve: boolean }' })
+    respondCancellation(
+        @Param('id', ParseIntPipe) id: number,
+        @Body('approve') approve: boolean,
+        @Req() req: any,
+    ) {
+        const userId: string = req.user.sub || req.user.id || req.user.userId;
+        return this.ordersService.respondCancellation(userId, id, approve);
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Get(':id')
     getOrderById(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
         const userId: string = req.user.sub || req.user.id || req.user.userId;

@@ -15,7 +15,7 @@ export class ReviewsService {
         private readonly notificationsService: NotificationsService,
     ) { }
 
-    async createReview(userId: string, orderId: number, rating: number, comment: string) {
+    async createReview(userId: string, orderId: number, rating: number, comment: string, productId?: number) {
         // 檢查訂單是否存在
         const order = await this.orderRepo.findOne({
             where: { id: orderId, userId },
@@ -49,6 +49,7 @@ export class ReviewsService {
             sellerId,
             rating,
             comment,
+            ...(productId ? { productId } : {}),
         });
 
         const saved = await this.reviewRepo.save(review);
@@ -64,10 +65,69 @@ export class ReviewsService {
         return saved;
     }
 
+    // 批次建立評價（每個商品各自 + 賣家整體）
+    async createBulkReviews(
+        userId: string,
+        orderId: number,
+        items: { productId?: number; rating: number; comment: string }[],
+    ) {
+        const order = await this.orderRepo.findOne({
+            where: { id: orderId, userId },
+            relations: ['items'],
+        });
+        if (!order) throw new NotFoundException('找不到該訂單或您無權限評價');
+        if (order.status !== 'delivered') throw new ConflictException('訂單需為已送達狀態才能評價');
+
+        const existing = await this.reviewRepo.findOne({ where: { orderId } });
+        if (existing) throw new ConflictException('您已經為這筆訂單留下過評價了');
+
+        const sellerId = order.items[0]?.sellerId;
+        if (!sellerId) throw new ConflictException('找不到賣家');
+
+        const reviews = this.reviewRepo.create(
+            items.map(r => ({
+                orderId,
+                buyerId: userId,
+                sellerId,
+                productId: r.productId ?? undefined,
+                rating: r.rating,
+                comment: r.comment || '讚！',
+            }))
+        );
+        const saved = await this.reviewRepo.save(reviews);
+
+        const avgRating = Math.round(items.reduce((s, r) => s + r.rating, 0) / items.length);
+        this.notificationsService.createNotification(
+            sellerId,
+            `有買家對您的訂單留下了 ${avgRating} 星評價！`,
+            'new_review',
+            orderId.toString()
+        ).catch(e => console.error('Failed to notify seller for review:', e));
+
+        return saved;
+    }
+
     // 給前端判斷該訂單是否已評價
     async checkIsReviewed(orderId: number) {
         const existing = await this.reviewRepo.findOne({ where: { orderId } });
         return { isReviewed: !!existing, review: existing };
+    }
+
+    // 取得指定商品的評價 (支援分頁)
+    async getReviewsByProduct(productId: number, page: number = 1, limit: number = 6) {
+        const [reviews, total] = await this.reviewRepo.findAndCount({
+            where: { productId },
+            order: { createdAt: 'DESC' },
+            skip: (page - 1) * limit,
+            take: limit,
+        });
+        return {
+            items: reviews,
+            total,
+            page,
+            limit,
+            hasMore: page * limit < total,
+        };
     }
 
     // 取得指定賣家的所有評價 (支援分頁)

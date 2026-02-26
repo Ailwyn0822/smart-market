@@ -19,7 +19,7 @@ export class ProductsService {
   }
 
   // 取得所有商品（支援搜尋 + 分類篩選 + 分頁）
-  async findAll(query?: { keyword?: string; category?: string; page?: number; limit?: number }): Promise<{ items: Product[]; total: number }> {
+  async findAll(query?: { keyword?: string; category?: string; maxPrice?: number; page?: number; limit?: number }): Promise<{ items: Product[]; total: number }> {
     const page = query?.page ?? 1;
     const limit = query?.limit ?? 20;
 
@@ -37,6 +37,10 @@ export class ProductsService {
 
     if (query?.category) {
       qb.andWhere('category.name = :cat', { cat: query.category });
+    }
+
+    if (query?.maxPrice && query.maxPrice > 0) {
+      qb.andWhere('product.price <= :maxPrice', { maxPrice: query.maxPrice });
     }
 
     const [items, total] = await qb
@@ -83,6 +87,15 @@ export class ProductsService {
       .getMany();
 
     return products;
+  }
+
+  // 更新商品資料（賣家自用，需驗證擁有者）
+  async update(productId: number, userId: string, dto: Partial<Product>): Promise<Product> {
+    const product = await this.productRepo.findOne({ where: { id: productId } });
+    if (!product) throw new NotFoundException('找不到此商品');
+    if (product.userId !== userId) throw new ForbiddenException('您無權限修改此商品');
+    Object.assign(product, dto);
+    return this.productRepo.save(product);
   }
 
   // 切換上/下架狀態（賣家自用，需驗證擁有者）

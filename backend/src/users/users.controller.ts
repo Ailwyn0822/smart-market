@@ -101,7 +101,7 @@ export class UsersController {
   }
 
   @Get(':id/store')
-  @ApiOperation({ summary: '取得賣家店面', description: '公開端點，取得賣家資料和商品列表' })
+  @ApiOperation({ summary: '取得賣家店面', description: '公開端點，取得賣家資料和商品列表（前 12 筆）' })
   @ApiParam({ name: 'id', description: '賣家用戶 UUID' })
   @ApiResponse({ status: 200, description: '賣家店面資訊' })
   @ApiResponse({ status: 404, description: '找不到此賣家' })
@@ -109,5 +109,19 @@ export class UsersController {
     const store = await this.usersService.findStore(id);
     if (!store) throw new NotFoundException('找不到此賣家');
     return store;
+  }
+
+  @Get(':id/products')
+  @ApiOperation({ summary: '取得賣家商品（分頁）', description: '公開端點，分頁取得賣家的上架商品' })
+  @ApiParam({ name: 'id', description: '賣家用戶 UUID' })
+  @ApiQuery({ name: 'page', required: false, description: '頁碼（預設 1）' })
+  @ApiQuery({ name: 'limit', required: false, description: '每頁筆數（預設 12）' })
+  @ApiResponse({ status: 200, description: '{ items, total, page, limit, hasMore }' })
+  async getSellerProducts(
+    @Param('id') id: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.usersService.findSellerProducts(id, page ? +page : 1, limit ? +limit : 12);
   }
 }

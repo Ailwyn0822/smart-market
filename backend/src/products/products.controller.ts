@@ -15,6 +15,7 @@ import {
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiConsumes, ApiParam } from '@nestjs/swagger';
 import type { Request } from 'express';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { StorageService } from '../storage/storage.service';
 import { AiService } from '../ai/ai.service';
@@ -23,6 +24,7 @@ import { ProductsService } from './products.service';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
 import { UserRole } from '@smart-market/shared';
+import { CategoriesService } from '../categories/categories.service';
 
 @ApiTags('products')
 @Controller('products')
@@ -31,6 +33,7 @@ export class ProductsController {
     private storageService: StorageService,
     private aiService: AiService,
     private productsService: ProductsService,
+    private categoriesService: CategoriesService,
   ) { }
 
   @Post('analyze')
@@ -42,8 +45,12 @@ export class ProductsController {
   @ApiResponse({ status: 200, description: '分析成功，回傳圖片 URL 和 AI 建議' })
   async analyze(@UploadedFile() file: Express.Multer.File) {
     try {
+      // 取得所有分類名稱，動態注入 AI prompt
+      const categories = await this.categoriesService.findAll();
+      const categoryNames = categories.map(c => c.name);
+
       // 先審核內容，通過後才存圖，避免違禁圖片寫入儲存空間
-      const aiResult = await this.aiService.analyzeProductImage(file.buffer, file.mimetype);
+      const aiResult = await this.aiService.analyzeProductImage(file.buffer, file.mimetype, categoryNames);
 
       if (aiResult.flagged) {
         console.warn('Content violation detected:', aiResult.reason);
@@ -121,18 +128,21 @@ export class ProductsController {
   @ApiOperation({ summary: '搜尋商品列表', description: '支援關鍵字、分類篩選及分頁' })
   @ApiQuery({ name: 'keyword', required: false })
   @ApiQuery({ name: 'category', required: false })
+  @ApiQuery({ name: 'maxPrice', required: false, description: '價格上限' })
   @ApiQuery({ name: 'page', required: false, description: '頁碼（預設 1）' })
   @ApiQuery({ name: 'limit', required: false, description: '每頁筆數（預設 20）' })
   @ApiResponse({ status: 200, description: '{ items: Product[], total: number }' })
   async findAll(
     @Query('keyword') keyword?: string,
     @Query('category') category?: string,
+    @Query('maxPrice') maxPrice?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
     return this.productsService.findAll({
       keyword,
       category,
+      maxPrice: maxPrice ? +maxPrice : undefined,
       page: page ? +page : 1,
       limit: limit ? +limit : 20,
     });
@@ -154,6 +164,18 @@ export class ProductsController {
   async toggleActiveStatus(@Param('id') id: string, @Req() req: Request) {
     const user = req.user as any;
     return this.productsService.toggleActiveStatus(+id, user.userId);
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: '更新商品資料（賣家）' })
+  @ApiParam({ name: 'id', description: '商品 ID' })
+  @ApiResponse({ status: 200, description: '更新成功' })
+  @ApiResponse({ status: 403, description: '無權限' })
+  async update(@Param('id') id: string, @Req() req: Request, @Body() body: UpdateProductDto) {
+    const user = req.user as any;
+    return this.productsService.update(+id, user.userId, body as any);
   }
 
   @Get(':id')
