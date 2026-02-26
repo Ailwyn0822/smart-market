@@ -6,7 +6,7 @@ describe('validateProductForm', () => {
         const formData = {
             name: '測試商品',
             description: '這是一個測試商品',
-            category: '電子產品',
+            categoryId: 1,
             price: '100',
             imageUrl: 'https://example.com/image.jpg'
         }
@@ -19,7 +19,7 @@ describe('validateProductForm', () => {
         const formData = {
             name: '',
             description: '這是一個測試商品',
-            category: '電子產品',
+            categoryId: 1,
             price: '100',
             imageUrl: 'https://example.com/image.jpg'
         }
@@ -32,7 +32,7 @@ describe('validateProductForm', () => {
         const formData = {
             name: '測試商品',
             description: '這是一個測試商品',
-            category: '電子產品',
+            categoryId: 1,
             price: '-10',
             imageUrl: 'https://example.com/image.jpg'
         }
@@ -45,7 +45,7 @@ describe('validateProductForm', () => {
         const formData = {
             name: '',
             description: '',
-            category: '電子產品',
+            categoryId: 1,
             price: '0',
             imageUrl: ''
         }

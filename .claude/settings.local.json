@@ -62,7 +62,8 @@
       "Bash(python -c \"import base64; data = open\\(''C:/Users/asd66/Documents/GitHub/smart-market/frontend-client/app/pages/seller/[id].vue'', ''rb''\\).read\\(\\) if False else b''test''; print\\(len\\(data\\)\\)\")",
       "Bash(powershell.exe -Command \"[System.IO.Directory]::CreateDirectory\\(''C:\\\\Temp''\\) | Out-Null; Write-Host ''ok''\")",
       "Bash(ls -d backend/src/*/)",
-      "Bash(npx tsc --noEmit)"
+      "Bash(npx tsc --noEmit)",
+      "Bash(npm run test:unit -w frontend-client)"
     ],
     "additionalDirectories": [
       "c:\\Users\\asd66\\Documents\\GitHub\\smart-market\\frontend-client\\app\\pages\\seller"

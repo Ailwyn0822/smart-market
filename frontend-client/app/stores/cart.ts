@@ -74,9 +74,12 @@ export const useCartStore = defineStore('cart', () => {
     }
 
     function updateQuantity(productId: number, quantity: number) {
+        if (quantity <= 0) {
+            removeFromCart(productId)
+            return
+        }
         const existing = items.value.find(i => i.product.id === productId)
         if (existing) {
-            if (quantity < 1) return  // 數量最小值為 1，不允許低於 1
             existing.quantity = quantity
         }
     }
