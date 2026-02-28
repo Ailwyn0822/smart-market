@@ -305,7 +305,7 @@ const { t } = useI18n()
 const cartStore = useCartStore()
 const toast = useToast()
 
-const config = useRuntimeConfig()
+const discountCodesApi = useDiscountCodesApi()
 
 // 折扣碼
 const discountCode = ref('')
@@ -356,7 +356,7 @@ const openCodesModal = async () => {
     if (availableCodes.value.length > 0) return
     loadingCodes.value = true
     try {
-        availableCodes.value = await $fetch<any[]>(`${config.public.apiBase}/discount-codes`)
+        availableCodes.value = await discountCodesApi.getAll() as any[]
     } finally {
         loadingCodes.value = false
     }
@@ -376,10 +376,7 @@ const applyDiscount = async () => {
         return
     }
     try {
-        const res = await $fetch<any>(`${config.public.apiBase}/discount-codes/validate`, {
-            method: 'POST',
-            body: { code }
-        })
+        const res = await discountCodesApi.validate(code) as any
         cartStore.discountAmount = parseFloat(res.discountAmount)
         cartStore.appliedDiscountCode = res.code
         discountMessage.value = { ok: true, text: t('cart.discount_success_amount', { amount: parseFloat(res.discountAmount).toFixed(0) }) }

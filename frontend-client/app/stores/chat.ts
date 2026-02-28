@@ -25,6 +25,7 @@ export interface ChatMessage {
 export const useChatStore = defineStore('chat', () => {
     const authStore = useAuthStore()
     const config = useRuntimeConfig()
+    const chatApi = useChatApi()
 
     const socket = shallowRef<Socket | null>(null)
     const isConnected = shallowRef(false)
@@ -95,9 +96,7 @@ export const useChatStore = defineStore('chat', () => {
     async function fetchContacts() {
         if (!authStore.isAuthenticated) return
         try {
-            const data = await $fetch<ChatContact[]>(`${config.public.apiBase}/chat/contacts`, {
-                headers: { Authorization: `Bearer ${authStore.token}` }
-            })
+            const data = await chatApi.getContacts() as ChatContact[]
             contacts.value = data
         } catch (e) {
             console.error('Failed to fetch contacts', e)
@@ -107,9 +106,7 @@ export const useChatStore = defineStore('chat', () => {
     async function fetchHistory(targetId: string) {
         if (!authStore.isAuthenticated) return
         try {
-            const data = await $fetch<ChatMessage[]>(`${config.public.apiBase}/chat/history/${targetId}`, {
-                headers: { Authorization: `Bearer ${authStore.token}` }
-            })
+            const data = await chatApi.getHistory(targetId) as ChatMessage[]
             messages.value[targetId] = data
 
             // 清除未讀

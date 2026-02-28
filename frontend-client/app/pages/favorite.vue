@@ -130,7 +130,7 @@ import { useCartStore } from '~/stores/cart'
 import { useToast } from '~/composables/useToast'
 
 const { t } = useI18n()
-const config = useRuntimeConfig()
+const favoritesApi = useFavoritesApi()
 const authStore = useAuthStore()
 const cartStore = useCartStore()
 const toast = useToast()
@@ -156,9 +156,7 @@ async function fetchFavorites() {
     if (!authStore.isAuthenticated) return
     pending.value = true
     try {
-        const data = await $fetch<Product[]>(`${config.public.apiBase}/favorites/my`, {
-            headers: { Authorization: `Bearer ${authStore.token}` }
-        })
+        const data = await favoritesApi.getAll() as Product[]
         favorites.value = data
     } catch (e) {
         console.error('Failed to fetch favorites', e)
@@ -170,10 +168,7 @@ async function fetchFavorites() {
 async function removeFavorite(productId: number) {
     if (!authStore.isAuthenticated) return
     try {
-        await $fetch(`${config.public.apiBase}/favorites/${productId}/favorite`, {
-            method: 'DELETE',
-            headers: { Authorization: `Bearer ${authStore.token}` }
-        })
+        await favoritesApi.remove(productId)
         // 從列表中移除
         favorites.value = favorites.value.filter(p => p.id !== productId)
     } catch (e) {

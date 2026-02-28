@@ -74,7 +74,7 @@
 <script setup lang="ts">
 import { useWindowScroll, useWindowSize } from '@vueuse/core'
 
-const config = useRuntimeConfig()
+const productsApi = useProductsApi()
 const route = useRoute()
 const sortBy = ref('newest')
 const searchQuery = ref('')
@@ -110,18 +110,13 @@ const loadMore = async () => {
     if (pending.value || !hasMore.value) return
     pending.value = true
     try {
-        const res = await $fetch<{ items: any[]; total: number }>(
-            `${config.public.apiBase}/products`,
-            {
-                query: {
-                    keyword: keywordParam.value,
-                    category: categoryParam.value,
-                    maxPrice: maxPriceParam.value,
-                    page: page.value,
-                    limit: PAGE_SIZE,
-                },
-            }
-        )
+        const res = await productsApi.getAll({
+            keyword: keywordParam.value,
+            category: categoryParam.value,
+            maxPrice: maxPriceParam.value,
+            page: page.value,
+            limit: PAGE_SIZE,
+        }) as { items: any[]; total: number }
         rawItems.value.push(...res.items)
         total.value = res.total
         if (rawItems.value.length >= res.total) hasMore.value = false

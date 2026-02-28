@@ -175,7 +175,8 @@ useHead({ title: 'My Orders | Smart Market' })
 const { t } = useI18n()
 
 const authStore = useAuthStore()
-const config = useRuntimeConfig()
+const ordersApi = useOrdersApi()
+const reviewsApi = useReviewsApi()
 const toast = useToast()
 
 interface OrderItem {
@@ -231,9 +232,7 @@ function formatDate(dateStr: string): string {
 
 async function checkReviewStatus(orderId: number) {
     try {
-        const res = await $fetch<any>(`${config.public.apiBase}/reviews/check/${orderId}`, {
-            headers: { Authorization: `Bearer ${authStore.token}` }
-        })
+        const res = await reviewsApi.checkByOrderId(orderId) as any
         return res.isReviewed
     } catch {
         return false
@@ -244,9 +243,7 @@ async function fetchOrders() {
     if (!authStore.isAuthenticated) return
     isLoading.value = true
     try {
-        const data = await $fetch<Order[]>(`${config.public.apiBase}/orders/my`, {
-            headers: { Authorization: `Bearer ${authStore.token}` }
-        })
+        const data = await ordersApi.getMyOrders() as Order[]
         orders.value = data
 
         // 對於已送達但未評價的訂單，檢查其是否已提交過評價
@@ -263,11 +260,7 @@ async function fetchOrders() {
 
 async function updateStatus(orderId: number, status: string) {
     try {
-        await $fetch(`${config.public.apiBase}/orders/${orderId}/status`, {
-            method: 'PATCH',
-            headers: { Authorization: `Bearer ${authStore.token}` },
-            body: { status }
-        })
+        await ordersApi.updateStatus(orderId, { status })
         fetchOrders()
         if (status === 'delivered') {
             toast.success(t('buy_order.confirm_receipt_success'))
@@ -290,14 +283,10 @@ async function submitReview() {
     if (!selectedOrderId.value || isSubmittingReview.value) return
     isSubmittingReview.value = true
     try {
-        await $fetch(`${config.public.apiBase}/reviews`, {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${authStore.token}` },
-            body: {
-                orderId: selectedOrderId.value,
-                rating: reviewForm.value.rating,
-                comment: reviewForm.value.comment || '讚！'
-            }
+        await reviewsApi.create({
+            orderId: selectedOrderId.value,
+            rating: reviewForm.value.rating,
+            comment: reviewForm.value.comment || '讚！'
         })
         // 成功後更新訂單物件狀態
         const order = orders.value.find(o => o.id === selectedOrderId.value)

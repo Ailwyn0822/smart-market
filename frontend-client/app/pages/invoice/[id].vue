@@ -115,7 +115,7 @@ useHead({ title: computed(() => `${t('invoice.title')} | Smart Market`) })
 
 const route = useRoute()
 const authStore = useAuthStore()
-const config = useRuntimeConfig()
+const ordersApi = useOrdersApi()
 
 interface OrderItem { id: number; productName: string; quantity: number; price: number }
 interface Order {
@@ -153,9 +153,7 @@ function printInvoice() {
 onMounted(async () => {
     if (!authStore.isAuthenticated) return
     try {
-        order.value = await $fetch<Order>(`${config.public.apiBase}/orders/${route.params.id}`, {
-            headers: { Authorization: `Bearer ${authStore.token}` }
-        })
+        order.value = await ordersApi.getById(route.params.id as string) as Order
     } catch { }
     finally { loading.value = false }
 })

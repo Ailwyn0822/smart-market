@@ -127,7 +127,7 @@ definePageMeta({
 })
 
 const router = useRouter()
-const config = useRuntimeConfig()
+const authApi = useAuthApi()
 const authStore = useAuthStore()
 const toast = useToast()
 
@@ -156,17 +156,11 @@ const register = async () => {
 
     isLoading.value = true
     try {
-        const res = await $fetch<{ access_token: string; user: any }>(
-            `${config.public.apiBase}/auth/register`,
-            {
-                method: 'POST',
-                body: {
-                    username: registerForm.value.username,
-                    email: registerForm.value.email,
-                    password: registerForm.value.password
-                }
-            }
-        )
+        const res = await authApi.register({
+            username: registerForm.value.username,
+            email: registerForm.value.email,
+            password: registerForm.value.password
+        }) as { access_token: string; user: any }
         // 註冊後直接登入
         authStore.login(res.access_token, res.user)
         toast.success('帳號建立成功，歡迎加入！')

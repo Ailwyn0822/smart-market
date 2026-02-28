@@ -93,26 +93,20 @@
 </template>
 
 <script setup lang="ts">
-import { useRuntimeConfig, useHead } from '#app';
-import { useAuthStore } from '~/stores/auth';
+import { useHead } from '#app';
 import { ref, onMounted, shallowRef } from 'vue';
 
 useHead({
     title: '賣家儀表板 - 個人管理中心'
 });
 
-const config = useRuntimeConfig();
-const authStore = useAuthStore();
+const ordersApi = useOrdersApi();
 const loading = shallowRef(true);
 const dashboardData = ref<any>(null);
 
 onMounted(async () => {
     try {
-        const res = await $fetch<any>(`${config.public.apiBase}/orders/seller/dashboard`, {
-            headers: {
-                Authorization: `Bearer ${authStore.token}`
-            }
-        });
+        const res = await ordersApi.getSellerDashboard();
         dashboardData.value = res;
     } catch (e) {
         console.error('Failed to load dashboard data:', e);

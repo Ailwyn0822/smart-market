@@ -87,7 +87,7 @@
 <script setup lang="ts">
 import { ref, shallowRef, onMounted, watch } from 'vue'
 
-const config = useRuntimeConfig()
+const categoriesApi = useCategoriesApi()
 const route = useRoute()
 const router = useRouter()
 
@@ -124,7 +124,7 @@ const selectedCategory = computed(() => (route.query.category as string) || '')
 async function fetchCategories() {
     loadingCategories.value = true
     try {
-        const data = await $fetch<{ id?: number; name: string }[]>(`${config.public.apiBase}/categories`)
+        const data = await categoriesApi.getAll() as { id?: number; name: string }[]
         categories.value = data || []
     } catch (e) {
         console.error('Failed to fetch categories', e)

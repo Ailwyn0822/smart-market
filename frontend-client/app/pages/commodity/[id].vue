@@ -159,15 +159,14 @@
 <script setup lang="ts">
 import { ref, reactive, watchEffect, shallowRef, useTemplateRef } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useAuthStore } from '~/stores/auth';
 import { useToast } from '~/composables/useToast';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
-const config = useRuntimeConfig();
-const authStore = useAuthStore();
+const $api = useApi();
+const productsApi = useProductsApi();
 const toast = useToast();
 
 const productId = route.params.id as string;
@@ -178,11 +177,9 @@ const isSubmitting = shallowRef(false);
 const fileInput = useTemplateRef<HTMLInputElement>('fileInput');
 
 // 資料裝載
-const { data: product } = await useFetch<any>(`${config.public.apiBase}/products/${productId}`, {
-    headers: { Authorization: `Bearer ${authStore.token}` }
-});
+const { data: product } = await useFetch<any>(`/products/${productId}`, { $fetch: $api });
 
-const { data: categories } = await useFetch<any[]>(`${config.public.apiBase}/categories`);
+const { data: categories } = await useFetch<any[]>('/categories', { $fetch: $api });
 
 const formData = reactive({
     name: '',
@@ -220,11 +217,7 @@ async function handleFileUpload(event: Event) {
 
     isUploading.value = true;
     try {
-        const response = await $fetch<any>(`${config.public.apiBase}/products/analyze`, {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${authStore.token}` },
-            body: uploadForm
-        });
+        const response = await productsApi.analyze(uploadForm) as any;
 
         formData.imageUrl = response.imageUrl;
         toast.success('圖片上傳成功');
@@ -245,9 +238,8 @@ async function submitForm() {
 
     isSubmitting.value = true;
     try {
-        await $fetch(`${config.public.apiBase}/products/${productId}`, {
+        await $api(`/products/${productId}`, {
             method: 'PATCH',
-            headers: { Authorization: `Bearer ${authStore.token}` },
             body: formData
         });
 

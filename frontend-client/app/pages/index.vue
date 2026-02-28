@@ -172,15 +172,15 @@ useSeoMeta({
 })
 
 const { illustrate } = useHomeData()
-const config = useRuntimeConfig()
+const $api = useApi()
 const route = useRoute()
 const authStore = useAuthStore()
 
 // 串接類別 API (取前六個)
-const { data: categoriesData, pending: categoriesPending } = await useLazyFetch<{ id: number; name: string; icon: string }[]>(`${config.public.apiBase}/categories/top`)
+const { data: categoriesData, pending: categoriesPending } = await useLazyFetch<{ id: number; name: string; icon: string }[]>('/categories/top', { $fetch: $api })
 
 // 串接最新商品 API (取前四個)
-const { data: productsData, pending: productsPending } = await useLazyFetch<any[]>(`${config.public.apiBase}/products/latest`)
+const { data: productsData, pending: productsPending } = await useLazyFetch<any[]>('/products/latest', { $fetch: $api })
 
 const colorStyles = [
     { border: 'crayon-border-red', price: 'text-accent-red', hover: 'hover:bg-accent-red' },

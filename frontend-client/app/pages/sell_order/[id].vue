@@ -216,7 +216,7 @@ import { useAuthStore } from '~/stores/auth'
 
 const route = useRoute()
 const authStore = useAuthStore()
-const config = useRuntimeConfig()
+const ordersApi = useOrdersApi()
 const toast = useToast()
 
 interface OrderItem {
@@ -267,9 +267,7 @@ async function fetchOrder() {
     if (!authStore.isAuthenticated) return
     isLoading.value = true
     try {
-        const data = await $fetch<Order>(`${config.public.apiBase}/orders/${route.params.id}`, {
-            headers: { Authorization: `Bearer ${authStore.token}` }
-        })
+        const data = await ordersApi.getById(route.params.id as string) as Order
         order.value = data
     } catch (e) {
         console.error('Failed to fetch order', e)
@@ -282,11 +280,7 @@ async function fetchOrder() {
 async function updateStatus(status: string) {
     if (!order.value) return
     try {
-        await $fetch(`${config.public.apiBase}/orders/${order.value.id}/status`, {
-            method: 'PATCH',
-            headers: { Authorization: `Bearer ${authStore.token}` },
-            body: { status }
-        })
+        await ordersApi.updateStatus(order.value.id, { status })
         await fetchOrder()
         if (status === 'out_for_delivery') {
             toast.success(t("toast.shipment_confirmed"))
@@ -303,11 +297,7 @@ async function respondCancel(approve: boolean) {
     if (!order.value || isCancelResponding.value) return
     isCancelResponding.value = true
     try {
-        await $fetch(`${config.public.apiBase}/orders/${order.value.id}/cancel-respond`, {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${authStore.token}` },
-            body: { approve }
-        })
+        await ordersApi.respondCancellation(order.value.id, { approve })
         toast.success(approve ? t('sell_order.cancel_approved') : t('sell_order.cancel_rejected'))
         await fetchOrder()
     } catch {

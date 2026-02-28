@@ -90,7 +90,8 @@ import { useI18n } from '#imports';
 
 const { t } = useI18n();
 
-const config = useRuntimeConfig();
+const usersApi = useUsersApi();
+const productsApi = useProductsApi();
 const authStore = useAuthStore();
 const toast = useToast();
 
@@ -107,13 +108,10 @@ const profile = ref<any>(null);
 const pending = ref(true);
 
 async function refresh() {
-    const tok = authStore.token;
-    if (!tok) { pending.value = false; return; }
+    if (!authStore.token) { pending.value = false; return; }
     pending.value = true;
     try {
-        profile.value = await $fetch<any>(`${config.public.apiBase}/users/profile`, {
-            headers: { Authorization: `Bearer ${tok}` }
-        });
+        profile.value = await usersApi.getProfile();
     } catch (e) {
         console.error('Profile load error:', e);
     } finally {
@@ -152,29 +150,17 @@ async function handleFileUpload(event: Event) {
         // 嘗試使用專屬頭像上傳端點，若失敗則使用通用圖片分析端點
         let imageUrl = '';
         try {
-            const res = await $fetch<any>(`${config.public.apiBase}/users/avatar`, {
-                method: 'POST',
-                headers: { Authorization: `Bearer ${authStore.token}` },
-                body: uploadForm
-            });
+            const res = await usersApi.uploadAvatar(uploadForm) as any;
             imageUrl = res.imageUrl || res.url || res.avatar || '';
         } catch {
-            const res = await $fetch<any>(`${config.public.apiBase}/products/analyze`, {
-                method: 'POST',
-                headers: { Authorization: `Bearer ${authStore.token}` },
-                body: uploadForm
-            });
+            const res = await productsApi.analyze(uploadForm) as any;
             imageUrl = res.imageUrl || '';
         }
 
         formData.avatar = imageUrl;
 
         // 上傳完成後直接幫使用者儲存
-        await $fetch(`${config.public.apiBase}/users/profile`, {
-            method: 'PATCH',
-            headers: { Authorization: `Bearer ${authStore.token}` },
-            body: { avatar: formData.avatar }
-        });
+        await usersApi.updateProfile({ avatar: formData.avatar });
 
         if (authStore.user) {
             authStore.user.avatar = formData.avatar;
@@ -199,11 +185,7 @@ async function saveProfile() {
 
     isSubmitting.value = true;
     try {
-        await $fetch(`${config.public.apiBase}/users/profile`, {
-            method: 'PATCH',
-            headers: { Authorization: `Bearer ${authStore.token}` },
-            body: formData
-        });
+        await usersApi.updateProfile(formData);
 
         toast.success(t('profile.save_success'));
         // 手動更新 authStore 中的 user data

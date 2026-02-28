@@ -162,15 +162,16 @@ import { useAuthStore } from '@/stores/auth';
 import { validateProductForm } from '@/utils/validation';
 
 const { t } = useI18n();
-const config = useRuntimeConfig();
 const authStore = useAuthStore();
+const $api = useApi();
+const productsApi = useProductsApi();
 const toast = useToast();
 const isLoading = ref(false);
 const fileInput = ref<HTMLInputElement | null>(null);
 
 const { data: categories } = await useFetch<{ id: number; name: string; icon: string }[]>(
-    `${config.public.apiBase}/categories`,
-    { default: () => [] }
+    '/categories',
+    { $fetch: $api, default: () => [] }
 );
 
 const formData = reactive({
@@ -224,7 +225,7 @@ const processFile = async (file: File) => {
             isLoading.value = false;
         }
 
-        const response = await $fetch<{
+        const response = await productsApi.analyze(body) as {
             imageUrl: string;
             aiAnalysis: {
                 name: string;
@@ -232,13 +233,7 @@ const processFile = async (file: File) => {
                 category: string;
                 price: number;
             }
-        }>(`${config.public.apiBase}/products/analyze`, {
-            method: 'POST',
-            body,
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
+        };
 
         if (response && response.aiAnalysis) {
             formData.name = response.aiAnalysis.name;
@@ -287,19 +282,13 @@ const submitForm = async () => {
             return;
         }
 
-        await $fetch(`${config.public.apiBase}/products`, {
-            method: 'POST',
-            body: {
-                name: formData.name,
-                description: formData.description,
-                categoryId: Number(formData.categoryId),
-                price: Number(formData.price),
-                stock: formData.stock ? Number(formData.stock) : 1,
-                imageUrl: formData.imageUrl
-            },
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
+        await productsApi.create({
+            name: formData.name,
+            description: formData.description,
+            categoryId: Number(formData.categoryId),
+            price: Number(formData.price),
+            stock: formData.stock ? Number(formData.stock) : 1,
+            imageUrl: formData.imageUrl
         });
 
         toast.success(t('toast.upload_success'));

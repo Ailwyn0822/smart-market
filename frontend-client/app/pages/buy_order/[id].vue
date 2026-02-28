@@ -313,7 +313,8 @@ import { useAuthStore } from '~/stores/auth'
 
 const route = useRoute()
 const authStore = useAuthStore()
-const config = useRuntimeConfig()
+const ordersApi = useOrdersApi()
+const reviewsApi = useReviewsApi()
 const toast = useToast()
 
 interface OrderItem {
@@ -392,9 +393,7 @@ async function fetchOrder() {
     if (!authStore.isAuthenticated) return
     isLoading.value = true
     try {
-        const data = await $fetch<Order>(`${config.public.apiBase}/orders/${route.params.id}`, {
-            headers: { Authorization: `Bearer ${authStore.token}` }
-        })
+        const data = await ordersApi.getById(route.params.id as string) as Order
         order.value = data
         if (data && data.status === 'delivered') {
             await checkReviewStatus(data.id)
@@ -410,11 +409,7 @@ async function fetchOrder() {
 async function updateStatus(status: string) {
     if (!order.value) return
     try {
-        await $fetch(`${config.public.apiBase}/orders/${order.value.id}/status`, {
-            method: 'PATCH',
-            headers: { Authorization: `Bearer ${authStore.token}` },
-            body: { status }
-        })
+        await ordersApi.updateStatus(order.value.id, { status })
         await fetchOrder()
         if (status === 'delivered') {
             toast.success(t('buy_order.confirm_receipt_success'))
@@ -429,9 +424,7 @@ async function updateStatus(status: string) {
 
 async function checkReviewStatus(orderId: number) {
     try {
-        const res = await $fetch<{ isReviewed: boolean }>(`${config.public.apiBase}/reviews/check/${orderId}`, {
-            headers: { Authorization: `Bearer ${authStore.token}` }
-        })
+        const res = await reviewsApi.checkByOrderId(orderId) as { isReviewed: boolean }
         isReviewed.value = res.isReviewed
     } catch (e) {
         console.error('Failed to check review status', e)
@@ -454,11 +447,7 @@ async function submitReview() {
                 comment: sellerReview.value.comment || '很棒的賣家！',
             },
         ]
-        await $fetch(`${config.public.apiBase}/reviews/bulk`, {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${authStore.token}` },
-            body: { orderId: order.value.id, items }
-        })
+        await reviewsApi.createBulk({ orderId: order.value.id, items })
         isReviewed.value = true
         showReviewModal.value = false
         toast.success(t('buy_order.review_success'))
@@ -474,10 +463,7 @@ async function requestCancel() {
     if (!order.value || isCancelRequesting.value) return
     isCancelRequesting.value = true
     try {
-        await $fetch(`${config.public.apiBase}/orders/${order.value.id}/cancel-request`, {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${authStore.token}` },
-        })
+        await ordersApi.requestCancellation(order.value.id)
         toast.success(t('buy_order.cancel_request_sent'))
         await fetchOrder()
     } catch (e) {

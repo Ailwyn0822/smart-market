@@ -273,18 +273,22 @@ import { useHead } from '#imports'
 import { useI18n } from '#imports'
 
 const { t } = useI18n()
-const config = useRuntimeConfig()
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const $api = useApi()
+const productsApi = useProductsApi()
+const reviewsApi = useReviewsApi()
+const favoritesApi = useFavoritesApi()
+const productQuestionsApi = useProductQuestionsApi()
 const toast = useToast()
 
 const productId = route.params.id as string
 
 // 串接 API 取得商品資料（加 default 避免 SSR 時後端錯誤炸出整頁）
 const { data: product, pending } = await useFetch<any>(
-    `${config.public.apiBase}/products/${productId}`,
-    { default: () => null }
+    `/products/${productId}`,
+    { $fetch: $api, default: () => null }
 )
 
 // 從不同可能的 API 欄位中提取賣家資訊
@@ -353,7 +357,7 @@ const reviewsPage = shallowRef(1)
 
 async function fetchReviews(page = 1) {
     try {
-        const res = await $fetch<ReviewsResponse>(`${config.public.apiBase}/reviews/product/${productId}?page=${page}&limit=6`)
+        const res = await reviewsApi.getByProduct(productId, { page, limit: 6 }) as ReviewsResponse
         if (page === 1) {
             reviewsData.value = res
         } else if (reviewsData.value) {
@@ -383,9 +387,7 @@ const isFavorited = ref(false)
 // 若已登入，確認是否已收藏
 if (authStore.isAuthenticated) {
     try {
-        const favRes = await $fetch<any>(`${config.public.apiBase}/favorites/check/${productId}`, {
-            headers: { Authorization: `Bearer ${authStore.token}` }
-        }).catch(() => null)
+        const favRes = await favoritesApi.check(productId).catch(() => null) as any
         if (favRes) isFavorited.value = favRes.isFavorited ?? false
     } catch { }
 }
@@ -401,17 +403,11 @@ async function toggleFavorite() {
     }
     try {
         if (isFavorited.value) {
-            await $fetch(`${config.public.apiBase}/favorites/${productId}/favorite`, {
-                method: 'DELETE',
-                headers: { Authorization: `Bearer ${authStore.token}` }
-            })
+            await favoritesApi.remove(productId)
             isFavorited.value = false
             toast.success(t('toast.remove_from_favorite'))
         } else {
-            await $fetch(`${config.public.apiBase}/favorites/${productId}/favorite`, {
-                method: 'POST',
-                headers: { Authorization: `Bearer ${authStore.token}` }
-            })
+            await favoritesApi.add(productId)
             isFavorited.value = true
             toast.success(t('toast.add_to_favorite'))
         }
@@ -441,7 +437,7 @@ const answerInputs = ref<Record<number, string>>({})
 
 async function fetchQuestions() {
     try {
-        questions.value = await $fetch<QAItem[]>(`${config.public.apiBase}/product-questions/product/${productId}`)
+        questions.value = await productQuestionsApi.getByProduct(productId) as QAItem[]
     } catch { }
     finally { qaLoading.value = false }
 }
@@ -450,11 +446,7 @@ async function submitQuestion() {
     if (!newQuestion.value.trim() || isSubmittingQuestion.value) return
     isSubmittingQuestion.value = true
     try {
-        await $fetch(`${config.public.apiBase}/product-questions`, {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${authStore.token}` },
-            body: { productId: +productId, question: newQuestion.value.trim() }
-        })
+        await productQuestionsApi.create({ productId: +productId, question: newQuestion.value.trim() })
         newQuestion.value = ''
         toast.success(t('products.qa_asked'))
         await fetchQuestions()
@@ -469,11 +461,7 @@ async function submitAnswer(qaId: number) {
     const answer = answerInputs.value[qaId]?.trim()
     if (!answer) return
     try {
-        await $fetch(`${config.public.apiBase}/product-questions/${qaId}/answer`, {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${authStore.token}` },
-            body: { answer }
-        })
+        await productQuestionsApi.answer(qaId, { answer })
         answerInputs.value[qaId] = ''
         toast.success(t('products.qa_answered'))
         await fetchQuestions()
@@ -484,10 +472,7 @@ async function submitAnswer(qaId: number) {
 
 async function deleteQuestion(qaId: number) {
     try {
-        await $fetch(`${config.public.apiBase}/product-questions/${qaId}`, {
-            method: 'DELETE',
-            headers: { Authorization: `Bearer ${authStore.token}` },
-        })
+        await productQuestionsApi.remove(qaId)
         questions.value = questions.value.filter(q => q.id !== qaId)
     } catch {
         toast.error(t('toast.error_generic'))

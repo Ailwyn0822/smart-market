@@ -105,7 +105,7 @@ import { ref, onMounted, shallowRef } from 'vue'
 const { t } = useI18n()
 useHead({ title: computed(() => t('coupons.page_title')) })
 
-const config = useRuntimeConfig()
+const discountCodesApi = useDiscountCodesApi()
 const toast = useToast()
 
 interface Coupon {
@@ -122,7 +122,7 @@ const loading = shallowRef(true)
 
 async function fetchCoupons() {
     try {
-        coupons.value = await $fetch<Coupon[]>(`${config.public.apiBase}/discount-codes`)
+        coupons.value = await discountCodesApi.getAll() as Coupon[]
     } catch (e) {
         console.error('Failed to fetch coupons', e)
     } finally {

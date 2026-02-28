@@ -177,12 +177,9 @@
 <script setup lang="ts">
 import { ref, computed, shallowRef } from 'vue'
 import { useCartStore } from '~/stores/cart'
-import { useAuthStore } from '~/stores/auth'
-import { useRuntimeConfig, useToast } from '#imports'
+import { useToast } from '#imports'
 
 const cartStore = useCartStore()
-const authStore = useAuthStore()
-const config = useRuntimeConfig()
 const toast = useToast()
 
 // 結帳只使用選中賣家的商品
@@ -224,10 +221,7 @@ function buildOrderPayload(paymentMethod: string) {
     }
 }
 
-function getAuthHeaders(): Record<string, string> {
-    const token = authStore.token
-    return token ? { Authorization: `Bearer ${token}` } : {}
-}
+const ordersApi = useOrdersApi()
 
 async function submitOrder() {
     if (isSubmitting.value) return
@@ -236,10 +230,7 @@ async function submitOrder() {
     try {
         if (form.value.paymentMethod === 'online') {
             const payload = buildOrderPayload('online')
-            const res = await $fetch<{ html: string; orderNumber: string }>(
-                `${config.public.apiBase}/ecpay/checkout`,
-                { method: 'POST', body: payload, headers: getAuthHeaders() }
-            )
+            const res = await ordersApi.ecpayCheckout(payload) as { html: string; orderNumber: string }
             orderNumber.value = res.orderNumber || ''
             cartStore.clearSelectedItems()
 
@@ -256,10 +247,7 @@ async function submitOrder() {
         } else {
             // 貨到付款：直接呼叫後端建立訂單
             const payload = buildOrderPayload('cod')
-            const res = await $fetch<{ orderNumber: string }>(
-                `${config.public.apiBase}/orders`,
-                { method: 'POST', body: payload, headers: getAuthHeaders() }
-            )
+            const res = await ordersApi.create(payload) as { orderNumber: string }
             orderNumber.value = res.orderNumber || ''
             cartStore.clearSelectedItems()
             await navigateTo({ path: '/order_completed', query: { orderNumber: res.orderNumber } })

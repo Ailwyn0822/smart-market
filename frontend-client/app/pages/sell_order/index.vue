@@ -123,7 +123,7 @@ const { t } = useI18n()
 useHead({ title: 'My Sales Orders | Smart Market' })
 
 const authStore = useAuthStore()
-const config = useRuntimeConfig()
+const ordersApi = useOrdersApi()
 const toast = useToast()
 
 interface OrderItem {
@@ -165,9 +165,7 @@ async function fetchOrders() {
     if (!authStore.isAuthenticated) return
     isLoading.value = true
     try {
-        const data = await $fetch<Order[]>(`${config.public.apiBase}/orders/selling`, {
-            headers: { Authorization: `Bearer ${authStore.token}` }
-        })
+        const data = await ordersApi.getSellingOrders() as Order[]
         orders.value = data
     } catch (e) {
         console.error('Failed to fetch selling orders', e)
@@ -178,11 +176,7 @@ async function fetchOrders() {
 
 async function updateStatus(orderId: number, status: string) {
     try {
-        await $fetch(`${config.public.apiBase}/orders/${orderId}/status`, {
-            method: 'PATCH',
-            headers: { Authorization: `Bearer ${authStore.token}` },
-            body: { status }
-        })
+        await ordersApi.updateStatus(orderId, { status })
         fetchOrders()
         if (status === 'out_for_delivery') {
             toast.success(t('toast.shipment_confirmed'))

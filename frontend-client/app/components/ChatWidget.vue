@@ -168,7 +168,7 @@ import { ref, watch, computed, nextTick, onUnmounted, useTemplateRef } from 'vue
 
 const authStore = useAuthStore()
 const chatStore = useChatStore()
-const config = useRuntimeConfig()
+const usersApi = useUsersApi()
 const inputText = ref('')
 const messagesContainer = useTemplateRef<HTMLElement>('messagesContainer')
 
@@ -188,10 +188,7 @@ function onSearchInput() {
     isSearching.value = true
     searchTimer = setTimeout(async () => {
         try {
-            const data = await $fetch<any[]>(`${config.public.apiBase}/users/search`, {
-                query: { q },
-                headers: { Authorization: `Bearer ${authStore.token}` }
-            })
+            const data = await usersApi.search(q) as any[]
             searchResults.value = (data || []).filter((u: any) => u.id !== authStore.user?.id)
         } catch {
             searchResults.value = []

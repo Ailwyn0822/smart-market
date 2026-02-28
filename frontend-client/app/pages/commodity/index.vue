@@ -146,26 +146,18 @@
 import { useAuthStore } from '~/stores/auth'
 import { useToast } from '#imports'
 
-const config = useRuntimeConfig()
 const authStore = useAuthStore()
+const $api = useApi()
+const productsApi = useProductsApi()
 const toast = useToast()
 
-const { data: items, pending, refresh } = await useFetch<any[]>(`${config.public.apiBase}/products/my-listings`, {
-    headers: {
-        Authorization: `Bearer ${authStore.token}`
-    }
-})
+const { data: items, pending, refresh } = await useFetch<any[]>('/products/my-listings', { $fetch: $api })
 
 async function toggleStatus(productId: number, currentStatus: boolean) {
     if (!authStore.isAuthenticated) return
 
     try {
-        await $fetch(`${config.public.apiBase}/products/${productId}/active_status`, {
-            method: 'PATCH',
-            headers: {
-                Authorization: `Bearer ${authStore.token}`
-            }
-        })
+        await productsApi.toggleActiveStatus(productId, { isActive: !currentStatus })
         toast.success(currentStatus ? '商品已下架' : '商品已重新上架')
         await refresh()
     } catch (e: any) {

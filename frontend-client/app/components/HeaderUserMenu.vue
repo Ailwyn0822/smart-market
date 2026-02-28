@@ -194,6 +194,7 @@ dayjs.extend(relativeTime);
 dayjs.locale('zh-tw');
 
 const config = useRuntimeConfig();
+const notificationsApi = useNotificationsApi();
 const authStore = useAuthStore();
 const router = useRouter();
 useI18n();
@@ -238,9 +239,7 @@ function handleLogout() {
 async function fetchNotifications() {
     if (!authStore.isAuthenticated) return;
     try {
-        const res = await $fetch<any>(`${config.public.apiBase}/notifications`, {
-            headers: { Authorization: `Bearer ${authStore.token}` }
-        });
+        const res = await notificationsApi.getAll() as any;
         notifications.value = res.items || [];
         unreadCount.value = res.unreadCount || 0;
     } catch (e) {
@@ -250,10 +249,7 @@ async function fetchNotifications() {
 
 async function markAllAsRead() {
     try {
-        await $fetch(`${config.public.apiBase}/notifications/read`, {
-            method: 'PATCH',
-            headers: { Authorization: `Bearer ${authStore.token}` }
-        });
+        await notificationsApi.markAllRead();
         notifications.value.forEach(n => n.isRead = true);
         unreadCount.value = 0;
     } catch (e) {
@@ -264,10 +260,7 @@ async function markAllAsRead() {
 async function handleNotificationClick(notif: any) {
     if (!notif.isRead) {
         try {
-            await $fetch(`${config.public.apiBase}/notifications/${notif.id}/read`, {
-                method: 'PATCH',
-                headers: { Authorization: `Bearer ${authStore.token}` }
-            });
+            await notificationsApi.markOneRead(notif.id);
             notif.isRead = true;
             if (unreadCount.value > 0) unreadCount.value--;
         } catch (e) {

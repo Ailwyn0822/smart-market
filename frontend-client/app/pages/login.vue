@@ -81,6 +81,7 @@ definePageMeta({
 })
 
 const config = useRuntimeConfig()
+const authApi = useAuthApi()
 
 const loginForm = ref({
     username: '',
@@ -98,13 +99,10 @@ const login = async () => {
     }
     isLoggingIn.value = true
     try {
-        const res = await $fetch<{ access_token: string; user: any }>(
-            `${config.public.apiBase}/auth/login`,
-            {
-                method: 'POST',
-                body: { email: loginForm.value.username, password: loginForm.value.password }
-            }
-        )
+        const res = await authApi.login({
+            email: loginForm.value.username,
+            password: loginForm.value.password
+        }) as { access_token: string; user: any }
         authStore.login(res.access_token, res.user)
         toast.success('登入成功！')
         await navigateTo('/')

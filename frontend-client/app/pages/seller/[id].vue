@@ -192,8 +192,9 @@ import type { ApiProduct, ProductItem } from '~/types'
 const { t } = useI18n()
 
 const route = useRoute()
-const config = useRuntimeConfig()
 const authStore = useAuthStore()
+const usersApi = useUsersApi()
+const reviewsApi = useReviewsApi()
 const chatStore = useChatStore()
 const toast = useToast()
 
@@ -257,7 +258,7 @@ async function fetchReviews(append = false) {
 
     isReviewLoading.value = true
     try {
-        const data = await $fetch<any>(`${config.public.apiBase}/reviews/seller/${route.params.id}?page=${reviewPage.value}&limit=6`)
+        const data = await reviewsApi.getBySeller(route.params.id as string, { page: reviewPage.value, limit: 6 }) as any
         if (append) {
             reviews.value.push(...data.items)
         } else {
@@ -297,9 +298,7 @@ async function fetchMoreProducts() {
     isProductLoading.value = true
     productPage.value++
     try {
-        const data = await $fetch<{ items: ApiProduct[], hasMore: boolean }>(
-            `${config.public.apiBase}/users/${route.params.id}/products?page=${productPage.value}&limit=12`
-        )
+        const data = await usersApi.getProducts(route.params.id as string, { page: productPage.value, limit: 12 }) as { items: ApiProduct[], hasMore: boolean }
         displayedProducts.value.push(...data.items)
         productHasMore.value = data.hasMore
     } catch (e) {
@@ -375,7 +374,7 @@ function handleChat() {
 async function fetchStore() {
     isLoading.value = true
     try {
-        const data = await $fetch<StoreData>(`${config.public.apiBase}/users/${route.params.id}/store`)
+        const data = await usersApi.getStore(route.params.id as string) as StoreData
         storeData.value = data
         displayedProducts.value = [...data.products]
         productPage.value = 1
