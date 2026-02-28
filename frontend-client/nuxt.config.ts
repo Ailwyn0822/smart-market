@@ -62,6 +62,21 @@ export default defineNuxtConfig({
       ]
     }
   },
+  routeRules: {
+    // SSG：FAQ、優惠券內容幾乎不變，build 時預渲染放 CDN
+    '/faq':         { prerender: true },
+    '/coupons':     { prerender: true },
+
+    // CSR：需要登入的個人化頁面，SEO 沒意義
+    '/cart':           { ssr: false },
+    '/checkout':       { ssr: false },
+    '/buy_order/**':   { ssr: false },
+    '/sell_order/**':  { ssr: false },
+    '/profile':        { ssr: false },
+    '/favorite':       { ssr: false },
+    '/upload':         { ssr: false },
+    '/invoice/**':     { ssr: false },
+  },
   vite: {
     plugins: [
       visualizer({
