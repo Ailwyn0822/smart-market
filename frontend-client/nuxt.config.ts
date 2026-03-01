@@ -18,6 +18,9 @@ export default defineNuxtConfig({
       },
     },
   },
+  imports: {
+    dirs: ['composables/api']
+  },
   css: ['~/assets/css/main.css'],
   image: {
     domains: ['lh3.googleusercontent.com']
@@ -63,9 +66,11 @@ export default defineNuxtConfig({
     }
   },
   routeRules: {
-    // SSG：FAQ、優惠券內容幾乎不變，build 時預渲染放 CDN
+    // SSG：FAQ 內容幾乎不變，build 時預渲染放 CDN
     '/faq':         { prerender: true },
-    '/coupons':     { prerender: true },
+
+    // ISR：優惠券由後台 CRUD 管理，可能隨時更新，最多延遲 60 秒
+    '/coupons':     { swr: 60 },
 
     // CSR：需要登入的個人化頁面，SEO 沒意義
     '/cart':           { ssr: false },
