@@ -56,7 +56,7 @@
                                             $t('products.price') }}</span>
                                     <span class="font-marker text-4xl">${{ parseFloat(String(product.price ||
                                         0)).toFixed(0)
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </div>
                             <div
@@ -135,7 +135,7 @@
                         <Icon name="material-symbols:star-rounded" class="text-3xl text-accent-red" />
                         {{ $t('products.reviews_title') }}
                         <span v-if="reviewsData" class="text-base font-bold text-gray-400">({{ reviewsData.total
-                        }})</span>
+                            }})</span>
                     </h2>
 
                     <!-- 載入中 -->
@@ -164,7 +164,7 @@
                                         :class="s <= review.rating ? 'text-accent-red' : 'text-gray-200'" />
                                 </div>
                                 <span class="text-xs text-gray-400 font-bold">{{ formatReviewDate(review.createdAt)
-                                }}</span>
+                                    }}</span>
                             </div>
                             <p class="text-sm text-content font-medium leading-relaxed">{{ review.comment }}</p>
                         </div>
@@ -179,94 +179,7 @@
                     </div>
                 </div>
 
-                <!-- Q&A 問答區塊 -->
-                <div class="border-t-2 border-dashed border-content/20 pt-10 pb-8">
-                    <h2 class="text-2xl font-black text-content mb-6 flex items-center gap-3">
-                        <Icon name="material-symbols:help-outline" class="text-3xl text-accent-blue" />
-                        {{ $t('products.qa_title') }}
-                        <span class="text-base font-bold text-gray-400">({{ questions.length }})</span>
-                    </h2>
 
-                    <!-- 提問輸入框 -->
-                    <div v-if="authStore.isAuthenticated && sellerInfo?.id !== authStore.user?.id"
-                        class="mb-6 flex gap-3">
-                        <input v-model="newQuestion"
-                            class="flex-1 bg-white rounded-xl border-2 border-gray-200 focus:border-content px-4 py-3 font-medium text-sm outline-none transition-all"
-                            :placeholder="$t('products.qa_placeholder')" @keydown.enter="submitQuestion" />
-                        <button @click="submitQuestion" :disabled="!newQuestion.trim() || isSubmittingQuestion"
-                            class="bg-accent-blue text-white px-5 py-3 rounded-xl border-2 border-content font-bold text-sm shadow-stitch-sm hover:translate-y-0.5 hover:shadow-none transition-all disabled:opacity-50 shrink-0">
-                            {{ $t('products.qa_ask') }}
-                        </button>
-                    </div>
-                    <div v-else-if="authStore.isAuthenticated && sellerInfo?.id === authStore.user?.id"
-                        class="mb-6 bg-primary/20 rounded-xl border-2 border-dashed border-primary/40 p-4 text-center">
-                        <p class="font-bold text-sm text-content/60 flex items-center justify-center gap-2">
-                            <Icon name="material-symbols:storefront" class="text-base" />
-                            {{ $t('products.qa_seller_restriction') }}
-                        </p>
-                    </div>
-                    <div v-else
-                        class="mb-6 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 p-4 text-center">
-                        <NuxtLink to="/login" class="font-bold text-accent-blue hover:underline text-sm">
-                            {{ $t('products.qa_login_to_ask') }}
-                        </NuxtLink>
-                    </div>
-
-                    <!-- 問題列表 -->
-                    <div v-if="qaLoading" class="flex justify-center py-8">
-                        <Icon name="line-md:loading-loop" class="text-3xl text-accent-blue" />
-                    </div>
-                    <div v-else-if="questions.length === 0" class="flex flex-col items-center gap-2 py-8 text-gray-400">
-                        <Icon name="material-symbols:question-mark" class="text-4xl" />
-                        <p class="font-bold text-sm">{{ $t('products.qa_no_questions') }}</p>
-                    </div>
-                    <div v-else class="space-y-4">
-                        <div v-for="qa in questions" :key="qa.id"
-                            class="bg-white rounded-2xl border-2 border-dashed border-gray-200 overflow-hidden">
-                            <!-- 問題 -->
-                            <div class="p-4 flex items-start gap-3">
-                                <div
-                                    class="size-8 rounded-full bg-accent-blue/10 flex items-center justify-center shrink-0 mt-0.5">
-                                    <Icon name="material-symbols:help" class="text-accent-blue text-sm" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="font-bold text-sm text-content">{{ qa.question }}</p>
-                                    <p class="text-xs text-gray-400 mt-1">{{ formatReviewDate(qa.createdAt) }}</p>
-                                </div>
-                                <button v-if="authStore.user?.id === qa.askerId || authStore.user?.id === qa.sellerId"
-                                    @click="deleteQuestion(qa.id)"
-                                    class="text-gray-300 hover:text-accent-red transition-colors shrink-0">
-                                    <Icon name="material-symbols:delete-outline" class="text-lg" />
-                                </button>
-                            </div>
-                            <!-- 回答 -->
-                            <div v-if="qa.answer"
-                                class="border-t-2 border-dashed border-gray-100 p-4 bg-primary/10 flex items-start gap-3">
-                                <div
-                                    class="size-8 rounded-full bg-accent-red/10 flex items-center justify-center shrink-0 mt-0.5">
-                                    <Icon name="material-symbols:storefront" class="text-accent-red text-sm" />
-                                </div>
-                                <div>
-                                    <p class="text-xs font-black text-accent-red mb-1">{{ $t('products.qa_seller_reply')
-                                    }}</p>
-                                    <p class="font-medium text-sm text-content">{{ qa.answer }}</p>
-                                </div>
-                            </div>
-                            <!-- 賣家回答輸入框 -->
-                            <div v-else-if="authStore.user?.id === qa.sellerId"
-                                class="border-t-2 border-dashed border-gray-100 p-3 bg-gray-50 flex gap-2">
-                                <input v-model="answerInputs[qa.id]"
-                                    class="flex-1 bg-white rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none"
-                                    :placeholder="$t('products.qa_answer_placeholder')"
-                                    @keydown.enter="submitAnswer(qa.id)" />
-                                <button @click="submitAnswer(qa.id)" :disabled="!answerInputs[qa.id]?.trim()"
-                                    class="bg-accent-red text-white px-3 py-2 rounded-lg text-xs font-bold disabled:opacity-50 border border-content">
-                                    {{ $t('products.qa_reply') }}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </main>
     </div>
@@ -285,7 +198,6 @@ const $api = useApi()
 const productsApi = useProductsApi()
 const reviewsApi = useReviewsApi()
 const favoritesApi = useFavoritesApi()
-const productQuestionsApi = useProductQuestionsApi()
 const toast = useToast()
 
 const productId = route.params.id as string
@@ -402,7 +314,7 @@ function formatReviewDate(dateStr: string) {
 }
 
 onMounted(async () => {
-    await Promise.all([fetchReviews(1), fetchQuestions()])
+    await fetchReviews(1)
 })
 
 // 收藏狀態
@@ -451,56 +363,5 @@ function addToCart() {
     toast.success(t('toast.add_to_cart'))
 }
 
-// Q&A 問答
-interface QAItem { id: number; productId: number; sellerId: string; askerId: string; question: string; answer: string | null; createdAt: string }
-const questions = ref<QAItem[]>([])
-const qaLoading = shallowRef(true)
-const newQuestion = ref('')
-const isSubmittingQuestion = shallowRef(false)
-const answerInputs = ref<Record<number, string>>({})
-
-async function fetchQuestions() {
-    try {
-        questions.value = await productQuestionsApi.getByProduct(productId) as QAItem[]
-    } catch { }
-    finally { qaLoading.value = false }
-}
-
-async function submitQuestion() {
-    if (!newQuestion.value.trim() || isSubmittingQuestion.value) return
-    isSubmittingQuestion.value = true
-    try {
-        await productQuestionsApi.create({ productId: +productId, question: newQuestion.value.trim() })
-        newQuestion.value = ''
-        toast.success(t('products.qa_asked'))
-        await fetchQuestions()
-    } catch {
-        toast.error(t('toast.error_generic'))
-    } finally {
-        isSubmittingQuestion.value = false
-    }
-}
-
-async function submitAnswer(qaId: number) {
-    const answer = answerInputs.value[qaId]?.trim()
-    if (!answer) return
-    try {
-        await productQuestionsApi.answer(qaId, { answer })
-        answerInputs.value[qaId] = ''
-        toast.success(t('products.qa_answered'))
-        await fetchQuestions()
-    } catch {
-        toast.error(t('toast.error_generic'))
-    }
-}
-
-async function deleteQuestion(qaId: number) {
-    try {
-        await productQuestionsApi.remove(qaId)
-        questions.value = questions.value.filter(q => q.id !== qaId)
-    } catch {
-        toast.error(t('toast.error_generic'))
-    }
-}
 
 </script>
