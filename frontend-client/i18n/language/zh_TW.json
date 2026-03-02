@@ -87,7 +87,10 @@
     "password_label": "秘密密碼",
     "password_placeholder": "••••••••",
     "submit_btn": "打開我的文件夾",
-    "or_stick_with": "或堅持使用"
+    "or_stick_with": "或堅持使用",
+    "error_empty_fields": "請輸入帳號與密碼",
+    "success": "登入成功！",
+    "error_invalid_credentials": "帳號或密碼錯誤"
   },
   "upload": {
     "title": "新作品",
@@ -231,7 +234,12 @@
     "submit_btn": "立即加入",
     "already_student": "已有帳號？",
     "login_here": "點這裡登入",
-    "page_title": "加入會員"
+    "page_title": "加入會員",
+    "error_required_fields": "請填寫所有必填欄位",
+    "error_password_mismatch": "兩次密碼輸入不一致",
+    "success": "帳號建立成功，歡迎加入！",
+    "error_duplicate": "此帳號或 Email 已被使用",
+    "error_generic": "註冊失敗，請稍後再試"
   },
   "checkout": {
     "details_title": "結帳明細",
@@ -369,7 +377,18 @@
     "reviews_end": "已經到底囉 🎉",
     "products_all_shown": "已顯示全部 {count} 件商品 🎉",
     "dashboard_title": "賣家儀表板",
-    "store_page_title": "{name} 的商店"
+    "store_page_title": "{name} 的商店",
+    "back": "返回上一頁",
+    "browse_products": "瀏覽其他商品",
+    "dashboard_monthly_revenue": "本月營收總額",
+    "dashboard_monthly_sales": "本月銷售訂單數",
+    "dashboard_unit": "件",
+    "dashboard_top_5": "本月熱銷排行 (Top 5)",
+    "dashboard_total_sold": "已售出",
+    "dashboard_no_data": "尚無銷售數據",
+    "dashboard_low_stock": "庫存不足警示 (< 10)",
+    "dashboard_stock_healthy": "目前庫存健康度良好",
+    "dashboard_stock_remaining": "剩餘 {count} 件"
   },
   "invoice": {
     "back": "返回訂單",
@@ -426,7 +445,19 @@
     "category_toys": "玩具與遊戲",
     "category_books": "尋寶童書",
     "category_clothing": "服飾",
-    "category_art": "美術用品"
+    "category_art": "美術用品",
+    "no_listings": "尚無上架商品",
+    "relist": "重新上架",
+    "deactivate_success": "商品已下架",
+    "relist_success": "商品已重新上架",
+    "status_update_error": "狀態更新失敗，請稍後再試",
+    "upload": "上傳商品",
+    "uploading": "上傳中...",
+    "saving": "儲存中...",
+    "inactive": "未上架",
+    "validation_error": "請確認必填欄位：名稱、分類、金額",
+    "update_success": "商品更新成功",
+    "update_error": "商品更新失敗，請再試一次"
   },
   "faq": {
     "title": "常見問題與解答",
@@ -513,7 +544,9 @@
     "shipment_confirmed": "訂單已標記為出貨（配送中）！",
     "upload_success": "商品上架成功！",
     "upload_error": "上架失敗，請再試一次",
-    "content_violation": "偵測到違禁或不當內容，請勿上傳此類圖片"
+    "content_violation": "偵測到違禁或不當內容，請勿上傳此類圖片",
+    "upload_invalid_image": "請上傳圖片格式",
+    "upload_analyzing": "分析中，請稍候..."
   },
   "menu": {
     "notifications": "通知中心",

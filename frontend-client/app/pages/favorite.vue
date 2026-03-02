@@ -183,7 +183,7 @@ function addToCart(product: Product) {
         price: Number(product.price),
         imageUrl: product.imageUrl,
         stock: product.stock
-    } as any, 1)
+    } as unknown as import('~/types').ApiProduct, 1)
     toast.success(t('toast.add_to_cart'))
 }
 

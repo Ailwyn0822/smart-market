@@ -78,7 +78,7 @@
 
                             <!-- 金額 -->
                             <span class="font-black text-lg text-accent-purple shrink-0">${{ order.totalAmount
-                            }}</span>
+                                }}</span>
                         </div>
 
                         <!-- 進度條 -->
@@ -232,7 +232,7 @@ function formatDate(dateStr: string): string {
 
 async function checkReviewStatus(orderId: number) {
     try {
-        const res = await reviewsApi.checkByOrderId(orderId) as any
+        const res = await reviewsApi.checkByOrderId(orderId) as { isReviewed: boolean }
         return res.isReviewed
     } catch {
         return false

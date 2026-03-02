@@ -179,8 +179,19 @@ const authStore = useAuthStore()
 // 串接類別 API (取前六個)
 const { data: categoriesData, pending: categoriesPending } = await useLazyFetch<{ id: number; name: string; icon: string }[]>('/categories/top', { $fetch: $api })
 
+interface ProductResponse {
+    id: number;
+    name: string;
+    price: string | number;
+    condition?: string;
+    description?: string;
+    imageUrl?: string;
+    category?: { name: string } | string;
+    [key: string]: any;
+}
+
 // 串接最新商品 API (取前四個)
-const { data: productsData, pending: productsPending } = await useLazyFetch<any[]>('/products/latest', { $fetch: $api })
+const { data: productsData, pending: productsPending } = await useLazyFetch<ProductResponse[]>('/products/latest', { $fetch: $api })
 
 const colorStyles = [
     { border: 'crayon-border-red', price: 'text-accent-red', hover: 'hover:bg-accent-red' },
@@ -191,7 +202,7 @@ const colorStyles = [
 
 // 映射至 ProductCard 格式（computed 避免模板中重複運算）
 const displayProducts = computed(() =>
-    (productsData.value || []).map((p: any, index: number) => {
+    (productsData.value || []).map((p: ProductResponse, index: number) => {
         const style = colorStyles[index % colorStyles.length]!
         return {
             id: p.id,

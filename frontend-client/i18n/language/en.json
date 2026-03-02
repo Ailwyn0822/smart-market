@@ -87,7 +87,10 @@
     "password_label": "Secret Password",
     "password_placeholder": "••••••••",
     "submit_btn": "Open My Folder",
-    "or_stick_with": "or stick with"
+    "or_stick_with": "or stick with",
+    "error_empty_fields": "Please enter your username and password",
+    "success": "Login successful!",
+    "error_invalid_credentials": "Incorrect account or password"
   },
   "upload": {
     "title": "New Work",
@@ -231,7 +234,12 @@
     "submit_btn": "Join Now",
     "already_student": "Already a student?",
     "login_here": "Log in here!",
-    "page_title": "Join the Club"
+    "page_title": "Join the Club",
+    "error_required_fields": "Please fill in all required fields",
+    "error_password_mismatch": "Passwords do not match",
+    "success": "Account created, welcome aboard!",
+    "error_duplicate": "This account or email is already in use",
+    "error_generic": "Registration failed, please try again"
   },
   "checkout": {
     "details_title": "Checkout Details",
@@ -369,7 +377,18 @@
     "reviews_end": "That's all! 🎉",
     "products_all_shown": "All {count} products shown 🎉",
     "dashboard_title": "Seller Dashboard",
-    "store_page_title": "{name}'s Store"
+    "store_page_title": "{name}'s Store",
+    "back": "Go Back",
+    "browse_products": "Browse other products",
+    "dashboard_monthly_revenue": "Monthly Revenue",
+    "dashboard_monthly_sales": "Monthly Sales Orders",
+    "dashboard_unit": "units",
+    "dashboard_top_5": "Top Selling Products (Top 5)",
+    "dashboard_total_sold": "Sold",
+    "dashboard_no_data": "No sales data yet",
+    "dashboard_low_stock": "Low Stock Alert (< 10)",
+    "dashboard_stock_healthy": "Stock levels are healthy",
+    "dashboard_stock_remaining": "{count} units remaining"
   },
   "invoice": {
     "back": "Back to Order",
@@ -426,7 +445,19 @@
     "category_toys": "Toys & Games",
     "category_books": "Books",
     "category_clothing": "Clothing",
-    "category_art": "Art Supplies"
+    "category_art": "Art Supplies",
+    "no_listings": "No listings yet",
+    "relist": "Relist",
+    "deactivate_success": "Product deactivated",
+    "relist_success": "Product relisted successfully",
+    "status_update_error": "Failed to update status, please try again",
+    "upload": "Upload item",
+    "uploading": "Uploading...",
+    "saving": "Saving...",
+    "inactive": "Inactive",
+    "validation_error": "Please check required fields: Name, Category, Price",
+    "update_success": "Item updated successfully",
+    "update_error": "Failed to update item, please try again"
   },
   "faq": {
     "title": "Questions & Answers",
@@ -513,7 +544,9 @@
     "shipment_confirmed": "Order marked as shipped (In Transit)!",
     "upload_success": "Product listed successfully!",
     "upload_error": "Failed to list product, please try again",
-    "content_violation": "Prohibited or inappropriate content detected. Please do not upload such images."
+    "content_violation": "Prohibited or inappropriate content detected. Please do not upload such images.",
+    "upload_invalid_image": "Please upload an image file",
+    "upload_analyzing": "Analyzing your item, please wait..."
   },
   "menu": {
     "notifications": "Notifications",

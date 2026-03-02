@@ -38,7 +38,7 @@
                                 <div v-if="isLoading"
                                     class="absolute inset-0 bg-white/80 z-20 flex flex-col items-center justify-center">
                                     <Icon name="svg-spinners:blocks-shuffle-3" class="text-6xl text-primary" />
-                                    <p class="mt-4 text-primary font-bold">Analyzing...</p>
+                                    <p class="mt-4 text-primary font-bold">{{ $t('toast.upload_analyzing') }}</p>
                                 </div>
 
                                 <!-- Preview Image -->
@@ -169,7 +169,7 @@ const $api = useApi();
 const productsApi = useProductsApi();
 const toast = useToast();
 const isLoading = ref(false);
-const fileInput = ref<HTMLInputElement | null>(null);
+const fileInput = useTemplateRef<HTMLInputElement>('fileInput')
 
 const { data: categories } = await useFetch<{ id: number; name: string; icon: string }[]>(
     '/categories',
@@ -191,20 +191,20 @@ const triggerFileInput = () => {
 
 const handleFileChange = (event: Event) => {
     const target = event.target as HTMLInputElement;
-    if (target.files && target.files.length > 0) {
+    if (target.files && target.files.length > 0 && target.files[0]) {
         processFile(target.files[0]);
     }
 };
 
 const handleDrop = (event: DragEvent) => {
-    if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
+    if (event.dataTransfer?.files && event.dataTransfer.files.length > 0 && event.dataTransfer.files[0]) {
         processFile(event.dataTransfer.files[0]);
     }
 };
 
 const processFile = async (file: File) => {
     if (!file.type.startsWith('image/')) {
-        toast.error('Please upload an image file.');
+        toast.error(t('toast.upload_invalid_image'));
         return;
     }
 
@@ -225,6 +225,7 @@ const processFile = async (file: File) => {
         if (!token) {
             toast.error(t('toast.login_required'));
             isLoading.value = false;
+            return;
         }
 
         const response = await productsApi.analyze(body) as {

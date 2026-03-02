@@ -87,7 +87,10 @@
     "password_label": "Mật khẩu bí mật",
     "password_placeholder": "••••••••",
     "submit_btn": "Mở Thư mục của tôi",
-    "or_stick_with": "hoặc gắn bó với"
+    "or_stick_with": "hoặc gắn bó với",
+    "error_empty_fields": "Vui lòng nhập tên đăng nhập và mật khẩu",
+    "success": "Đăng nhập thành công!",
+    "error_invalid_credentials": "Tài khoản hoặc mật khẩu không đúng"
   },
   "upload": {
     "title": "Tác phẩm mới",
@@ -231,7 +234,12 @@
     "submit_btn": "Tham gia ngay",
     "already_student": "Đã có tài khoản?",
     "login_here": "Đăng nhập tại đây",
-    "page_title": "Đăng ký"
+    "page_title": "Đăng ký",
+    "error_required_fields": "Vui lòng điền đầy đủ các trường bắt buộc",
+    "error_password_mismatch": "Mật khẩu không khớp",
+    "success": "Tạo tài khoản thành công, chào mừng!",
+    "error_duplicate": "Tài khoản hoặc email này đã được sử dụng",
+    "error_generic": "Đăng ký thất bại, vui lòng thử lại"
   },
   "checkout": {
     "details_title": "Chi tiết thanh toán",
@@ -369,7 +377,18 @@
     "reviews_end": "Đã hết! 🎉",
     "products_all_shown": "Đã hiển thị tất cả {count} sản phẩm 🎉",
     "dashboard_title": "Bảng điều khiển bán hàng",
-    "store_page_title": "Cửa hàng của {name}"
+    "store_page_title": "Cửa hàng của {name}",
+    "back": "Quay lại",
+    "browse_products": "Duyệt sản phẩm khác",
+    "dashboard_monthly_revenue": "Doanh thu tháng này",
+    "dashboard_monthly_sales": "Đơn hàng tháng này",
+    "dashboard_unit": "đơn vị",
+    "dashboard_top_5": "Sản phẩm bán chạy (Top 5)",
+    "dashboard_total_sold": "Đã bán",
+    "dashboard_no_data": "Chưa có dữ liệu doanh số",
+    "dashboard_low_stock": "Cảnh báo tồn kho thấp (< 10)",
+    "dashboard_stock_healthy": "Tồn kho hiện đang ổn định",
+    "dashboard_stock_remaining": "Còn {count} đơn vị"
   },
   "invoice": {
     "back": "Quay lại đơn hàng",
@@ -413,6 +432,13 @@
     "deactivate": "Hủy kích hoạt",
     "edit_title": "Chỉnh sửa sản phẩm",
     "active": "Đang bán",
+    "upload": "đăng bán",
+    "uploading": "Đang tải lên...",
+    "saving": "Đang lưu...",
+    "inactive": "Chưa duyệt",
+    "validation_error": "Vui lòng nhập các trường bắt buộc: Tên, Phân loại, Giá",
+    "update_success": "Cập nhật sản phẩm thành công",
+    "update_error": "Cập nhật sản phẩm thất bại, vui lòng thử lại",
     "listing_details": "Chi tiết sản phẩm",
     "title_of_work": "Tên sản phẩm",
     "category": "Danh mục",
@@ -426,7 +452,12 @@
     "category_toys": "Đồ chơi & Trò chơi",
     "category_books": "Sách",
     "category_clothing": "Quần áo",
-    "category_art": "Dụng cụ mỹ thuật"
+    "category_art": "Dụng cụ mỹ thuật",
+    "no_listings": "Chưa có sản phẩm",
+    "relist": "Đăng lại",
+    "deactivate_success": "Đã hủy kích hoạt sản phẩm",
+    "relist_success": "Đã đăng lại sản phẩm thành công",
+    "status_update_error": "Cập nhật trạng thái thất bại, vui lòng thử lại"
   },
   "faq": {
     "title": "Các câu hỏi thường gặp",
@@ -513,7 +544,9 @@
     "shipment_confirmed": "Đơn hàng đã được đánh dấu là đã gửi hàng!",
     "upload_success": "Đăng sản phẩm thành công!",
     "upload_error": "Đăng sản phẩm thất bại, vui lòng thử lại",
-    "content_violation": "Phát hiện nội dung bị cấm hoặc không phù hợp. Vui lòng không tải lên hình ảnh này."
+    "content_violation": "Phát hiện nội dung bị cấm hoặc không phù hợp. Vui lòng không tải lên hình ảnh này.",
+    "upload_invalid_image": "Vui lòng tải lên tệp hình ảnh",
+    "upload_analyzing": "Đang phân tích mặt hàng, vui lòng chờ..."
   },
   "menu": {
     "notifications": "Thông báo",

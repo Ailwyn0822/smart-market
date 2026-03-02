@@ -1,15 +1,26 @@
 import { defineStore } from 'pinia';
 
+export interface AuthUser {
+    id: string
+    name: string
+    email: string
+    avatarUrl?: string
+    // OAuth 提供者（Google / LINE）可能回傳的欄位
+    picture?: string
+    avatar?: string
+    username?: string
+}
+
 export const useAuthStore = defineStore('auth', () => {
     // 1. 定義 State (資料)
     // useCookie 會自動連結瀏覽器的 Cookie，重新整理也不會不見！
     const token = useCookie<string | null>('auth_token');
-    const user = useCookie<any>('auth_user'); // 暫時把個資也存 Cookie，之後會改用 Token 換取
+    const user = useCookie<AuthUser | null>('auth_user');
 
     // 2. 定義 Actions (動作)
 
     // 登入：把資料存起來
-    const login = (newToken: string, userData: any) => {
+    const login = (newToken: string, userData: AuthUser) => {
         token.value = newToken;
         user.value = userData;
     };

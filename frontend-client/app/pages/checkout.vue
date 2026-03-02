@@ -39,7 +39,7 @@
                                 </div>
                                 <div class="col-span-1 md:col-span-2 space-y-2">
                                     <label class="font-bold text-content ml-1">{{ $t('checkout.shipping_address')
-                                        }}</label>
+                                    }}</label>
                                     <input v-model="form.address" class="w-full input-crayon rounded-xl p-3 text-base"
                                         placeholder="123 Treehouse Lane" type="text" />
                                 </div>
@@ -120,7 +120,8 @@
                                     <h4 class="font-bold text-sm text-content truncate">{{ item.product.name }}</h4>
                                     <p class="text-xs text-gray-500">{{ $t('checkout.qty') }}: {{ item.quantity }}</p>
                                 </div>
-                                <span class="font-bold text-sm">${{ item.product.price * item.quantity }}</span>
+                                <span class="font-bold text-sm">${{ (parseFloat(String(item.product.price)) *
+                                    item.quantity).toFixed(2) }}</span>
                             </div>
                         </div>
                         <div v-else class="text-center text-gray-400 py-10 flex-1">

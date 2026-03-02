@@ -7,22 +7,22 @@
                 class="inline-flex items-center gap-2 mb-6 font-bold text-content hover:text-accent-red transition-colors group">
                 <Icon name="material-symbols:arrow-back"
                     class="text-xl group-hover:-translate-x-1 transition-transform" />
-                返回上一頁
+                {{ $t('seller.back') }}
             </button>
 
             <!-- Loading -->
             <div v-if="isLoading" class="flex flex-col items-center justify-center py-32 gap-3">
                 <Icon name="material-symbols:sync" class="text-5xl text-accent-red animate-spin" />
-                <p class="font-bold text-gray-400">載入賣家資訊中...</p>
+                <p class="font-bold text-gray-400">{{ $t('seller.loading') }}</p>
             </div>
 
             <!-- 404 -->
             <div v-else-if="!storeData" class="flex flex-col items-center justify-center py-32 gap-4">
                 <Icon name="material-symbols:storefront-outline" class="text-6xl text-gray-300" />
-                <p class="font-bold text-gray-400 text-lg">找不到該賣家資訊</p>
+                <p class="font-bold text-gray-400 text-lg">{{ $t('seller.not_found') }}</p>
                 <NuxtLink to="/products"
                     class="inline-flex items-center gap-2 bg-primary px-5 py-2 rounded-lg border-2 border-content text-content font-bold text-sm shadow-stitch-sm hover:translate-y-0.5 hover:shadow-none transition-all">
-                    瀏覽其他商品
+                    {{ $t('seller.browse_products') }}
                 </NuxtLink>
             </div>
 
@@ -58,22 +58,23 @@
                             <div
                                 class="inline-flex items-center gap-2 px-3 py-1 bg-cream border border-primary rounded-full text-xs font-bold text-[#854d0e] tracking-wide mb-3">
                                 <Icon name="material-symbols:verified" class="text-sm" />
-                                認證賣家
+                                {{ $t('seller.verified') }}
                             </div>
                             <h1 class="text-3xl md:text-5xl font-black text-content tracking-tight">
-                                {{ storeData.seller.name }} 的商店
+                                {{ $t('seller.store_page_title', { name: storeData.seller.name }) }}
                             </h1>
                         </div>
 
                         <div class="flex flex-wrap justify-center md:justify-start gap-6 pt-2">
                             <div class="flex items-center gap-2">
                                 <Icon name="material-symbols:inventory-2" class="text-gray-400 text-xl" />
-                                <span class="font-bold text-gray-600">商品數：{{ storeData.seller.totalProducts }}</span>
+                                <span class="font-bold text-gray-600">{{ $t('seller.product_count') }}: {{
+                                    storeData.seller.totalProducts }}</span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <Icon name="material-symbols:calendar-month" class="text-gray-400 text-xl" />
-                                <span class="font-bold text-gray-600">加入時間：{{ formatDate(storeData.seller.joinedAt)
-                                    }}</span>
+                                <span class="font-bold text-gray-600">{{ $t('seller.joined_at') }}: {{
+                                    formatDate(storeData.seller.joinedAt) }}</span>
                             </div>
                         </div>
 
@@ -84,12 +85,11 @@
                                 <Icon
                                     :name="isFollowing ? 'material-symbols:favorite' : 'material-symbols:favorite-outline'"
                                     :class="[isFollowing ? 'text-accent-red' : '']" />
-                                {{ isFollowing ? '已關注' : '關注賣家' }}
+                                {{ isFollowing ? $t('seller.following') : $t('seller.follow') }}
                             </button>
                             <button @click="handleChat"
                                 class="bg-white hover:bg-gray-50 text-content text-sm font-bold px-6 py-2.5 rounded-full border-2 border-content shadow-[4px_4px_0px_rgba(0,0,0,0.1)] active:shadow-none active:translate-y-1 transition-all flex items-center gap-2">
-                                <Icon name="material-symbols:chat" class="text-accent-blue" />
-                                聊聊
+                                {{ $t('seller.chat') }}
                             </button>
                         </div>
                     </div>
@@ -105,7 +105,7 @@
                     <div v-if="displayedProducts.length === 0 && !isProductLoading"
                         class="flex flex-col items-center justify-center py-16 gap-4 bg-white rounded-3xl border-2 border-dashed border-gray-300">
                         <Icon name="material-symbols:box-outline" class="text-6xl text-gray-300" />
-                        <p class="font-bold text-gray-400 text-lg">該賣家目前沒有上架商品</p>
+                        <p class="font-bold text-gray-400 text-lg">{{ $t('seller.no_products') }}</p>
                     </div>
 
                     <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -140,14 +140,14 @@
                 </button>
                 <h2 class="text-2xl font-black text-content mb-6 flex items-center gap-2 shrink-0">
                     <Icon name="material-symbols:star" class="text-accent-red" />
-                    來自買家的評價
+                    {{ $t('seller.reviews_title') }}
                 </h2>
 
                 <!-- 虛擬滾動列表容器 -->
                 <div class="flex-1 overflow-y-auto pr-2 space-y-4">
                     <div v-if="reviews.length === 0 && !isReviewLoading"
                         class="text-center py-10 text-gray-400 font-bold">
-                        目前沒有評價喔！
+                        {{ $t('seller.no_reviews') }}
                     </div>
                     <template v-else>
                         <div v-for="review in reviews" :key="review.id"
@@ -172,7 +172,7 @@
                     </div>
                     <div v-if="!reviewHasMore && reviews.length > 0"
                         class="text-center py-4 text-sm text-gray-400 font-bold">
-                        已經到底囉 🎉
+                        {{ $t('seller.reviews_end') }}
                     </div>
                 </div>
             </div>
@@ -246,7 +246,14 @@ function toggleFollow() {
 
 // 評價 Modal 與 無限下拉邏輯
 const showReviewsModal = shallowRef(false)
-const reviews = ref<any[]>([])
+interface SellerReview {
+    id: number
+    rating: number
+    comment: string
+    createdAt: string
+}
+
+const reviews = ref<SellerReview[]>([])
 const reviewPage = ref(1)
 const reviewHasMore = shallowRef(true)
 const isReviewLoading = shallowRef(false)
@@ -334,7 +341,7 @@ function getCardStyle(id: number) {
     return CARD_STYLES[(id || 0) % CARD_STYLES.length] ?? CARD_STYLES[0]!;
 }
 
-const mappedProducts = computed<ProductItem[]>(() => {
+const mappedProducts = computed(() => {
     return displayedProducts.value.map(p => {
         const style = getCardStyle(p.id)
         return {
@@ -342,6 +349,7 @@ const mappedProducts = computed<ProductItem[]>(() => {
             title: p.name,
             price: `$${p.price}`,
             condition: p.category?.name ?? '商品',
+            category: p.category?.name ?? '',
             description: p.description,
             image: p.imageUrl,
             borderColorClass: style.border,

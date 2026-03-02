@@ -14,7 +14,8 @@
             <div v-if="authStore.isAuthenticated"
                 class="relative cursor-pointer flex items-center justify-center size-10 rounded-full border-2 border-transparent hover:bg-gray-100 transition-colors group"
                 @click="toggleNotificationMenu">
-                <Icon name="material-symbols:notifications-outline" class="text-2xl text-content group-hover:text-accent-red transition-colors" />
+                <Icon name="material-symbols:notifications-outline"
+                    class="text-2xl text-content group-hover:text-accent-red transition-colors" />
                 <div v-if="unreadCount > 0"
                     class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-accent-red rounded-full text-[10px] text-white flex items-center justify-center font-bold border-2 border-white shadow-sm">
                     {{ unreadCount > 99 ? '99+' : unreadCount }}
@@ -206,8 +207,17 @@ const userAvatar = computed(() => authStore.user?.picture || authStore.user?.ava
 const userName = computed(() => authStore.user?.name || authStore.user?.username || 'User');
 const userEmail = computed(() => authStore.user?.email || null);
 
+interface Notification {
+    id: string | number
+    message: string
+    isRead: boolean
+    createdAt: string
+    type: 'order_update' | 'new_review' | 'product_deactivated' | string
+    referenceId?: string | number
+}
+
 const unreadCount = shallowRef(0);
-const notifications = ref<any[]>([]);
+const notifications = ref<Notification[]>([]);
 const isNotificationOpen = shallowRef(false);
 let sseSource: EventSource | null = null;
 

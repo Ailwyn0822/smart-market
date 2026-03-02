@@ -31,98 +31,102 @@
             <div v-else class="flex flex-col gap-16">
                 <!-- 商品主資訊 -->
                 <div class="flex flex-col lg:flex-row gap-16 items-start">
-                <!-- 左側圖片區 -->
-                <div class="w-full lg:w-1/2 flex flex-col items-center sticky top-8">
-                    <div class="relative group w-full max-w-xl mx-auto py-6">
-                        <div class="relative bg-white p-4 pb-12 shadow-xl rotate-[-2deg] z-10">
-                            <NuxtImg :src="product.imageUrl || product.image" :alt="product.name || product.title"
-                                class="w-full h-auto object-cover grayscale-[10%] relative z-0" />
-                            <div class="washi-tape absolute -top-2 -left-2 w-40 h-12 bg-primary -rotate-[35deg] z-50">
+                    <!-- 左側圖片區 -->
+                    <div class="w-full lg:w-1/2 flex flex-col items-center sticky top-8">
+                        <div class="relative group w-full max-w-xl mx-auto py-6">
+                            <div class="relative bg-white p-4 pb-12 shadow-xl rotate-[-2deg] z-10">
+                                <NuxtImg :src="product.imageUrl || product.image" :alt="product.name || product.title"
+                                    class="w-full h-auto object-cover grayscale-[10%] relative z-0" />
+                                <div
+                                    class="washi-tape absolute -top-2 -left-2 w-40 h-12 bg-primary -rotate-[35deg] z-50">
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- 右側資訊區 -->
-                <div class="w-full lg:w-1/2 flex flex-col gap-10 relative mt-12 lg:mt-0">
-                    <!-- Price Badge -->
-                    <div class="absolute -top-12 right-0 lg:-right-4 z-20 transform rotate-12 group cursor-default">
-                        <div
-                            class="bg-primary text-content w-32 h-32 rounded-full flex items-center justify-center shadow-xl border-4 border-dashed border-content group-hover:scale-110 transition-transform bg-[url('https://www.transparenttextures.com/patterns/paper-fibers.png')]">
-                            <div class="text-center -rotate-12">
-                                <span class="block text-xs font-bold font-mono-card uppercase tracking-widest mb-1">{{
-                                    $t('products.price') }}</span>
-                                <span class="font-marker text-4xl">${{ parseFloat(product.price || 0).toFixed(0)
-                                    }}</span>
+                    <!-- 右側資訊區 -->
+                    <div class="w-full lg:w-1/2 flex flex-col gap-10 relative mt-12 lg:mt-0">
+                        <!-- Price Badge -->
+                        <div class="absolute -top-12 right-0 lg:-right-4 z-20 transform rotate-12 group cursor-default">
+                            <div
+                                class="bg-primary text-content w-32 h-32 rounded-full flex items-center justify-center shadow-xl border-4 border-dashed border-content group-hover:scale-110 transition-transform bg-[url('https://www.transparenttextures.com/patterns/paper-fibers.png')]">
+                                <div class="text-center -rotate-12">
+                                    <span
+                                        class="block text-xs font-bold font-mono-card uppercase tracking-widest mb-1">{{
+                                            $t('products.price') }}</span>
+                                    <span class="font-marker text-4xl">${{ parseFloat(String(product.price ||
+                                        0)).toFixed(0)
+                                        }}</span>
+                                </div>
+                            </div>
+                            <div
+                                class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full h-16 w-1 bg-white border border-gray-300">
+                            </div>
+                            <div
+                                class="absolute top-[-4rem] left-1/2 -translate-x-1/2 w-4 h-4 bg-gray-300 rounded-full border border-gray-400">
                             </div>
                         </div>
-                        <div
-                            class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full h-16 w-1 bg-white border border-gray-300">
+
+                        <div class="relative z-10 pr-24">
+                            <h1 class="text-5xl lg:text-6xl font-black text-content tracking-tight leading-[1.1]">
+                                {{ product.name || product.title }}
+                            </h1>
                         </div>
+
+                        <!-- 賣家資訊卡片 -->
+                        <NuxtLink v-if="sellerInfo" :to="`/seller/${sellerInfo.id}`"
+                            class="flex items-center gap-3 bg-white/80 border-2 border-content rounded-2xl px-4 py-3 shadow-[3px_3px_0px_#1c180d] hover:shadow-[1px_1px_0px_#1c180d] hover:translate-x-0.5 hover:translate-y-0.5 transition-all group/seller w-fit">
+                            <div
+                                class="size-10 rounded-full border-2 border-content overflow-hidden bg-gray-100 shrink-0 flex items-center justify-center">
+                                <NuxtImg v-if="sellerInfo.avatar" :src="sellerInfo.avatar" alt="seller"
+                                    class="w-full h-full object-cover" />
+                                <Icon v-else name="material-symbols:person" class="text-gray-400 text-xl" />
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">{{
+                                    $t('products.seller_label') }}</span>
+                                <span
+                                    class="text-sm font-black text-content group-hover/seller:text-accent-blue transition-colors">
+                                    {{ sellerInfo.name || $t('products.view_seller') }}
+                                </span>
+                            </div>
+                            <Icon name="material-symbols:chevron-right"
+                                class="text-gray-400 ml-auto group-hover/seller:translate-x-1 transition-transform" />
+                        </NuxtLink>
+
+                        <!-- Description Box -->
                         <div
-                            class="absolute top-[-4rem] left-1/2 -translate-x-1/2 w-4 h-4 bg-gray-300 rounded-full border border-gray-400">
+                            class="relative w-full transform -rotate-1 hover:rotate-0 transition-transform duration-300">
+                            <div
+                                class="absolute -top-3 left-1/2 -translate-x-1/2 w-32 h-8 bg-yellow-100/80 rotate-1 border-l border-r border-white/50 backdrop-blur-sm z-10 shadow-sm">
+                            </div>
+                            <div class="lined-paper p-8 pt-10 rounded-xl border border-gray-200 shadow-md">
+                                <h3 class="font-marker text-xl mb-2 text-gray-400 rotate-[-1deg]">{{
+                                    $t('products.description') }}:</h3>
+                                <p class="text-xl leading-[4rem] text-content font-medium font-marker">
+                                    {{ product.description }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 操作按鈕 -->
+                        <div class="py-4 flex flex-col gap-3">
+                            <button @click="addToCart"
+                                class="w-full bg-accent-blue text-white font-marker text-2xl py-5 px-6 rounded-2xl border-4 border-content shadow-[6px_6px_0px_#1c180d] hover:shadow-[2px_2px_0px_#1c180d] hover:translate-x-1 hover:translate-y-1 transition-all duration-200 flex items-center justify-center gap-3 group">
+                                <Icon name="material-symbols:shopping-cart"
+                                    class="text-3xl group-hover:scale-110 group-hover:rotate-12 transition-transform" />
+                                {{ $t('products.add_to_cart') }}
+                            </button>
+                            <button @click="toggleFavorite"
+                                class="w-full bg-white font-bold text-base py-3 px-6 rounded-2xl border-2 border-content shadow-[4px_4px_0px_#1c180d] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-2"
+                                :class="isFavorited ? 'text-accent-red' : 'text-gray-500'">
+                                <Icon
+                                    :name="isFavorited ? 'material-symbols:favorite' : 'material-symbols:favorite-outline'"
+                                    class="text-xl" />
+                                {{ isFavorited ? $t('products.unfavorite') : $t('products.favorite') }}
+                            </button>
                         </div>
                     </div>
-
-                    <div class="relative z-10 pr-24">
-                        <h1 class="text-5xl lg:text-6xl font-black text-content tracking-tight leading-[1.1]">
-                            {{ product.name || product.title }}
-                        </h1>
-                    </div>
-
-                    <!-- 賣家資訊卡片 -->
-                    <NuxtLink v-if="sellerInfo" :to="`/seller/${sellerInfo.id}`"
-                        class="flex items-center gap-3 bg-white/80 border-2 border-content rounded-2xl px-4 py-3 shadow-[3px_3px_0px_#1c180d] hover:shadow-[1px_1px_0px_#1c180d] hover:translate-x-0.5 hover:translate-y-0.5 transition-all group/seller w-fit">
-                        <div
-                            class="size-10 rounded-full border-2 border-content overflow-hidden bg-gray-100 shrink-0 flex items-center justify-center">
-                            <NuxtImg v-if="sellerInfo.avatar" :src="sellerInfo.avatar" alt="seller"
-                                class="w-full h-full object-cover" />
-                            <Icon v-else name="material-symbols:person" class="text-gray-400 text-xl" />
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">{{
-                                $t('products.seller_label') }}</span>
-                            <span
-                                class="text-sm font-black text-content group-hover/seller:text-accent-blue transition-colors">
-                                {{ sellerInfo.name || $t('products.view_seller') }}
-                            </span>
-                        </div>
-                        <Icon name="material-symbols:chevron-right"
-                            class="text-gray-400 ml-auto group-hover/seller:translate-x-1 transition-transform" />
-                    </NuxtLink>
-
-                    <!-- Description Box -->
-                    <div class="relative w-full transform -rotate-1 hover:rotate-0 transition-transform duration-300">
-                        <div
-                            class="absolute -top-3 left-1/2 -translate-x-1/2 w-32 h-8 bg-yellow-100/80 rotate-1 border-l border-r border-white/50 backdrop-blur-sm z-10 shadow-sm">
-                        </div>
-                        <div class="lined-paper p-8 pt-10 rounded-xl border border-gray-200 shadow-md">
-                            <h3 class="font-marker text-xl mb-2 text-gray-400 rotate-[-1deg]">{{
-                                $t('products.description') }}:</h3>
-                            <p class="text-xl leading-[4rem] text-content font-medium font-marker">
-                                {{ product.description }}
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- 操作按鈕 -->
-                    <div class="py-4 flex flex-col gap-3">
-                        <button @click="addToCart"
-                            class="w-full bg-accent-blue text-white font-marker text-2xl py-5 px-6 rounded-2xl border-4 border-content shadow-[6px_6px_0px_#1c180d] hover:shadow-[2px_2px_0px_#1c180d] hover:translate-x-1 hover:translate-y-1 transition-all duration-200 flex items-center justify-center gap-3 group">
-                            <Icon name="material-symbols:shopping-cart"
-                                class="text-3xl group-hover:scale-110 group-hover:rotate-12 transition-transform" />
-                            {{ $t('products.add_to_cart') }}
-                        </button>
-                        <button @click="toggleFavorite"
-                            class="w-full bg-white font-bold text-base py-3 px-6 rounded-2xl border-2 border-content shadow-[4px_4px_0px_#1c180d] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-2"
-                            :class="isFavorited ? 'text-accent-red' : 'text-gray-500'">
-                            <Icon
-                                :name="isFavorited ? 'material-symbols:favorite' : 'material-symbols:favorite-outline'"
-                                class="text-xl" />
-                            {{ isFavorited ? $t('products.unfavorite') : $t('products.favorite') }}
-                        </button>
-                    </div>
-                </div>
                 </div>
 
                 <!-- 商品評價區塊 -->
@@ -130,7 +134,8 @@
                     <h2 class="text-2xl font-black text-content mb-6 flex items-center gap-3">
                         <Icon name="material-symbols:star-rounded" class="text-3xl text-accent-red" />
                         {{ $t('products.reviews_title') }}
-                        <span v-if="reviewsData" class="text-base font-bold text-gray-400">({{ reviewsData.total }})</span>
+                        <span v-if="reviewsData" class="text-base font-bold text-gray-400">({{ reviewsData.total
+                        }})</span>
                     </h2>
 
                     <!-- 載入中 -->
@@ -155,12 +160,11 @@
                             class="bg-white rounded-2xl border-2 border-dashed border-gray-200 p-5 space-y-2 hover:border-content transition-all">
                             <div class="flex items-center justify-between">
                                 <div class="flex gap-0.5">
-                                    <Icon v-for="s in 5" :key="s"
-                                        name="material-symbols:star-rounded"
-                                        class="text-xl"
+                                    <Icon v-for="s in 5" :key="s" name="material-symbols:star-rounded" class="text-xl"
                                         :class="s <= review.rating ? 'text-accent-red' : 'text-gray-200'" />
                                 </div>
-                                <span class="text-xs text-gray-400 font-bold">{{ formatReviewDate(review.createdAt) }}</span>
+                                <span class="text-xs text-gray-400 font-bold">{{ formatReviewDate(review.createdAt)
+                                }}</span>
                             </div>
                             <p class="text-sm text-content font-medium leading-relaxed">{{ review.comment }}</p>
                         </div>
@@ -168,8 +172,7 @@
 
                     <!-- 載入更多 -->
                     <div v-if="reviewsData && reviewsData.hasMore" class="flex justify-center mt-6">
-                        <button @click="loadMoreReviews"
-                            :disabled="reviewsLoadingMore"
+                        <button @click="loadMoreReviews" :disabled="reviewsLoadingMore"
                             class="bg-white px-6 py-2 rounded-xl border-2 border-content font-bold text-sm shadow-stitch-sm hover:translate-y-0.5 hover:shadow-none transition-all disabled:opacity-50">
                             {{ reviewsLoadingMore ? $t('products.loading_more') : $t('products.load_more_reviews') }}
                         </button>
@@ -185,13 +188,12 @@
                     </h2>
 
                     <!-- 提問輸入框 -->
-                    <div v-if="authStore.isAuthenticated && sellerInfo?.id !== authStore.user?.id" class="mb-6 flex gap-3">
+                    <div v-if="authStore.isAuthenticated && sellerInfo?.id !== authStore.user?.id"
+                        class="mb-6 flex gap-3">
                         <input v-model="newQuestion"
                             class="flex-1 bg-white rounded-xl border-2 border-gray-200 focus:border-content px-4 py-3 font-medium text-sm outline-none transition-all"
-                            :placeholder="$t('products.qa_placeholder')"
-                            @keydown.enter="submitQuestion" />
-                        <button @click="submitQuestion"
-                            :disabled="!newQuestion.trim() || isSubmittingQuestion"
+                            :placeholder="$t('products.qa_placeholder')" @keydown.enter="submitQuestion" />
+                        <button @click="submitQuestion" :disabled="!newQuestion.trim() || isSubmittingQuestion"
                             class="bg-accent-blue text-white px-5 py-3 rounded-xl border-2 border-content font-bold text-sm shadow-stitch-sm hover:translate-y-0.5 hover:shadow-none transition-all disabled:opacity-50 shrink-0">
                             {{ $t('products.qa_ask') }}
                         </button>
@@ -203,7 +205,8 @@
                             {{ $t('products.qa_seller_restriction') }}
                         </p>
                     </div>
-                    <div v-else class="mb-6 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 p-4 text-center">
+                    <div v-else
+                        class="mb-6 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 p-4 text-center">
                         <NuxtLink to="/login" class="font-bold text-accent-blue hover:underline text-sm">
                             {{ $t('products.qa_login_to_ask') }}
                         </NuxtLink>
@@ -213,8 +216,7 @@
                     <div v-if="qaLoading" class="flex justify-center py-8">
                         <Icon name="line-md:loading-loop" class="text-3xl text-accent-blue" />
                     </div>
-                    <div v-else-if="questions.length === 0"
-                        class="flex flex-col items-center gap-2 py-8 text-gray-400">
+                    <div v-else-if="questions.length === 0" class="flex flex-col items-center gap-2 py-8 text-gray-400">
                         <Icon name="material-symbols:question-mark" class="text-4xl" />
                         <p class="font-bold text-sm">{{ $t('products.qa_no_questions') }}</p>
                     </div>
@@ -223,7 +225,8 @@
                             class="bg-white rounded-2xl border-2 border-dashed border-gray-200 overflow-hidden">
                             <!-- 問題 -->
                             <div class="p-4 flex items-start gap-3">
-                                <div class="size-8 rounded-full bg-accent-blue/10 flex items-center justify-center shrink-0 mt-0.5">
+                                <div
+                                    class="size-8 rounded-full bg-accent-blue/10 flex items-center justify-center shrink-0 mt-0.5">
                                     <Icon name="material-symbols:help" class="text-accent-blue text-sm" />
                                 </div>
                                 <div class="flex-1 min-w-0">
@@ -237,12 +240,15 @@
                                 </button>
                             </div>
                             <!-- 回答 -->
-                            <div v-if="qa.answer" class="border-t-2 border-dashed border-gray-100 p-4 bg-primary/10 flex items-start gap-3">
-                                <div class="size-8 rounded-full bg-accent-red/10 flex items-center justify-center shrink-0 mt-0.5">
+                            <div v-if="qa.answer"
+                                class="border-t-2 border-dashed border-gray-100 p-4 bg-primary/10 flex items-start gap-3">
+                                <div
+                                    class="size-8 rounded-full bg-accent-red/10 flex items-center justify-center shrink-0 mt-0.5">
                                     <Icon name="material-symbols:storefront" class="text-accent-red text-sm" />
                                 </div>
                                 <div>
-                                    <p class="text-xs font-black text-accent-red mb-1">{{ $t('products.qa_seller_reply') }}</p>
+                                    <p class="text-xs font-black text-accent-red mb-1">{{ $t('products.qa_seller_reply')
+                                    }}</p>
                                     <p class="font-medium text-sm text-content">{{ qa.answer }}</p>
                                 </div>
                             </div>
@@ -253,8 +259,7 @@
                                     class="flex-1 bg-white rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none"
                                     :placeholder="$t('products.qa_answer_placeholder')"
                                     @keydown.enter="submitAnswer(qa.id)" />
-                                <button @click="submitAnswer(qa.id)"
-                                    :disabled="!answerInputs[qa.id]?.trim()"
+                                <button @click="submitAnswer(qa.id)" :disabled="!answerInputs[qa.id]?.trim()"
                                     class="bg-accent-red text-white px-3 py-2 rounded-lg text-xs font-bold disabled:opacity-50 border border-content">
                                     {{ $t('products.qa_reply') }}
                                 </button>
@@ -285,8 +290,25 @@ const toast = useToast()
 
 const productId = route.params.id as string
 
+interface ProductDetail {
+    id: number;
+    name?: string;
+    title?: string;
+    description?: string;
+    price?: string | number;
+    imageUrl?: string;
+    image?: string;
+    condition?: string;
+    stock?: number;
+    seller?: any;
+    user?: any;
+    userId?: string;
+    sellerId?: string;
+    [key: string]: any;
+}
+
 // 串接 API 取得商品資料（加 default 避免 SSR 時後端錯誤炸出整頁）
-const { data: product, pending } = await useFetch<any>(
+const { data: product, pending } = await useFetch<ProductDetail | null>(
     `/products/${productId}`,
     { $fetch: $api, default: () => null }
 )
@@ -314,7 +336,7 @@ const jsonLd = computed(() => {
         image: p.imageUrl || p.image,
         offers: {
             '@type': 'Offer',
-            price: parseFloat(p.price || 0).toFixed(2),
+            price: parseFloat(String(p.price || 0)).toFixed(2),
             priceCurrency: 'TWD',
             availability: (p.stock ?? 1) > 0
                 ? 'https://schema.org/InStock'
@@ -379,7 +401,9 @@ function formatReviewDate(dateStr: string) {
     return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`
 }
 
-fetchReviews(1)
+onMounted(async () => {
+    await Promise.all([fetchReviews(1), fetchQuestions()])
+})
 
 // 收藏狀態
 const isFavorited = ref(false)
@@ -423,7 +447,7 @@ function addToCart() {
         return
     }
     const cartStore = useCartStore()
-    cartStore.addToCart(product.value, 1)
+    cartStore.addToCart(product.value as unknown as import('~/types').ApiProduct, 1)
     toast.success(t('toast.add_to_cart'))
 }
 
@@ -479,5 +503,4 @@ async function deleteQuestion(qaId: number) {
     }
 }
 
-fetchQuestions()
 </script>

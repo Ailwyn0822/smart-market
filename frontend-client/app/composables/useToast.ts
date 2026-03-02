@@ -17,7 +17,7 @@ export function useToast() {
         const newToast = {
             ...toast,
             id,
-            duration: toast.duration || 3000
+            duration: toast.duration ?? 3000
         }
 
         toasts.value.push(newToast)

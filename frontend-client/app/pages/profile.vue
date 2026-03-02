@@ -102,7 +102,16 @@ const isUploading = shallowRef(false);
 const fileInput = useTemplateRef<HTMLInputElement>('fileInput');
 
 // 用 $fetch 直接抓，避免 useFetch headers 無法響應式的問題
-const profile = ref<any>(null);
+interface UserProfile {
+    id?: number | string;
+    username?: string;
+    name?: string;
+    email?: string;
+    avatar?: string;
+    picture?: string;
+    [key: string]: any;
+}
+const profile = ref<UserProfile | null>(null);
 const pending = ref(true);
 
 async function refresh() {

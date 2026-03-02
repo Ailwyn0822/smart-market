@@ -122,6 +122,7 @@
 </template>
 
 <script setup lang="ts">
+import type { AuthUser } from '~/stores/auth'
 definePageMeta({
     layout: 'auth'
 })
@@ -148,12 +149,12 @@ const register = async () => {
     errorMessage.value = ''
 
     if (!registerForm.value.username || !registerForm.value.email || !registerForm.value.password) {
-        errorMessage.value = '請填寫所有必填欄位'
+        errorMessage.value = t('register.error_required_fields')
         return
     }
 
     if (registerForm.value.password !== registerForm.value.confirmPassword) {
-        errorMessage.value = '兩次密碼輸入不一致'
+        errorMessage.value = t('register.error_password_mismatch')
         return
     }
 
@@ -163,17 +164,17 @@ const register = async () => {
             username: registerForm.value.username,
             email: registerForm.value.email,
             password: registerForm.value.password
-        }) as { access_token: string; user: any }
+        }) as { access_token: string; user: AuthUser }
         // 註冊後直接登入
         authStore.login(res.access_token, res.user)
-        toast.success('帳號建立成功，歡迎加入！')
+        toast.success(t('register.success'))
         await navigateTo('/')
     } catch (err: any) {
         const statusCode = err?.response?.status || err?.status
         if (statusCode === 409) {
-            errorMessage.value = err?.data?.message || '此帳號或 Email 已被使用'
+            errorMessage.value = err?.data?.message || t('register.error_duplicate')
         } else {
-            errorMessage.value = err?.data?.message || '註冊失敗，請稍後再試'
+            errorMessage.value = err?.data?.message || t('register.error_generic')
         }
     } finally {
         isLoading.value = false

@@ -38,7 +38,7 @@
                     <div v-else-if="!items || items.length === 0"
                         class="flex flex-col items-center justify-center py-12 text-center">
                         <Icon name="material-symbols:box-outline" class="text-6xl text-gray-300 mb-4" />
-                        <h3 class="text-xl font-bold text-gray-400">尚無上架商品</h3>
+                        <h3 class="text-xl font-bold text-gray-400">{{ $t('commodity.no_listings') }}</h3>
                     </div>
                     <div v-else class="flex flex-col gap-6">
                         <div v-for="(item, index) in items" :key="item.id"
@@ -114,7 +114,7 @@
                                     <button @click="toggleStatus(item.id, item.isActive)"
                                         :class="item.isActive ? 'bg-accent-red hover:bg-[#ff5252] border-accent-red' : 'bg-gray-500 hover:bg-gray-600 border-gray-500'"
                                         class="px-4 py-2 text-white font-bold rounded-lg border-2 hover:border-[#1c180d] flex items-center gap-2 transition-colors shadow-sm text-sm">
-                                        {{ item.isActive ? $t('commodity.deactivate') : '重新上架' }}
+                                        {{ item.isActive ? $t('commodity.deactivate') : $t('commodity.relist') }}
                                     </button>
                                 </div>
                             </div>
@@ -161,10 +161,10 @@ async function toggleStatus(productId: number, currentStatus: boolean) {
 
     try {
         await productsApi.toggleActiveStatus(productId, { isActive: !currentStatus })
-        toast.success(currentStatus ? '商品已下架' : '商品已重新上架')
+        toast.success(currentStatus ? t('commodity.deactivate_success') : t('commodity.relist_success'))
         await refresh()
     } catch (e: any) {
-        toast.error('狀態更新失敗，請稍後再試')
+        toast.error(t('commodity.status_update_error'))
         console.error(e)
     }
 }

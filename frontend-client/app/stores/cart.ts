@@ -11,6 +11,10 @@ export const useCartStore = defineStore('cart', () => {
     const cartCookie = useCookie<CartItem[]>('smart_market_cart', { default: () => [] })
     const items = ref<CartItem[]>(cartCookie.value || [])
 
+    // 共用的 price 解析函式
+    const parsePrice = (price: string | number) =>
+        typeof price === 'string' ? parseFloat(price) : Number(price)
+
     // 折扣碼、費用相關
     const discountAmount = ref<number>(0)
     const appliedDiscountCode = ref<string>('')
@@ -18,27 +22,22 @@ export const useCartStore = defineStore('cart', () => {
     // 多賣家分組：目前選中的賣家 ID（null = 未選擇）
     const selectedSellerId = ref<string | null>(null)
 
-    // 監聽 items 變化並寫回 cookie
+    // 監聽 items 變化：寫回 cookie，並在選中賣家無商品時清除選擇
     watch(items, (newItems) => {
         cartCookie.value = newItems
-    }, { deep: true })
-
-    // 當商品被移除後，若選中的賣家已無商品則清除選擇
-    watch(items, (newItems) => {
         if (selectedSellerId.value) {
             const hasItems = newItems.some(i => i.product.userId === selectedSellerId.value)
             if (!hasItems) selectedSellerId.value = null
         }
     }, { deep: true })
 
-    const c_totalItems = computed(() => {
+    const totalItems = computed(() => {
         return items.value.reduce((acc, item) => acc + item.quantity, 0)
     })
 
     const c_subtotal = computed(() => {
         return items.value.reduce((acc, item) => {
-            const price = typeof item.product.price === 'string' ? parseFloat(item.product.price) : Number(item.product.price)
-            return acc + (price * item.quantity)
+            return acc + (parsePrice(item.product.price) * item.quantity)
         }, 0)
     })
 
@@ -51,8 +50,7 @@ export const useCartStore = defineStore('cart', () => {
     // 選中賣家的小計
     const selectedSubtotal = computed(() => {
         return selectedItems.value.reduce((acc, item) => {
-            const price = typeof item.product.price === 'string' ? parseFloat(item.product.price) : Number(item.product.price)
-            return acc + (price * item.quantity)
+            return acc + (parsePrice(item.product.price) * item.quantity)
         }, 0)
     })
 
@@ -106,7 +104,7 @@ export const useCartStore = defineStore('cart', () => {
 
     return {
         items,
-        c_totalItems,
+        totalItems,
         c_subtotal,
         selectedSellerId,
         selectedItems,

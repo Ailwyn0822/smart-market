@@ -26,7 +26,7 @@
                     <form class="space-y-5" @submit.prevent>
                         <div class="space-y-1">
                             <label class="text-xs font-bold text-content uppercase ml-3">{{ $t('login.username_label')
-                            }}</label>
+                                }}</label>
                             <div class="relative group/input">
                                 <input v-model="loginForm.username"
                                     class="w-full pl-5 pr-4 py-3.5 bg-white border-2 border-gray-200 rounded-2xl focus:border-content focus:ring-0 text-content font-medium placeholder-gray-400 shadow-sm transition-all group-hover/input:border-gray-300"
@@ -39,7 +39,7 @@
                         </div>
                         <div class="space-y-1">
                             <label class="text-xs font-bold text-content uppercase ml-3">{{ $t('login.password_label')
-                            }}</label>
+                                }}</label>
                             <div class="relative group/input">
                                 <input v-model="loginForm.password"
                                     class="w-full pl-5 pr-4 py-3.5 bg-white border-2 border-gray-200 rounded-2xl focus:border-content focus:ring-0 text-content font-medium placeholder-gray-400 shadow-sm transition-all group-hover/input:border-gray-300"
@@ -76,6 +76,7 @@
 </template>
 
 <script setup lang="ts">
+import type { AuthUser } from '~/stores/auth'
 definePageMeta({
     layout: 'auth'
 })
@@ -97,7 +98,7 @@ const isLoggingIn = ref(false)
 
 const login = async () => {
     if (!loginForm.value.username || !loginForm.value.password) {
-        toast.error('請輸入帳號與密碼')
+        toast.error(t('login.error_empty_fields'))
         return
     }
     isLoggingIn.value = true
@@ -105,12 +106,12 @@ const login = async () => {
         const res = await authApi.login({
             email: loginForm.value.username,
             password: loginForm.value.password
-        }) as { access_token: string; user: any }
+        }) as { access_token: string; user: AuthUser }
         authStore.login(res.access_token, res.user)
-        toast.success('登入成功！')
+        toast.success(t('login.success'))
         await navigateTo('/')
     } catch (e: any) {
-        const msg = e?.data?.message || '帳號或密碼錯誤'
+        const msg = e?.data?.message || t('login.error_invalid_credentials')
         toast.error(msg)
     } finally {
         isLoggingIn.value = false

@@ -44,7 +44,7 @@
                         class="w-full bg-accent-blue hover:bg-[#3dbdb4] text-white py-4 rounded-xl font-black text-lg shadow-[4px_4px_0px_#1c180d] border-2 border-content flex items-center justify-center gap-3 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_#1c180d] transition-all rotate-1">
                         <Icon v-if="isUploading" name="line-md:loading-loop" class="text-2xl" />
                         <Icon v-else name="material-symbols:add-photo-alternate" class="text-2xl" />
-                        {{ isUploading ? '上傳中...' : $t('commodity.change_masterpiece') }}
+                        {{ isUploading ? $t('commodity.uploading') : $t('commodity.change_masterpiece') }}
                     </button>
                     <input type="file" ref="fileInput" class="hidden" accept="image/*" @change="handleFileUpload" />
                 </div>
@@ -53,12 +53,13 @@
                 <div class="lg:col-span-7 flex flex-col gap-6 pl-0 lg:pl-6">
                     <div class="flex items-center justify-between border-b-2 border-dashed border-gray-300 pb-4 mb-2">
                         <h2 class="text-2xl font-black text-content tracking-tight">{{ $t('commodity.listing_details')
-                        }}</h2>
+                            }}</h2>
                         <span v-if="product?.isActive"
                             class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-300">{{
                                 $t('commodity.active') }}</span>
                         <span v-else
-                            class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-bold border border-gray-300">未上架</span>
+                            class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-bold border border-gray-300">{{
+                                $t('commodity.inactive') }}</span>
                     </div>
 
                     <div class="grid gap-6">
@@ -145,7 +146,8 @@
                             class="bg-primary hover:bg-yellow-400 text-content px-10 py-4 rounded-xl font-black text-xl shadow-[6px_6px_0px_#1c180d] border-4 border-content flex items-center justify-center gap-3 hover:translate-y-1 hover:shadow-[2px_2px_0px_#1c180d] transition-all">
                             <Icon v-if="isSubmitting" name="line-md:loading-loop" class="text-3xl" />
                             <Icon v-else name="material-symbols:save" class="text-3xl" />
-                            <span class="uppercase tracking-tight">{{ isSubmitting ? '儲存中...' : $t('commodity.save')
+                            <span class="uppercase tracking-tight">{{ isSubmitting ? $t('commodity.saving') :
+                                $t('commodity.save')
                                 }}</span>
                         </button>
                     </div>
@@ -178,10 +180,22 @@ const isUploading = shallowRef(false);
 const isSubmitting = shallowRef(false);
 const fileInput = useTemplateRef<HTMLInputElement>('fileInput');
 
-// 資料裝載
-const { data: product } = await useFetch<any>(`/products/${productId}`, { $fetch: $api });
+interface EditProductData {
+    name?: string;
+    description?: string;
+    price?: string | number;
+    category?: { id: number; name: string };
+    imageUrl?: string;
+    condition?: string;
+    stock?: number;
+    isActive?: boolean;
+    [key: string]: any;
+}
 
-const { data: categories } = await useFetch<any[]>('/categories', { $fetch: $api });
+// 資料裝載
+const { data: product } = await useFetch<EditProductData | null>(`/products/${productId}`, { $fetch: $api });
+
+const { data: categories } = await useFetch<{ id: number; name: string }[]>('/categories', { $fetch: $api });
 
 const formData = reactive({
     name: '',
@@ -195,11 +209,11 @@ const formData = reactive({
 
 watchEffect(() => {
     if (product.value) {
-        formData.name = product.value.name;
-        formData.description = product.value.description;
-        formData.price = Number(product.value.price);
+        formData.name = product.value.name || '';
+        formData.description = product.value.description || '';
+        formData.price = Number(product.value.price || 0);
         formData.categoryId = product.value.category?.id || 0;
-        formData.imageUrl = product.value.imageUrl;
+        formData.imageUrl = product.value.imageUrl || '';
         formData.condition = product.value.condition || 'New';
         formData.stock = product.value.stock ?? 1;
     }
@@ -222,9 +236,9 @@ async function handleFileUpload(event: Event) {
         const response = await productsApi.analyze(uploadForm) as any;
 
         formData.imageUrl = response.imageUrl;
-        toast.success('圖片上傳成功');
+        toast.success(t('toast.upload_success'));
     } catch (e) {
-        toast.error('圖片上傳失敗，請再試一次');
+        toast.error(t('toast.upload_error'));
         console.error(e);
     } finally {
         isUploading.value = false;
@@ -234,7 +248,7 @@ async function handleFileUpload(event: Event) {
 
 async function submitForm() {
     if (!formData.name || !formData.categoryId || formData.price <= 0) {
-        toast.error('請確認必填欄位：名稱、分類、金額');
+        toast.error(t('commodity.validation_error'));
         return;
     }
 
@@ -245,10 +259,10 @@ async function submitForm() {
             body: formData
         });
 
-        toast.success('商品更新成功');
+        toast.success(t('commodity.update_success'));
         router.push('/commodity');
     } catch (e: any) {
-        toast.error(e.response?._data?.message || '商品更新失敗，請再試一次');
+        toast.error(e.response?._data?.message || t('commodity.update_error'));
         console.error(e);
     } finally {
         isSubmitting.value = false;

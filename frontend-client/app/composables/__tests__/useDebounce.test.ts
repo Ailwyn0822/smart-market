@@ -11,13 +11,13 @@ describe('useDebounce', () => {
     vi.useRealTimers()
   })
 
-  it('returns the initial value immediately', () => {
+  it('應該立即回傳初始值', () => {
     const source = ref('hello')
     const debounced = useDebounce(source, 300)
     expect(debounced.value).toBe('hello')
   })
 
-  it('does not update before the delay elapses', async () => {
+  it('延遲時間未到前不應更新值', async () => {
     const source = ref('hello')
     const debounced = useDebounce(source, 300)
     source.value = 'world'
@@ -26,7 +26,7 @@ describe('useDebounce', () => {
     expect(debounced.value).toBe('hello')
   })
 
-  it('updates after the delay elapses', async () => {
+  it('延遲時間到後應更新為新值', async () => {
     const source = ref('hello')
     const debounced = useDebounce(source, 300)
     source.value = 'world'
@@ -35,7 +35,7 @@ describe('useDebounce', () => {
     expect(debounced.value).toBe('world')
   })
 
-  it('debounces rapid changes and only applies the last value', async () => {
+  it('快速連續變更時只套用最後一個值', async () => {
     const source = ref('a')
     const debounced = useDebounce(source, 300)
 
@@ -50,12 +50,12 @@ describe('useDebounce', () => {
     expect(debounced.value).toBe('c')
   })
 
-  it('accepts a plain value as the source', async () => {
+  it('接受純值（非 ref）作為來源', async () => {
     const debounced = useDebounce('static', 300)
     expect(debounced.value).toBe('static')
   })
 
-  it('works with a getter function as the source', async () => {
+  it('接受 getter 函式作為來源', async () => {
     const inner = ref(42)
     const debounced = useDebounce(() => inner.value, 300)
     expect(debounced.value).toBe(42)

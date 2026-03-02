@@ -76,10 +76,10 @@ import { useWindowScroll, useWindowSize } from '@vueuse/core'
 
 const { t } = useI18n()
 useSeoMeta({
-  title: computed(() => t('products.page_title')),
-  ogTitle: '探索所有寶物 | Smart Market',
-  description: '瀏覽各類二手玩具、衣物與裝備，找到獨一無二的好物。',
-  ogDescription: '瀏覽各類二手玩具、衣物與裝備，找到獨一無二的好物。',
+    title: computed(() => t('products.page_title')),
+    ogTitle: '探索所有寶物 | Smart Market',
+    description: '瀏覽各類二手玩具、衣物與裝備，找到獨一無二的好物。',
+    ogDescription: '瀏覽各類二手玩具、衣物與裝備，找到獨一無二的好物。',
 })
 
 const productsApi = useProductsApi()
@@ -109,7 +109,19 @@ const rowHeight = computed(() => {
 // ── 分頁狀態 ──────────────────────────────────────
 const PAGE_SIZE = 20
 const page = ref(1)
-const rawItems = ref<any[]>([])
+interface ProductResponse {
+    id: number;
+    name?: string;
+    title?: string;
+    price?: string | number;
+    condition?: string;
+    description?: string;
+    imageUrl?: string;
+    image?: string;
+    category?: { name: string } | string;
+    [key: string]: any;
+}
+const rawItems = ref<ProductResponse[]>([])
 const total = ref(0)
 const pending = ref(false)
 const hasMore = ref(true)
@@ -239,15 +251,15 @@ const colorStyles = [
     { border: 'crayon-border-purple', price: 'text-accent-purple', hover: 'hover:bg-accent-purple' }
 ]
 
-function mapProduct(p: any, index: number) {
+function mapProduct(p: ProductResponse, index: number) {
     const style = colorStyles[index % colorStyles.length]!
     return {
         id: p.id,
-        title: p.name || p.title,
-        price: `$${parseFloat(p.price || 0).toFixed(0)}`,
+        title: p.name || p.title || '',
+        price: `$${parseFloat(String(p.price || 0)).toFixed(0)}`,
         condition: p.condition === 'New' || !p.condition ? '全新' : p.condition,
-        description: p.description,
-        image: p.imageUrl || p.image,
+        description: p.description || '',
+        image: p.imageUrl || p.image || '',
         borderColorClass: style.border,
         priceColor: style.price,
         btnHoverBg: style.hover,
@@ -261,9 +273,9 @@ function mapProduct(p: any, index: number) {
 const sortedRaw = computed(() => {
     const sorted = [...rawItems.value]
     if (sortBy.value === 'price-low')
-        return sorted.sort((a, b) => parseFloat(a.price || 0) - parseFloat(b.price || 0))
+        return sorted.sort((a, b) => parseFloat(String(a.price || 0)) - parseFloat(String(b.price || 0)))
     if (sortBy.value === 'price-high')
-        return sorted.sort((a, b) => parseFloat(b.price || 0) - parseFloat(a.price || 0))
+        return sorted.sort((a, b) => parseFloat(String(b.price || 0)) - parseFloat(String(a.price || 0)))
     return sorted
 })
 
