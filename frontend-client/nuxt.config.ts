@@ -46,16 +46,19 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
-      htmlAttrs: {
-        lang: 'zh-TW'
-      },
-      titleTemplate: '%s - Smart Market',
-      title: 'Home',
+      titleTemplate: '%s | Smart Market',
+      title: 'Smart Market',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         { name: 'description', content: 'A playful marketplace for buying and selling pre-loved toys, clothes, and gear.' },
-        { name: 'format-detection', content: 'telephone=no' }
+        { name: 'format-detection', content: 'telephone=no' },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:site_name', content: 'Smart Market' },
+        { property: 'og:title', content: 'Smart Market' },
+        { property: 'og:description', content: 'A playful marketplace for buying and selling pre-loved toys, clothes, and gear.' },
+        { property: 'og:image', content: 'https://panda-map.com/og-image.webp' },
+        { property: 'og:url', content: 'https://panda-map.com' },
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
