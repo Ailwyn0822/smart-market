@@ -114,6 +114,25 @@ const total = ref(0)
 const pending = ref(false)
 const hasMore = ref(true)
 
+// SSR：初次抓第一頁，讓爬蟲看得到商品
+const { data: initialData } = await useAsyncData(
+    `products-${categoryParam.value ?? ''}-${keywordParam.value ?? ''}-${maxPriceParam.value ?? ''}`,
+    () => productsApi.getAll({
+        keyword: keywordParam.value,
+        category: categoryParam.value,
+        maxPrice: maxPriceParam.value,
+        page: 1,
+        limit: PAGE_SIZE,
+    })
+)
+if (initialData.value) {
+    const res = initialData.value as { items: any[]; total: number }
+    rawItems.value = res.items
+    total.value = res.total
+    page.value = 2
+    if (rawItems.value.length >= res.total) hasMore.value = false
+}
+
 const loadMore = async () => {
     if (pending.value || !hasMore.value) return
     pending.value = true
@@ -198,7 +217,6 @@ const handleWindowScroll = () => {
 }
 
 onMounted(() => {
-    resetAndLoad()
     // 等 DOM 渲染完才量測容器位置
     nextTick(measureContainer)
     window.addEventListener('scroll', handleWindowScroll, { passive: true })

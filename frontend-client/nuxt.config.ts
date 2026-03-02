@@ -82,6 +82,8 @@ export default defineNuxtConfig({
     '/favorite': { ssr: false },
     '/upload': { ssr: false },
     '/invoice/**': { ssr: false },
+    '/commodity/**': { ssr: false },
+    '/dashboard': { ssr: false },
   },
   vite: {
     plugins: [
