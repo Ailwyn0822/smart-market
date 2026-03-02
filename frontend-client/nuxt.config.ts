@@ -6,7 +6,6 @@ export default defineNuxtConfig({
   modules: ['@nuxtjs/tailwindcss', '@nuxt/image', '@nuxt/icon', '@pinia/nuxt', '@nuxtjs/i18n', '@nuxtjs/sitemap', '@nuxt/test-utils/module'],
   sitemap: {
     sitemaps: true,
-    sources: ['/api/__sitemap__/urls'],
   },
   typescript: {
     tsConfig: {

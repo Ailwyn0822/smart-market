@@ -1,2 +1,11 @@
 User-Agent: *
-Disallow:
+Disallow: /cart
+Disallow: /checkout
+Disallow: /profile
+Disallow: /favorite
+Disallow: /upload
+Disallow: /buy_order/
+Disallow: /sell_order/
+Disallow: /invoice/
+
+Sitemap: https://panda-map.com/sitemap.xml
