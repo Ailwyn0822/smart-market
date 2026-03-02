@@ -61,7 +61,7 @@ import { ProductQuestionsModule } from './product-questions/product-questions.mo
         // synchronize: 同步模式 (雙面刃！)
         // true = 當你改了程式碼 (例如加了 phone 欄位)，重啟時它會「自動修改」資料庫結構。
         // 開發時超方便；但上線(Production)絕對要關掉，不然它可能會不小心刪掉你的資料。
-        synchronize: process.env.NODE_ENV !== 'production',
+        synchronize: true,
       }),
     }),
 
