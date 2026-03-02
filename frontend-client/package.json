@@ -23,6 +23,8 @@
     "@smart-market/shared": "*",
     "@vueuse/core": "^14.2.1",
     "dayjs": "^1.11.19",
+    "google-auth-library": "^9.15.1",
+    "google-spreadsheet": "^4.1.4",
     "nuxt": "^4.3.0",
     "pinia": "^3.0.4",
     "socket.io-client": "^4.8.3",
@@ -41,7 +43,7 @@
     "jsdom": "^27.0.0",
     "playwright-core": "^1.58.2",
     "rollup-plugin-visualizer": "^6.0.5",
-    "spreadsheet-to-json": "^2.0.0",
+
     "unplugin-auto-import": "^21.0.0",
     "vitest": "^4.0.18"
   }
