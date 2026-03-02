@@ -116,7 +116,6 @@
     }
   },
   "products": {
-    "page_title": "Khám phá tất cả",
     "all_treasures": "Tất cả kho báu",
     "items": "mặt hàng",
     "sort_by": "Sắp xếp:",
@@ -164,7 +163,8 @@
     "cannot_favorite_own": "Không thể yêu thích sản phẩm của mình",
     "cannot_buy_own": "Không thể mua sản phẩm của mình",
     "qa_seller_restriction": "You are the seller of this product and cannot ask questions here",
-    "no_results": "Không tìm thấy sản phẩm"
+    "no_results": "Không tìm thấy sản phẩm",
+    "page_title": "Khám phá tất cả"
   },
   "coupons": {
     "title": "Phiếu giảm giá",
@@ -177,7 +177,7 @@
     "unlimited_usage": "Không giới hạn số lần dùng",
     "go_to_cart": "Đến giỏ hàng để dùng",
     "copy_success": "Đã sao chép mã {code}, đến giỏ hàng để áp dụng!",
-    "page_title": "Phiếu giảm giá"
+    "page_title": "Phiếu giảm giá | Smart Market"
   },
   "cart": {
     "title": "Giỏ hàng của tôi",
@@ -215,7 +215,6 @@
     "discount_success": "Đã áp dụng mã giảm giá!"
   },
   "register": {
-    "page_title": "Đăng ký",
     "new_member": "Thành viên mới",
     "new": "MỚI",
     "join_class": "Tham gia cộng đồng!",
@@ -231,10 +230,10 @@
     "loading": "Đang tạo...",
     "submit_btn": "Tham gia ngay",
     "already_student": "Đã có tài khoản?",
-    "login_here": "Đăng nhập tại đây"
+    "login_here": "Đăng nhập tại đây",
+    "page_title": "Đăng ký"
   },
   "checkout": {
-    "title": "Thanh toán",
     "details_title": "Chi tiết thanh toán",
     "whos_it_for": "Dành cho ai?",
     "buyer_name": "Tên của bé",
@@ -255,7 +254,8 @@
     "qty": "Số lượng",
     "pay_online": "Thanh toán trực tuyến (ECPay)",
     "pay_cod": "Thanh toán khi nhận hàng",
-    "processing": "Đang xử lý..."
+    "processing": "Đang xử lý...",
+    "title": "Thanh toán"
   },
   "buy_order": {
     "title": "Đơn hàng của tôi",
@@ -343,8 +343,8 @@
       "delivered": "Đã giao thành công"
     },
     "detail": {
-      "title": "Đơn hàng bán",
-      "qty": "Số lượng"
+      "qty": "Số lượng",
+      "title": "Đơn hàng bán"
     },
     "cancel_approve": "Đồng ý hủy",
     "cancel_reject": "Từ chối hủy",
@@ -354,8 +354,6 @@
     "not_found": "Không tìm thấy đơn hàng"
   },
   "seller": {
-    "dashboard_title": "Bảng điều khiển bán hàng",
-    "store_page_title": "Cửa hàng của {name}",
     "loading": "Đang tải thông tin người bán...",
     "not_found": "Không tìm thấy người bán",
     "verified": "Người bán đã xác minh",
@@ -369,7 +367,9 @@
     "reviews_title": "Đánh giá từ người mua",
     "no_reviews": "Chưa có đánh giá!",
     "reviews_end": "Đã hết! 🎉",
-    "products_all_shown": "Đã hiển thị tất cả {count} sản phẩm 🎉"
+    "products_all_shown": "Đã hiển thị tất cả {count} sản phẩm 🎉",
+    "dashboard_title": "Bảng điều khiển bán hàng",
+    "store_page_title": "Cửa hàng của {name}"
   },
   "invoice": {
     "back": "Quay lại đơn hàng",

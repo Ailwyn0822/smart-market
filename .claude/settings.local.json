@@ -63,7 +63,8 @@
       "Bash(powershell.exe -Command \"[System.IO.Directory]::CreateDirectory\\(''C:\\\\Temp''\\) | Out-Null; Write-Host ''ok''\")",
       "Bash(ls -d backend/src/*/)",
       "Bash(npx tsc --noEmit)",
-      "Bash(npm run test:unit -w frontend-client)"
+      "Bash(npm run test:unit -w frontend-client)",
+      "Bash(git -C \"c:/Users/asd66/Documents/GitHub/smart-market\" ls-files \"frontend-client/google/\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\asd66\\Documents\\GitHub\\smart-market\\frontend-client\\app\\pages\\seller"

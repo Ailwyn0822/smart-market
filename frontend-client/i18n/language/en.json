@@ -116,7 +116,6 @@
     }
   },
   "products": {
-    "page_title": "Explore All Treasures",
     "all_treasures": "All Treasures",
     "items": "items",
     "sort_by": "Sort by:",
@@ -164,7 +163,8 @@
     "cannot_favorite_own": "Cannot add your own product to favorites",
     "cannot_buy_own": "Cannot add your own product to cart",
     "qa_seller_restriction": "Bạn là người bán sản phẩm này và không thể đặt câu hỏi",
-    "no_results": "No products found"
+    "no_results": "No products found",
+    "page_title": "Explore All Treasures"
   },
   "coupons": {
     "title": "Coupons",
@@ -177,7 +177,7 @@
     "unlimited_usage": "Unlimited usage",
     "go_to_cart": "Go to cart to use",
     "copy_success": "Coupon {code} copied! Go to cart to apply.",
-    "page_title": "Coupons"
+    "page_title": "Coupons | Smart Market"
   },
   "cart": {
     "title": "My Cart",
@@ -215,7 +215,6 @@
     "discount_success": "Discount applied!"
   },
   "register": {
-    "page_title": "Join the Club",
     "new_member": "New Member",
     "new": "NEW",
     "join_class": "Join the Class!",
@@ -231,10 +230,10 @@
     "loading": "Creating...",
     "submit_btn": "Join Now",
     "already_student": "Already a student?",
-    "login_here": "Log in here!"
+    "login_here": "Log in here!",
+    "page_title": "Join the Club"
   },
   "checkout": {
-    "title": "Checkout",
     "details_title": "Checkout Details",
     "whos_it_for": "Who's it for?",
     "buyer_name": "Kid's Name",
@@ -255,7 +254,8 @@
     "qty": "Quantity",
     "pay_online": "Online Payment (ECPay)",
     "pay_cod": "Cash on Delivery",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "title": "Checkout"
   },
   "buy_order": {
     "title": "My Orders",
@@ -343,8 +343,8 @@
       "delivered": "Delivered"
     },
     "detail": {
-      "title": "Sales Order",
-      "qty": "Qty"
+      "qty": "Qty",
+      "title": "Sales Order"
     },
     "cancel_approve": "Approve Cancellation",
     "cancel_reject": "Reject Cancellation",
@@ -354,8 +354,6 @@
     "not_found": "Order not found"
   },
   "seller": {
-    "dashboard_title": "Seller Dashboard",
-    "store_page_title": "{name}'s Store",
     "loading": "Loading seller info...",
     "not_found": "Seller not found",
     "verified": "Verified Seller",
@@ -369,7 +367,9 @@
     "reviews_title": "Buyer Reviews",
     "no_reviews": "No reviews yet!",
     "reviews_end": "That's all! 🎉",
-    "products_all_shown": "All {count} products shown 🎉"
+    "products_all_shown": "All {count} products shown 🎉",
+    "dashboard_title": "Seller Dashboard",
+    "store_page_title": "{name}'s Store"
   },
   "invoice": {
     "back": "Back to Order",
