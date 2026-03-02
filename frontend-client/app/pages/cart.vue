@@ -302,6 +302,8 @@ import { useCartStore } from '~/stores/cart'
 import { useI18n } from '#imports'
 
 const { t } = useI18n()
+useHead({ title: computed(() => t('cart.title')) })
+
 const cartStore = useCartStore()
 const toast = useToast()
 

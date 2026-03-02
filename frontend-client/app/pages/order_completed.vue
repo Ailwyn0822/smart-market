@@ -114,6 +114,9 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n()
+useHead({ title: computed(() => t('cart.order_complete_title')) })
+
 const route = useRoute()
 const orderNumber = route.query.orderNumber as string || ''
 </script>

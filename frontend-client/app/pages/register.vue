@@ -126,6 +126,9 @@ definePageMeta({
     layout: 'auth'
 })
 
+const { t } = useI18n()
+useHead({ title: computed(() => t('register.page_title')) })
+
 const router = useRouter()
 const authApi = useAuthApi()
 const authStore = useAuthStore()

@@ -163,6 +163,8 @@ import { useToast } from '~/composables/useToast';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
+useHead({ title: computed(() => t('commodity.edit_title')) })
+
 const route = useRoute();
 const router = useRouter();
 const $api = useApi();

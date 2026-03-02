@@ -371,7 +371,7 @@ function openReviewModal() {
 }
 
 const { t } = useI18n()
-useHead({ title: computed(() => order.value ? `${t('buy_order.detail.title')} #${order.value.orderNumber} | Smart Market` : 'Smart Market') })
+useHead({ title: computed(() => order.value ? `${t('buy_order.detail.title')} #${order.value.orderNumber}` : t('buy_order.title')) })
 
 const subtotal = computed(() => {
     if (!order.value) return '0.00'

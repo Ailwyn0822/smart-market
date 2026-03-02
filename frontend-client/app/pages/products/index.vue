@@ -74,6 +74,14 @@
 <script setup lang="ts">
 import { useWindowScroll, useWindowSize } from '@vueuse/core'
 
+const { t } = useI18n()
+useSeoMeta({
+  title: computed(() => t('products.page_title')),
+  ogTitle: '探索所有寶物 | Smart Market',
+  description: '瀏覽各類二手玩具、衣物與裝備，找到獨一無二的好物。',
+  ogDescription: '瀏覽各類二手玩具、衣物與裝備，找到獨一無二的好物。',
+})
+
 const productsApi = useProductsApi()
 const route = useRoute()
 const sortBy = ref('newest')

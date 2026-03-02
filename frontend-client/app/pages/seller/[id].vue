@@ -320,7 +320,7 @@ useIntersectionObserver(
     { rootMargin: '100px' }
 )
 
-useHead({ title: computed(() => storeData.value ? `${storeData.value.seller.name} 的商店 | Smart Market` : '賣家商店 | Smart Market') })
+useHead({ title: computed(() => storeData.value ? t('seller.store_page_title', { name: storeData.value.seller.name }) : t('seller.loading')) })
 
 // 沿用與首頁相同的卡片顏色輪替機制
 const CARD_STYLES = [

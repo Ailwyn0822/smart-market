@@ -116,6 +116,7 @@
     }
   },
   "products": {
+    "page_title": "Khám phá tất cả",
     "all_treasures": "Tất cả kho báu",
     "items": "mặt hàng",
     "sort_by": "Sắp xếp:",
@@ -176,7 +177,7 @@
     "unlimited_usage": "Không giới hạn số lần dùng",
     "go_to_cart": "Đến giỏ hàng để dùng",
     "copy_success": "Đã sao chép mã {code}, đến giỏ hàng để áp dụng!",
-    "page_title": "Phiếu giảm giá | Smart Market"
+    "page_title": "Phiếu giảm giá"
   },
   "cart": {
     "title": "Giỏ hàng của tôi",
@@ -214,6 +215,7 @@
     "discount_success": "Đã áp dụng mã giảm giá!"
   },
   "register": {
+    "page_title": "Đăng ký",
     "new_member": "Thành viên mới",
     "new": "MỚI",
     "join_class": "Tham gia cộng đồng!",
@@ -232,6 +234,7 @@
     "login_here": "Đăng nhập tại đây"
   },
   "checkout": {
+    "title": "Thanh toán",
     "details_title": "Chi tiết thanh toán",
     "whos_it_for": "Dành cho ai?",
     "buyer_name": "Tên của bé",
@@ -340,6 +343,7 @@
       "delivered": "Đã giao thành công"
     },
     "detail": {
+      "title": "Đơn hàng bán",
       "qty": "Số lượng"
     },
     "cancel_approve": "Đồng ý hủy",
@@ -350,6 +354,8 @@
     "not_found": "Không tìm thấy đơn hàng"
   },
   "seller": {
+    "dashboard_title": "Bảng điều khiển bán hàng",
+    "store_page_title": "Cửa hàng của {name}",
     "loading": "Đang tải thông tin người bán...",
     "not_found": "Không tìm thấy người bán",
     "verified": "Người bán đã xác minh",

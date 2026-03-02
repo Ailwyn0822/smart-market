@@ -116,6 +116,7 @@
     }
   },
   "products": {
+    "page_title": "探索所有寶物",
     "all_treasures": "所有寶藏",
     "items": "件商品",
     "sort_by": "排序：",
@@ -176,7 +177,7 @@
     "unlimited_usage": "無使用次數限制",
     "go_to_cart": "前往購物車使用",
     "copy_success": "已複製折扣碼 {code}，請前往購物車使用！",
-    "page_title": "優惠券 | Smart Market"
+    "page_title": "優惠券"
   },
   "cart": {
     "title": "我的購物車",
@@ -214,6 +215,7 @@
     "discount_success": "折扣碼套用成功！"
   },
   "register": {
+    "page_title": "加入會員",
     "new_member": "新成員",
     "new": "NEW",
     "join_class": "加入社群！",
@@ -232,6 +234,7 @@
     "login_here": "點這裡登入"
   },
   "checkout": {
+    "title": "結帳",
     "details_title": "結帳明細",
     "whos_it_for": "收件人是誰？",
     "buyer_name": "小孩的姓名",
@@ -340,6 +343,7 @@
       "delivered": "已送達"
     },
     "detail": {
+      "title": "銷售訂單",
       "qty": "數量"
     },
     "cancel_approve": "同意取消",
@@ -350,6 +354,8 @@
     "not_found": "找不到此訂單"
   },
   "seller": {
+    "dashboard_title": "賣家儀表板",
+    "store_page_title": "{name} 的商店",
     "loading": "載入賣家資訊中...",
     "not_found": "找不到該賣家資訊",
     "verified": "認證賣家",

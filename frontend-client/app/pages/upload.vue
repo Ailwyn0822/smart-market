@@ -162,6 +162,8 @@ import { useAuthStore } from '@/stores/auth';
 import { validateProductForm } from '@/utils/validation';
 
 const { t } = useI18n();
+useHead({ title: computed(() => t('upload.title')) })
+
 const authStore = useAuthStore();
 const $api = useApi();
 const productsApi = useProductsApi();

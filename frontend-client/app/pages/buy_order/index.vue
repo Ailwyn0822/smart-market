@@ -167,12 +167,12 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '~/stores/auth'
-import { ref, onMounted, shallowRef } from 'vue'
+import { ref, onMounted, shallowRef, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-useHead({ title: 'My Orders | Smart Market' })
-
 const { t } = useI18n()
+
+useHead({ title: computed(() => t('buy_order.title')) })
 
 const authStore = useAuthStore()
 const ordersApi = useOrdersApi()

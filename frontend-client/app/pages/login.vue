@@ -80,6 +80,9 @@ definePageMeta({
     layout: 'auth'
 })
 
+const { t } = useI18n()
+useHead({ title: computed(() => t('auth.login')) })
+
 const config = useRuntimeConfig()
 const authApi = useAuthApi()
 

@@ -93,12 +93,10 @@
 </template>
 
 <script setup lang="ts">
-import { useHead } from '#app';
 import { ref, onMounted, shallowRef } from 'vue';
 
-useHead({
-    title: '賣家儀表板 - 個人管理中心'
-});
+const { t } = useI18n()
+useHead({ title: computed(() => t('seller.dashboard_title')) })
 
 const ordersApi = useOrdersApi();
 const loading = shallowRef(true);

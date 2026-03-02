@@ -245,7 +245,7 @@ const isLoading = shallowRef(false)
 const isCancelResponding = shallowRef(false)
 
 const { t } = useI18n()
-useHead({ title: computed(() => order.value ? `Sales #${order.value.orderNumber} | Smart Market` : 'Smart Market') })
+useHead({ title: computed(() => order.value ? `${t('sell_order.detail.title')} #${order.value.orderNumber}` : t('sell_order.title')) })
 
 const subtotal = computed(() => {
     if (!order.value) return '0.00'

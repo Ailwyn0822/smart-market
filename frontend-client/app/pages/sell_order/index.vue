@@ -120,7 +120,7 @@ import { useI18n } from '#imports'
 import { useAuthStore } from '~/stores/auth'
 
 const { t } = useI18n()
-useHead({ title: 'My Sales Orders | Smart Market' })
+useHead({ title: computed(() => t('sell_order.title')) })
 
 const authStore = useAuthStore()
 const ordersApi = useOrdersApi()

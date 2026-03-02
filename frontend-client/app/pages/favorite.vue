@@ -123,7 +123,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, shallowRef } from 'vue'
+import { ref, watch, shallowRef, computed } from 'vue'
 import { useI18n } from '#imports'
 import { useAuthStore } from '~/stores/auth'
 import { useCartStore } from '~/stores/cart'
@@ -135,7 +135,7 @@ const authStore = useAuthStore()
 const cartStore = useCartStore()
 const toast = useToast()
 
-useHead({ title: 'My Favorites | Smart Market' })
+useHead({ title: computed(() => t('favorite.title')) })
 
 interface Product {
     id: number

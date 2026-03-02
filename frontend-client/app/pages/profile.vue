@@ -95,9 +95,7 @@ const productsApi = useProductsApi();
 const authStore = useAuthStore();
 const toast = useToast();
 
-useHead({
-    title: '個人資料 | Smart Market'
-});
+useHead({ title: computed(() => t('profile.title')) });
 
 const isSubmitting = shallowRef(false);
 const isUploading = shallowRef(false);

@@ -116,6 +116,7 @@
     }
   },
   "products": {
+    "page_title": "Explore All Treasures",
     "all_treasures": "All Treasures",
     "items": "items",
     "sort_by": "Sort by:",
@@ -176,7 +177,7 @@
     "unlimited_usage": "Unlimited usage",
     "go_to_cart": "Go to cart to use",
     "copy_success": "Coupon {code} copied! Go to cart to apply.",
-    "page_title": "Coupons | Smart Market"
+    "page_title": "Coupons"
   },
   "cart": {
     "title": "My Cart",
@@ -214,6 +215,7 @@
     "discount_success": "Discount applied!"
   },
   "register": {
+    "page_title": "Join the Club",
     "new_member": "New Member",
     "new": "NEW",
     "join_class": "Join the Class!",
@@ -232,6 +234,7 @@
     "login_here": "Log in here!"
   },
   "checkout": {
+    "title": "Checkout",
     "details_title": "Checkout Details",
     "whos_it_for": "Who's it for?",
     "buyer_name": "Kid's Name",
@@ -340,6 +343,7 @@
       "delivered": "Delivered"
     },
     "detail": {
+      "title": "Sales Order",
       "qty": "Qty"
     },
     "cancel_approve": "Approve Cancellation",
@@ -350,6 +354,8 @@
     "not_found": "Order not found"
   },
   "seller": {
+    "dashboard_title": "Seller Dashboard",
+    "store_page_title": "{name}'s Store",
     "loading": "Loading seller info...",
     "not_found": "Seller not found",
     "verified": "Verified Seller",

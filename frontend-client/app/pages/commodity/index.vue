@@ -146,6 +146,9 @@
 import { useAuthStore } from '~/stores/auth'
 import { useToast } from '#imports'
 
+const { t } = useI18n()
+useHead({ title: computed(() => t('commodity.portfolio_title')) })
+
 const authStore = useAuthStore()
 const $api = useApi()
 const productsApi = useProductsApi()

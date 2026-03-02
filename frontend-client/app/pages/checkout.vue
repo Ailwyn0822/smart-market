@@ -179,6 +179,9 @@ import { ref, computed, shallowRef } from 'vue'
 import { useCartStore } from '~/stores/cart'
 import { useToast } from '#imports'
 
+const { t } = useI18n()
+useHead({ title: computed(() => t('checkout.title')) })
+
 const cartStore = useCartStore()
 const toast = useToast()
 

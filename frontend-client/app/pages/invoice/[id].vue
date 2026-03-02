@@ -111,7 +111,7 @@ import { ref, computed, shallowRef, onMounted } from 'vue'
 
 definePageMeta({ layout: 'empty' })
 const { t } = useI18n()
-useHead({ title: computed(() => `${t('invoice.title')} | Smart Market`) })
+useHead({ title: computed(() => t('invoice.title')) })
 
 const route = useRoute()
 const authStore = useAuthStore()
