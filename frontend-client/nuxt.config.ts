@@ -13,7 +13,6 @@ export default defineNuxtConfig({
       compilerOptions: {
         paths: {
           '@smart-market/shared': ['../../shared/src/index.ts'],
-          '@smart-market/shared/*': ['../../shared/src/*'],
         },
       },
     },
@@ -48,7 +47,7 @@ export default defineNuxtConfig({
   app: {
     head: {
       htmlAttrs: {
-        lang: 'en'
+        lang: 'zh-TW'
       },
       titleTemplate: '%s - Smart Market',
       title: 'Home',
@@ -67,20 +66,20 @@ export default defineNuxtConfig({
   },
   routeRules: {
     // SSG：FAQ 內容幾乎不變，build 時預渲染放 CDN
-    '/faq':         { prerender: true },
+    '/faq': { prerender: true },
 
     // ISR：優惠券由後台 CRUD 管理，可能隨時更新，最多延遲 60 秒
-    '/coupons':     { swr: 60 },
+    '/coupons': { swr: 60 },
 
     // CSR：需要登入的個人化頁面，SEO 沒意義
-    '/cart':           { ssr: false },
-    '/checkout':       { ssr: false },
-    '/buy_order/**':   { ssr: false },
-    '/sell_order/**':  { ssr: false },
-    '/profile':        { ssr: false },
-    '/favorite':       { ssr: false },
-    '/upload':         { ssr: false },
-    '/invoice/**':     { ssr: false },
+    '/cart': { ssr: false },
+    '/checkout': { ssr: false },
+    '/buy_order/**': { ssr: false },
+    '/sell_order/**': { ssr: false },
+    '/profile': { ssr: false },
+    '/favorite': { ssr: false },
+    '/upload': { ssr: false },
+    '/invoice/**': { ssr: false },
   },
   vite: {
     plugins: [
