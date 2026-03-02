@@ -100,8 +100,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, shallowRef } from 'vue'
-
 const { t } = useI18n()
 useHead({ title: computed(() => t('coupons.page_title')) })
 
@@ -117,23 +115,11 @@ interface Coupon {
     currentUsages: number
 }
 
-const coupons = ref<Coupon[]>([])
-const loading = shallowRef(true)
-
-async function fetchCoupons() {
-    try {
-        coupons.value = await discountCodesApi.getAll() as Coupon[]
-    } catch (e) {
-        console.error('Failed to fetch coupons', e)
-    } finally {
-        loading.value = false
-    }
-}
+const { data, pending: loading } = await useAsyncData('coupons', () => discountCodesApi.getAll())
+const coupons = computed(() => (data.value as Coupon[]) ?? [])
 
 function copyAndApply(code: string) {
     navigator.clipboard.writeText(code).catch(() => { })
     toast.success(t('coupons.copy_success', { code }))
 }
-
-onMounted(fetchCoupons)
 </script>
