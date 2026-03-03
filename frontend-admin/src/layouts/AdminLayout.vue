@@ -86,9 +86,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessageBox } from 'element-plus'
+
 import { House, Setting, Menu, ShoppingBag, User, List, Ticket } from '@element-plus/icons-vue'
 import { useAuthStore } from '@/stores/auth'
 
@@ -98,14 +98,17 @@ const authStore = useAuthStore()
 
 const activeMenu = computed(() => route.path)
 
-const handleLogout = async () => {
-  await ElMessageBox.confirm('確定要登出嗎？', '登出確認', {
+const handleLogout = () => {
+  ElMessageBox.confirm('確定要登出嗎？', '登出確認', {
     confirmButtonText: '確定',
     cancelButtonText: '取消',
     type: 'warning',
   })
-  authStore.logout()
-  router.push('/login')
+    .then(() => {
+      authStore.logout()
+      router.push('/login')
+    })
+    .catch(() => { /* 使用者按取消，不做任何事 */ })
 }
 </script>
 

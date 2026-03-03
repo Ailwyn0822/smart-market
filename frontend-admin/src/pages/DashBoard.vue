@@ -4,7 +4,9 @@
     <div class="stat-cards">
       <div v-for="card in statCards" :key="card.label" class="stat-card">
         <div class="stat-icon" :style="{ background: card.bg }">
-          <el-icon :size="24" style="color:#fff"><component :is="card.icon" /></el-icon>
+          <el-icon :size="24" style="color:#fff">
+            <component :is="card.icon" />
+          </el-icon>
         </div>
         <div class="stat-info">
           <div class="stat-value">{{ card.value }}</div>
@@ -30,14 +32,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+
 import * as echarts from 'echarts'
 import { User, ShoppingBag, TrendCharts, Goods } from '@element-plus/icons-vue'
 import api from '@/api'
 
 // ── 資料 ──────────────────────────────────────────
-const users = ref<any[]>([])
-const products = ref<any[]>([])
+const users = shallowRef<any[]>([])
+const products = shallowRef<any[]>([])
 
 const loadData = async () => {
   const [uRes, pRes] = await Promise.allSettled([
@@ -74,16 +76,6 @@ let lineChart: echarts.ECharts | null = null
 let pieChart: echarts.ECharts | null = null
 let barChart: echarts.ECharts | null = null
 
-/** 過去 N 個月的標籤 */
-function getLastMonths(n: number) {
-  const months: string[] = []
-  const now = new Date()
-  for (let i = n - 1; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
-    months.push(`${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}`)
-  }
-  return months
-}
 
 function initCharts() {
   // ─── Line Chart: 每日新增會員（本月） ───────────
@@ -195,7 +187,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
 }
 
 .stat-icon {
@@ -233,7 +225,12 @@ onUnmounted(() => {
 }
 
 @media (max-width: 900px) {
-  .stat-cards { grid-template-columns: repeat(2, 1fr); }
-  .charts-row { grid-template-columns: 1fr; }
+  .stat-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .charts-row {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

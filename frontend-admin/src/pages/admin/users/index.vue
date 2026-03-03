@@ -2,13 +2,8 @@
   <div class="page-container">
     <div class="page-header">
       <h2>會員管理</h2>
-      <el-input
-        v-model="searchQuery"
-        placeholder="搜尋名稱或 Email..."
-        clearable
-        style="width: 280px;"
-        @input="handleSearch"
-      />
+      <el-input v-model="searchQuery" placeholder="搜尋名稱或 Email..." clearable style="width: 280px;"
+        @input="handleSearch" />
     </div>
 
     <el-card>
@@ -38,11 +33,7 @@
         </el-table-column>
         <el-table-column prop="role" label="角色" width="120">
           <template #default="{ row }">
-            <el-select
-              v-model="row.role"
-              size="small"
-              @change="updateUserRole(row.id, row.role)"
-            >
+            <el-select v-model="row.role" size="small" @change="updateUserRole(row.id, row.role)">
               <el-option label="一般用戶" value="user" />
               <el-option label="管理員" value="admin" />
             </el-select>
@@ -57,27 +48,22 @@
     </el-card>
 
     <div class="pagination">
-      <el-pagination
-        v-model:current-page="currentPage"
-        :page-size="pageSize"
-        :total="filteredUsers.length"
-        layout="total, prev, pager, next"
-      />
+      <el-pagination v-model:current-page="currentPage" :page-size="pageSize" :total="filteredUsers.length"
+        layout="total, prev, pager, next" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
-import api from '@/api'
-import type { ApiUser } from '@smart-market/shared'
-import type { UserRole } from '@smart-market/shared'
 
-const users = ref<ApiUser[]>([])
-const loading = ref(false)
-const searchQuery = ref('')
-const currentPage = ref(1)
+
+import api from '@/api'
+import type { ApiUser, UserRole } from '@smart-market/shared'
+
+const users = shallowRef<ApiUser[]>([])
+const loading = shallowRef(false)
+const searchQuery = shallowRef('')
+const currentPage = shallowRef(1)
 const pageSize = 20
 
 const filteredUsers = computed(() => {

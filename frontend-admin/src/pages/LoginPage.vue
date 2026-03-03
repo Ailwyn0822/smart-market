@@ -28,9 +28,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+
 import { useRouter } from 'vue-router'
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 
@@ -39,7 +39,7 @@ const authStore = useAuthStore()
 
 const formRef = ref<FormInstance>()
 const form = reactive({ email: '', password: '' })
-const loading = ref(false)
+const loading = shallowRef(false)
 
 const rules: FormRules = {
   email: [

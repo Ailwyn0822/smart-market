@@ -3,19 +3,16 @@
     <div class="page-header">
       <h2>類別管理</h2>
       <el-button type="primary" @click="openCreateDialog">
-        <el-icon><Plus /></el-icon>
+        <el-icon>
+          <Plus />
+        </el-icon>
         新增類別
       </el-button>
     </div>
 
     <!-- 類別列表 -->
     <el-card>
-      <el-table
-        :data="categories"
-        v-loading="loading"
-        stripe
-        style="width: 100%"
-      >
+      <el-table :data="categories" v-loading="loading" stripe style="width: 100%">
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="icon" label="圖示" width="80">
           <template #default="{ row }">
@@ -62,7 +59,9 @@
     <!-- 刪除確認 Dialog（取代 ElMessageBox，避免 overflow:hidden 定位問題） -->
     <el-dialog v-model="deleteDialogVisible" title="刪除確認" width="380px" align-center>
       <div class="delete-confirm">
-        <el-icon size="48" color="#f56c6c"><WarningFilled /></el-icon>
+        <el-icon size="48" color="#f56c6c">
+          <WarningFilled />
+        </el-icon>
         <p>確定要刪除類別「<strong>{{ deletingCategory?.name }}</strong>」嗎？</p>
         <p class="hint">此操作無法復原。</p>
       </div>
@@ -75,20 +74,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+
+import type { FormInstance, FormRules } from 'element-plus'
 import { Plus, WarningFilled } from '@element-plus/icons-vue'
 import api from '@/api'
 import type { ApiCategory } from '@smart-market/shared'
 
-const categories = ref<ApiCategory[]>([])
-const loading = ref(false)
-const dialogVisible = ref(false)
-const submitting = ref(false)
-const isEditing = ref(false)
-const editingId = ref<number | null>(null)
+const categories = shallowRef<ApiCategory[]>([])
+const loading = shallowRef(false)
+const dialogVisible = shallowRef(false)
+const submitting = shallowRef(false)
+const isEditing = shallowRef(false)
+const editingId = shallowRef<number | null>(null)
 
-const formRef = ref<FormInstance>()
+const formRef = shallowRef<FormInstance>()
 const form = reactive({ name: '', slug: '', icon: '' })
 
 const rules: FormRules = {
@@ -147,9 +146,9 @@ const submitForm = async () => {
   }
 }
 
-const deleteDialogVisible = ref(false)
-const deletingCategory = ref<ApiCategory | null>(null)
-const deleting = ref(false)
+const deleteDialogVisible = shallowRef(false)
+const deletingCategory = shallowRef<ApiCategory | null>(null)
+const deleting = shallowRef(false)
 
 const openDeleteDialog = (category: ApiCategory) => {
   deletingCategory.value = category

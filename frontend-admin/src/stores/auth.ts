@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+
 import type { UserRole } from '@smart-market/shared'
 
 interface AdminUser {
@@ -11,8 +11,8 @@ interface AdminUser {
 }
 
 export const useAuthStore = defineStore('auth', () => {
-  const token = ref<string | null>(localStorage.getItem('admin_token'))
-  const user = ref<AdminUser | null>(
+  const token = shallowRef<string | null>(localStorage.getItem('admin_token'))
+  const user = shallowRef<AdminUser | null>(
     JSON.parse(localStorage.getItem('admin_user') || 'null')
   )
 

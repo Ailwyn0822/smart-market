@@ -3,7 +3,9 @@
     <div class="page-header">
       <h2>折扣碼管理</h2>
       <el-button type="primary" @click="openCreateDialog">
-        <el-icon><Plus /></el-icon>
+        <el-icon>
+          <Plus />
+        </el-icon>
         新增折扣碼
       </el-button>
     </div>
@@ -65,14 +67,8 @@
           <div class="form-hint">0 = 不限次數</div>
         </el-form-item>
         <el-form-item label="有效期限" prop="validUntil">
-          <el-date-picker
-            v-model="form.validUntil"
-            type="date"
-            placeholder="選擇日期（留空 = 永久有效）"
-            style="width: 100%;"
-            value-format="YYYY-MM-DD"
-            clearable
-          />
+          <el-date-picker v-model="form.validUntil" type="date" placeholder="選擇日期（留空 = 永久有效）" style="width: 100%;"
+            value-format="YYYY-MM-DD" clearable />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -86,7 +82,9 @@
     <!-- 刪除確認 Dialog -->
     <el-dialog v-model="deleteDialogVisible" title="刪除確認" width="380px" align-center>
       <div class="delete-confirm">
-        <el-icon size="48" color="#f56c6c"><WarningFilled /></el-icon>
+        <el-icon size="48" color="#f56c6c">
+          <WarningFilled />
+        </el-icon>
         <p>確定要刪除折扣碼「<strong>{{ deletingCoupon?.code }}</strong>」嗎？</p>
         <p class="hint">此操作無法復原。</p>
       </div>
@@ -99,8 +97,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+
+import type { FormInstance, FormRules } from 'element-plus'
 import { Plus, WarningFilled } from '@element-plus/icons-vue'
 import api from '@/api'
 
@@ -114,14 +112,14 @@ interface Coupon {
   createdAt: string
 }
 
-const coupons = ref<Coupon[]>([])
-const loading = ref(false)
-const dialogVisible = ref(false)
-const submitting = ref(false)
-const isEditing = ref(false)
-const editingId = ref<number | null>(null)
+const coupons = shallowRef<Coupon[]>([])
+const loading = shallowRef(false)
+const dialogVisible = shallowRef(false)
+const submitting = shallowRef(false)
+const isEditing = shallowRef(false)
+const editingId = shallowRef<number | null>(null)
 
-const formRef = ref<FormInstance>()
+const formRef = shallowRef<FormInstance>()
 const form = reactive({
   code: '',
   discountAmount: 50,
@@ -193,9 +191,9 @@ const submitForm = async () => {
   }
 }
 
-const deleteDialogVisible = ref(false)
-const deletingCoupon = ref<Coupon | null>(null)
-const deleting = ref(false)
+const deleteDialogVisible = shallowRef(false)
+const deletingCoupon = shallowRef<Coupon | null>(null)
+const deleting = shallowRef(false)
 
 const openDeleteDialog = (coupon: Coupon) => {
   deletingCoupon.value = coupon
