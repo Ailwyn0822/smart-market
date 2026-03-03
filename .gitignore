@@ -21,3 +21,10 @@ Thumbs.db
 # 忽略 Docker 資料庫的本地存檔
 postgres_data/
 minio_data/
+
+# npm workspaces：lock file 統一由根目錄管理
+# 子目錄不應有自己的 package-lock.json
+backend/package-lock.json
+frontend-client/package-lock.json
+frontend-admin/package-lock.json
+shared/package-lock.json
