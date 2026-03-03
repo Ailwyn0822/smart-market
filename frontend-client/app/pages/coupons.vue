@@ -52,7 +52,10 @@
                                             {{ coupon.code }}
                                         </span>
                                         <p class="font-black text-2xl text-accent-red">
-                                            {{ $t('coupons.discount_amount', { amount: parseFloat(coupon.discountAmount).toFixed(0) }) }}
+                                            {{ $t('coupons.discount_amount', {
+                                                amount:
+                                                    parseFloat(coupon.discountAmount).toFixed(0)
+                                            }) }}
                                         </p>
                                     </div>
                                     <button @click="copyAndApply(coupon.code)"
@@ -65,11 +68,17 @@
                                 <div class="text-xs text-gray-500 font-medium space-y-0.5">
                                     <p v-if="coupon.validUntil">
                                         <Icon name="material-symbols:calendar-month" class="inline text-sm mr-1" />
-                                        {{ $t('coupons.valid_until', { date: new Date(coupon.validUntil).toLocaleDateString() }) }}
+                                        {{ $t('coupons.valid_until', {
+                                            date: new
+                                                Date(coupon.validUntil).toLocaleDateString()
+                                        }) }}
                                     </p>
                                     <p v-if="coupon.maxUsages > 0">
                                         <Icon name="material-symbols:people-outline" class="inline text-sm mr-1" />
-                                        {{ $t('coupons.used_count', { current: coupon.currentUsages, max: coupon.maxUsages }) }}
+                                        {{ $t('coupons.used_count', {
+                                            current: coupon.currentUsages, max:
+                                                coupon.maxUsages
+                                        }) }}
                                     </p>
                                     <p v-else>
                                         <Icon name="material-symbols:all-inclusive" class="inline text-sm mr-1" />
@@ -80,7 +89,8 @@
 
                             <!-- 票券鋸齒右邊 -->
                             <div class="w-4 flex flex-col justify-between py-2 shrink-0">
-                                <div v-for="n in 6" :key="n" class="w-4 h-4 bg-[#fdfcf0] rounded-full border border-gray-200"></div>
+                                <div v-for="n in 6" :key="n"
+                                    class="w-4 h-4 bg-[#fdfcf0] rounded-full border border-gray-200"></div>
                             </div>
                         </div>
                     </div>
@@ -105,15 +115,7 @@ useHead({ title: computed(() => t('coupons.page_title')) })
 
 const discountCodesApi = useDiscountCodesApi()
 const toast = useToast()
-
-interface Coupon {
-    id: number
-    code: string
-    discountAmount: string
-    validUntil: string | null
-    maxUsages: number
-    currentUsages: number
-}
+import type { Coupon } from '~/types'
 
 const { data, pending: loading } = await useAsyncData('coupons', () => discountCodesApi.getAll())
 const coupons = computed(() => (data.value as Coupon[]) ?? [])

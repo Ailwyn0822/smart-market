@@ -1,13 +1,4 @@
 
-export type ToastType = 'success' | 'error' | 'info' | 'warning'
-
-export interface Toast {
-    id: string
-    message: string
-    type: ToastType
-    duration?: number
-}
-
 export function useToast() {
     // 使用 useState 確�?跨�?件�? SSR ?��??��?�?
     const toasts = useState<Toast[]>('app_toasts', () => [])

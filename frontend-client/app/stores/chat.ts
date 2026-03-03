@@ -5,23 +5,6 @@ import { useRuntimeConfig } from '#imports'
 import { io, Socket } from 'socket.io-client'
 import { useToast } from '#imports'
 
-export interface ChatContact {
-    id: string
-    name: string
-    avatar: string
-    lastMessage?: string
-    unreadCount?: number
-}
-
-export interface ChatMessage {
-    id: number
-    content: string
-    senderId: string
-    receiverId: string
-    createdAt: string
-    isRead: boolean
-}
-
 export const useChatStore = defineStore('chat', () => {
     const authStore = useAuthStore()
     const config = useRuntimeConfig()

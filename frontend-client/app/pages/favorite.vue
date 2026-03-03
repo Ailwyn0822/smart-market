@@ -128,6 +128,7 @@ import { useI18n } from '#imports'
 import { useAuthStore } from '~/stores/auth'
 import { useCartStore } from '~/stores/cart'
 import { useToast } from '~/composables/useToast'
+import type { FavoriteProduct } from '~/types'
 
 const { t } = useI18n()
 const favoritesApi = useFavoritesApi()
@@ -137,26 +138,14 @@ const toast = useToast()
 
 useHead({ title: computed(() => t('favorite.title')) })
 
-interface Product {
-    id: number
-    name: string
-    description: string
-    price: string
-    stock: number
-    imageUrl: string
-    categoryId: number
-    condition: string
-    isActive?: boolean
-}
-
-const favorites = ref<Product[]>([])
+const favorites = ref<FavoriteProduct[]>([])
 const pending = shallowRef(false)
 
 async function fetchFavorites() {
     if (!authStore.isAuthenticated) return
     pending.value = true
     try {
-        const data = await favoritesApi.getAll() as Product[]
+        const data = await favoritesApi.getAll() as FavoriteProduct[]
         favorites.value = data
     } catch (e) {
         console.error('Failed to fetch favorites', e)
@@ -170,13 +159,13 @@ async function removeFavorite(productId: number) {
     try {
         await favoritesApi.remove(productId)
         // 從列表中移除
-        favorites.value = favorites.value.filter(p => p.id !== productId)
+        favorites.value = favorites.value.filter((p: FavoriteProduct) => p.id !== productId)
     } catch (e) {
         console.error('Failed to remove favorite', e)
     }
 }
 
-function addToCart(product: Product) {
+function addToCart(product: FavoriteProduct) {
     cartStore.addToCart({
         id: product.id,
         name: product.name,

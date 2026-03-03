@@ -163,6 +163,7 @@
 </template>
 
 <script setup lang="ts">
+import type { ProductResponse } from '~/types'
 useSeoMeta({
     title: 'Smart Market — 二手好物市集',
     description: '安全、環保的二手玩具、衣物與裝備交易平台。',
@@ -178,17 +179,6 @@ const authStore = useAuthStore()
 
 // 串接類別 API (取前六個)
 const { data: categoriesData, pending: categoriesPending } = await useLazyFetch<{ id: number; name: string; icon: string }[]>('/categories/top', { $fetch: $api })
-
-interface ProductResponse {
-    id: number;
-    name: string;
-    price: string | number;
-    condition?: string;
-    description?: string;
-    imageUrl?: string;
-    category?: { name: string } | string;
-    [key: string]: any;
-}
 
 // 串接最新商品 API (取前四個)
 const { data: productsData, pending: productsPending } = await useLazyFetch<ProductResponse[]>('/products/latest', { $fetch: $api })
@@ -206,11 +196,11 @@ const displayProducts = computed(() =>
         const style = colorStyles[index % colorStyles.length]!
         return {
             id: p.id,
-            title: p.name,
-            price: `$${parseFloat(p.price).toFixed(0)}`,
+            title: p.name ?? '',
+            price: `$${parseFloat(String(p.price)).toFixed(0)}`,
             condition: p.condition === 'New' || !p.condition ? '全新' : p.condition,
-            description: p.description,
-            image: p.imageUrl,
+            description: p.description ?? '',
+            image: p.imageUrl ?? '',
             borderColorClass: style.border,
             priceColor: style.price,
             btnHoverBg: style.hover,

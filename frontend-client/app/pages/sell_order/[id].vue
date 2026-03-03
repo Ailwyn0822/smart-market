@@ -56,7 +56,7 @@
                                 class="inline-flex items-center gap-2 bg-white border-2 border-content rounded-full px-5 py-2 shadow-stitch-sm">
                                 <Icon name="material-symbols:receipt-long" class="text-accent-red text-xl" />
                                 <span class="font-black text-content text-xl font-mono-card">#{{ order.orderNumber
-                                }}</span>
+                                    }}</span>
                             </div>
                             <div class="text-right">
                                 <p class="text-xs font-bold uppercase tracking-widest text-gray-400">{{
@@ -219,28 +219,7 @@ const authStore = useAuthStore()
 const ordersApi = useOrdersApi()
 const toast = useToast()
 
-interface OrderItem {
-    id: number
-    productName: string
-    productImageUrl?: string
-    quantity: number
-    price: number
-}
-
-interface Order {
-    id: number
-    orderNumber: string
-    status: string
-    totalAmount: number
-    paymentMethod: string
-    recipientName?: string
-    recipientEmail?: string
-    shippingAddress?: string
-    createdAt: string
-    items: OrderItem[]
-}
-
-const order = ref<Order | null>(null)
+const order = ref<AppOrder | null>(null)
 const isLoading = shallowRef(false)
 const isCancelResponding = shallowRef(false)
 
@@ -267,7 +246,7 @@ async function fetchOrder() {
     if (!authStore.isAuthenticated) return
     isLoading.value = true
     try {
-        const data = await ordersApi.getById(route.params.id as string) as Order
+        const data = await ordersApi.getById(route.params.id as string) as AppOrder
         order.value = data
     } catch (e) {
         console.error('Failed to fetch order', e)

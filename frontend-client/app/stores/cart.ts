@@ -1,10 +1,5 @@
 import { defineStore } from 'pinia'
-import type { ApiProduct } from '~/types'
-
-export interface CartItem {
-    product: ApiProduct
-    quantity: number
-}
+import type { ApiProduct, CartItem } from '~/types'
 
 export const useCartStore = defineStore('cart', () => {
     // 嘗試從 cookie 讀取初始值
@@ -26,17 +21,17 @@ export const useCartStore = defineStore('cart', () => {
     watch(items, (newItems) => {
         cartCookie.value = newItems
         if (selectedSellerId.value) {
-            const hasItems = newItems.some(i => i.product.userId === selectedSellerId.value)
+            const hasItems = newItems.some((i: CartItem) => i.product.userId === selectedSellerId.value)
             if (!hasItems) selectedSellerId.value = null
         }
     }, { deep: true })
 
     const totalItems = computed(() => {
-        return items.value.reduce((acc, item) => acc + item.quantity, 0)
+        return items.value.reduce((acc: number, item: CartItem) => acc + item.quantity, 0)
     })
 
     const c_subtotal = computed(() => {
-        return items.value.reduce((acc, item) => {
+        return items.value.reduce((acc: number, item: CartItem) => {
             return acc + (parsePrice(item.product.price) * item.quantity)
         }, 0)
     })
@@ -44,12 +39,12 @@ export const useCartStore = defineStore('cart', () => {
     // 選中賣家的商品清單
     const selectedItems = computed(() => {
         if (!selectedSellerId.value) return []
-        return items.value.filter(i => i.product.userId === selectedSellerId.value)
+        return items.value.filter((i: CartItem) => i.product.userId === selectedSellerId.value)
     })
 
     // 選中賣家的小計
     const selectedSubtotal = computed(() => {
-        return selectedItems.value.reduce((acc, item) => {
+        return selectedItems.value.reduce((acc: number, item: CartItem) => {
             return acc + (parsePrice(item.product.price) * item.quantity)
         }, 0)
     })
@@ -63,7 +58,7 @@ export const useCartStore = defineStore('cart', () => {
     })
 
     function addToCart(product: ApiProduct, quantity: number = 1) {
-        const existing = items.value.find(i => i.product.id === product.id)
+        const existing = items.value.find((i: CartItem) => i.product.id === product.id)
         if (existing) {
             existing.quantity += quantity
         } else {
@@ -76,14 +71,14 @@ export const useCartStore = defineStore('cart', () => {
             removeFromCart(productId)
             return
         }
-        const existing = items.value.find(i => i.product.id === productId)
+        const existing = items.value.find((i: CartItem) => i.product.id === productId)
         if (existing) {
             existing.quantity = quantity
         }
     }
 
     function removeFromCart(productId: number) {
-        items.value = items.value.filter(i => i.product.id !== productId)
+        items.value = items.value.filter((i: CartItem) => i.product.id !== productId)
     }
 
     function clearCart() {
@@ -94,7 +89,7 @@ export const useCartStore = defineStore('cart', () => {
     // 只清除選中賣家的商品（結帳後使用）
     function clearSelectedItems() {
         if (!selectedSellerId.value) return
-        items.value = items.value.filter(i => i.product.userId !== selectedSellerId.value)
+        items.value = items.value.filter((i: CartItem) => i.product.userId !== selectedSellerId.value)
         selectedSellerId.value = null
     }
 

@@ -79,7 +79,7 @@
 
                             <!-- 金額 -->
                             <span class="font-black text-lg text-accent-red shrink-0">${{ order.totalAmount
-                            }}</span>
+                                }}</span>
                         </div>
 
                         <!-- 進度條與狀態 -->
@@ -126,29 +126,12 @@ const authStore = useAuthStore()
 const ordersApi = useOrdersApi()
 const toast = useToast()
 
-interface OrderItem {
-    id: number
-    productName: string
-    productImageUrl?: string
-    quantity: number
-    price: number
-}
-
-interface Order {
-    id: number
-    orderNumber: string
-    status: string
-    totalAmount: number
-    createdAt: string
-    items: OrderItem[]
-}
-
-const orders = ref<Order[]>([])
+const orders = ref<AppOrder[]>([])
 const isLoading = shallowRef(false)
 
-const firstItem = (order: Order) => order.items?.[0] ?? null
+const firstItem = (order: AppOrder) => order.items?.[0] ?? null
 
-function displayProductName(order: Order): string {
+function displayProductName(order: AppOrder): string {
     const items = order.items ?? []
     if (items.length === 0) return '-'
     const first = items[0]?.productName ?? '-'

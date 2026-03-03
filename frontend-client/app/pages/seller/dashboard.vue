@@ -95,32 +95,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted, shallowRef } from 'vue';
+import type { DashboardData } from '~/types';
 
 const { t } = useI18n()
 useHead({ title: computed(() => t('seller.dashboard_title')) })
 
 const ordersApi = useOrdersApi();
-interface DashboardTopProduct {
-    productId: string | number
-    productName: string
-    productImage?: string
-    totalSold: number
-}
-
-interface DashboardLowStockItem {
-    productId: string | number
-    productName: string
-    productImage?: string
-    stock: number
-}
-
-interface DashboardData {
-    monthlyRevenue: number
-    currentMonthSales: number
-    topProducts: DashboardTopProduct[]
-    lowStockAlerts: DashboardLowStockItem[]
-}
-
 const loading = shallowRef(true);
 const dashboardData = ref<DashboardData | null>(null);
 

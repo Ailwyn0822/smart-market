@@ -207,17 +207,8 @@ const userAvatar = computed(() => authStore.user?.picture || authStore.user?.ava
 const userName = computed(() => authStore.user?.name || authStore.user?.username || 'User');
 const userEmail = computed(() => authStore.user?.email || null);
 
-interface Notification {
-    id: string | number
-    message: string
-    isRead: boolean
-    createdAt: string
-    type: 'order_update' | 'new_review' | 'product_deactivated' | string
-    referenceId?: string | number
-}
-
 const unreadCount = shallowRef(0);
-const notifications = ref<Notification[]>([]);
+const notifications = ref<AppNotification[]>([]);
 const isNotificationOpen = shallowRef(false);
 let sseSource: EventSource | null = null;
 

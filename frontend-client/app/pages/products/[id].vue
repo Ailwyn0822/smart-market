@@ -186,9 +186,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, shallowRef } from 'vue'
+import { ref, computed, shallowRef, onMounted, nextTick } from 'vue'
 import { useHead } from '#imports'
 import { useI18n } from '#imports'
+import type { ProductDetail, ReviewItem, ReviewsResponse } from '~/types'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -202,22 +203,6 @@ const toast = useToast()
 
 const productId = route.params.id as string
 
-interface ProductDetail {
-    id: number;
-    name?: string;
-    title?: string;
-    description?: string;
-    price?: string | number;
-    imageUrl?: string;
-    image?: string;
-    condition?: string;
-    stock?: number;
-    seller?: any;
-    user?: any;
-    userId?: string;
-    sellerId?: string;
-    [key: string]: any;
-}
 
 // 串接 API 取得商品資料（加 default 避免 SSR 時後端錯誤炸出整頁）
 const { data: product, pending } = await useFetch<ProductDetail | null>(
@@ -282,8 +267,6 @@ useSeoMeta({
 })
 
 // 評價資料
-interface ReviewItem { id: number; rating: number; comment: string; createdAt: string }
-interface ReviewsResponse { items: ReviewItem[]; total: number; page: number; hasMore: boolean }
 const reviewsData = ref<ReviewsResponse | null>(null)
 const reviewsLoading = shallowRef(true)
 const reviewsLoadingMore = shallowRef(false)

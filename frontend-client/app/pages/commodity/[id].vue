@@ -163,6 +163,7 @@ import { ref, reactive, watchEffect, shallowRef, useTemplateRef } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useToast } from '~/composables/useToast';
 import { useI18n } from 'vue-i18n';
+import type { EditProductData } from '~/types';
 
 const { t } = useI18n();
 useHead({ title: computed(() => t('commodity.edit_title')) })
@@ -179,18 +180,6 @@ const productId = route.params.id as string;
 const isUploading = shallowRef(false);
 const isSubmitting = shallowRef(false);
 const fileInput = useTemplateRef<HTMLInputElement>('fileInput');
-
-interface EditProductData {
-    name?: string;
-    description?: string;
-    price?: string | number;
-    category?: { id: number; name: string };
-    imageUrl?: string;
-    condition?: string;
-    stock?: number;
-    isActive?: boolean;
-    [key: string]: any;
-}
 
 // 資料裝載
 const { data: product } = await useFetch<EditProductData | null>(`/products/${productId}`, { $fetch: $api });

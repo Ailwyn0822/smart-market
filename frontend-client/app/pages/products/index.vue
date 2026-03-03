@@ -73,6 +73,7 @@
 
 <script setup lang="ts">
 import { useWindowScroll, useWindowSize } from '@vueuse/core'
+import type { ProductResponse } from '~/types'
 
 const { t } = useI18n()
 useSeoMeta({
@@ -109,18 +110,6 @@ const rowHeight = computed(() => {
 // ── 分頁狀態 ──────────────────────────────────────
 const PAGE_SIZE = 20
 const page = ref(1)
-interface ProductResponse {
-    id: number;
-    name?: string;
-    title?: string;
-    price?: string | number;
-    condition?: string;
-    description?: string;
-    imageUrl?: string;
-    image?: string;
-    category?: { name: string } | string;
-    [key: string]: any;
-}
 const rawItems = ref<ProductResponse[]>([])
 const total = ref(0)
 const pending = ref(false)

@@ -1,15 +1,5 @@
 import { defineStore } from 'pinia';
-
-export interface AuthUser {
-    id: string
-    name: string
-    email: string
-    avatarUrl?: string
-    // OAuth 提供者（Google / LINE）可能回傳的欄位
-    picture?: string
-    avatar?: string
-    username?: string
-}
+import type { AuthUser } from '~/types';
 
 export const useAuthStore = defineStore('auth', () => {
     // 1. 定義 State (資料)

@@ -78,7 +78,7 @@
 
                             <!-- 金額 -->
                             <span class="font-black text-lg text-accent-purple shrink-0">${{ order.totalAmount
-                                }}</span>
+                            }}</span>
                         </div>
 
                         <!-- 進度條 -->
@@ -179,25 +179,7 @@ const ordersApi = useOrdersApi()
 const reviewsApi = useReviewsApi()
 const toast = useToast()
 
-interface OrderItem {
-    id: number
-    productName: string
-    productImageUrl?: string
-    quantity: number
-    price: number
-}
-
-interface Order {
-    id: number
-    orderNumber: string
-    status: string
-    totalAmount: number
-    createdAt: string
-    items: OrderItem[]
-    isReviewed?: boolean
-}
-
-const orders = ref<Order[]>([])
+const orders = ref<AppOrder[]>([])
 const isLoading = shallowRef(false)
 
 const showReviewModal = shallowRef(false)
@@ -208,7 +190,7 @@ const reviewForm = ref({
     comment: ''
 })
 
-const firstItem = (order: Order) => order.items?.[0] ?? null
+const firstItem = (order: AppOrder) => order.items?.[0] ?? null
 
 const statusMap: Record<string, string> = {
     processing: '處理中',
@@ -217,7 +199,7 @@ const statusMap: Record<string, string> = {
     delivered: '已送達',
 }
 
-function displayProductName(order: Order): string {
+function displayProductName(order: AppOrder): string {
     const items = order.items ?? []
     if (items.length === 0) return '-'
     const first = items[0]?.productName ?? '-'
@@ -243,7 +225,7 @@ async function fetchOrders() {
     if (!authStore.isAuthenticated) return
     isLoading.value = true
     try {
-        const data = await ordersApi.getMyOrders() as Order[]
+        const data = await ordersApi.getMyOrders() as AppOrder[]
         orders.value = data
 
         // 對於已送達但未評價的訂單，檢查其是否已提交過評價
@@ -273,7 +255,7 @@ async function updateStatus(orderId: number, status: string) {
     }
 }
 
-function openReviewModal(order: Order) {
+function openReviewModal(order: AppOrder) {
     selectedOrderId.value = order.id
     reviewForm.value = { rating: 5, comment: '' }
     showReviewModal.value = true

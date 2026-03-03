@@ -56,7 +56,7 @@
                                 class="inline-flex items-center gap-2 bg-white border-2 border-content rounded-full px-5 py-2 shadow-stitch-sm">
                                 <Icon name="material-symbols:receipt-long" class="text-accent-purple text-xl" />
                                 <span class="font-black text-content text-xl font-mono-card">#{{ order.orderNumber
-                                    }}</span>
+                                }}</span>
                             </div>
                             <div class="flex flex-col items-end gap-2">
                                 <div class="text-right">
@@ -103,8 +103,7 @@
                                     {{ $t('buy_order.cancelled') }}
                                 </span>
                                 <!-- 評價 -->
-                                <button v-if="order.status === 'delivered' && !isReviewed"
-                                    @click="openReviewModal"
+                                <button v-if="order.status === 'delivered' && !isReviewed" @click="openReviewModal"
                                     class="bg-accent-red text-white px-4 py-1.5 rounded-lg border-2 border-content shadow-stitch-sm hover:translate-y-0.5 hover:shadow-none transition-all text-sm font-bold flex items-center gap-1">
                                     <Icon name="material-symbols:star" class="text-white" />
                                     {{ $t('buy_order.review') }}
@@ -317,29 +316,7 @@ const ordersApi = useOrdersApi()
 const reviewsApi = useReviewsApi()
 const toast = useToast()
 
-interface OrderItem {
-    id: number
-    productId?: number
-    productName: string
-    productImageUrl?: string
-    quantity: number
-    price: number
-}
-
-interface Order {
-    id: number
-    orderNumber: string
-    status: string
-    totalAmount: number
-    paymentMethod: string
-    recipientName?: string
-    recipientEmail?: string
-    shippingAddress?: string
-    createdAt: string
-    items: OrderItem[]
-}
-
-const order = ref<Order | null>(null)
+const order = ref<AppOrder | null>(null)
 const isLoading = shallowRef(false)
 
 const isReviewed = shallowRef(false)
@@ -347,13 +324,6 @@ const showReviewModal = shallowRef(false)
 const isSubmittingReview = shallowRef(false)
 const isCancelRequesting = shallowRef(false)
 
-interface ProductReviewItem {
-    productId: number | undefined
-    productName: string
-    productImageUrl: string | undefined
-    rating: number
-    comment: string
-}
 const productReviews = ref<ProductReviewItem[]>([])
 const sellerReview = ref({ rating: 5, comment: '' })
 
@@ -393,7 +363,7 @@ async function fetchOrder() {
     if (!authStore.isAuthenticated) return
     isLoading.value = true
     try {
-        const data = await ordersApi.getById(route.params.id as string) as Order
+        const data = await ordersApi.getById(route.params.id as string) as AppOrder
         order.value = data
         if (data && data.status === 'delivered') {
             await checkReviewStatus(data.id)

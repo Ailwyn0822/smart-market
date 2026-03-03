@@ -187,7 +187,7 @@ import { useI18n } from '#imports'
 import { useAuthStore } from '~/stores/auth'
 import { useChatStore } from '~/stores/chat'
 import { useToast } from '~/composables/useToast'
-import type { ApiProduct, ProductItem } from '~/types'
+import type { ApiProduct, StoreData, SellerReview } from '~/types'
 
 const { t } = useI18n()
 
@@ -197,21 +197,6 @@ const usersApi = useUsersApi()
 const reviewsApi = useReviewsApi()
 const chatStore = useChatStore()
 const toast = useToast()
-
-interface SellerInfo {
-    id: string
-    name: string
-    avatar: string
-    joinedAt: string
-    rating: number
-    totalProducts: number
-}
-
-interface StoreData {
-    seller: SellerInfo
-    products: ApiProduct[]
-    hasMore: boolean
-}
 
 const storeData = ref<StoreData | null>(null)
 const isLoading = shallowRef(true)
@@ -246,13 +231,6 @@ function toggleFollow() {
 
 // 評價 Modal 與 無限下拉邏輯
 const showReviewsModal = shallowRef(false)
-interface SellerReview {
-    id: number
-    rating: number
-    comment: string
-    createdAt: string
-}
-
 const reviews = ref<SellerReview[]>([])
 const reviewPage = ref(1)
 const reviewHasMore = shallowRef(true)

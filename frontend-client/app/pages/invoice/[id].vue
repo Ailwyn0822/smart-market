@@ -41,7 +41,8 @@
                 </div>
                 <div class="info-block text-right">
                     <h3>{{ $t('invoice.payment_info') }}</h3>
-                    <p>{{ $t('invoice.payment_method_label') }}：{{ order.paymentMethod === 'cod' ? $t('invoice.cod') : $t('invoice.online') }}</p>
+                    <p>{{ $t('invoice.payment_method_label') }}：{{ order.paymentMethod === 'cod' ? $t('invoice.cod') :
+                        $t('invoice.online') }}</p>
                     <p>{{ $t('invoice.order_status_label') }}：{{ statusLabel(order.status) }}</p>
                 </div>
             </div>
@@ -108,6 +109,7 @@
 
 <script setup lang="ts">
 import { ref, computed, shallowRef, onMounted } from 'vue'
+import type { AppOrder } from '~/types'
 
 definePageMeta({ layout: 'empty' })
 const { t } = useI18n()
@@ -117,13 +119,7 @@ const route = useRoute()
 const authStore = useAuthStore()
 const ordersApi = useOrdersApi()
 
-interface OrderItem { id: number; productName: string; quantity: number; price: number }
-interface Order {
-    id: number; orderNumber: string; status: string; totalAmount: number; paymentMethod: string;
-    recipientName: string; recipientEmail: string; shippingAddress: string; createdAt: string; items: OrderItem[]
-}
-
-const order = ref<Order | null>(null)
+const order = ref<AppOrder | null>(null)
 const loading = shallowRef(true)
 
 const subtotal = computed(() => {
@@ -153,7 +149,7 @@ function printInvoice() {
 onMounted(async () => {
     if (!authStore.isAuthenticated) return
     try {
-        order.value = await ordersApi.getById(route.params.id as string) as Order
+        order.value = await ordersApi.getById(route.params.id as string) as AppOrder
     } catch { }
     finally { loading.value = false }
 })
@@ -198,15 +194,45 @@ onMounted(async () => {
     gap: 8px;
 }
 
-.brand-icon { font-size: 28px; }
-.brand-name { font-size: 20px; font-weight: 800; color: #1c180d; }
+.brand-icon {
+    font-size: 28px;
+}
 
-.invoice-meta { text-align: right; }
-.invoice-meta h1 { font-size: 24px; font-weight: 800; color: #1c180d; margin: 0 0 4px; }
-.order-number { font-size: 14px; font-weight: 700; color: #6b7280; margin: 0 0 2px; }
-.invoice-date { font-size: 13px; color: #9ca3af; margin: 0; }
+.brand-name {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1c180d;
+}
 
-.divider { border: none; border-top: 1px solid #e5e7eb; margin: 20px 0; }
+.invoice-meta {
+    text-align: right;
+}
+
+.invoice-meta h1 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1c180d;
+    margin: 0 0 4px;
+}
+
+.order-number {
+    font-size: 14px;
+    font-weight: 700;
+    color: #6b7280;
+    margin: 0 0 2px;
+}
+
+.invoice-date {
+    font-size: 13px;
+    color: #9ca3af;
+    margin: 0;
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin: 20px 0;
+}
 
 .info-grid {
     display: grid;
@@ -215,31 +241,127 @@ onMounted(async () => {
     margin-bottom: 24px;
 }
 
-.info-block h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #9ca3af; margin: 0 0 8px; }
-.info-block p { font-size: 14px; color: #374151; margin: 2px 0; font-weight: 500; }
-.info-block .address { color: #6b7280; font-size: 13px; margin-top: 4px; }
-.info-block.text-right { text-align: right; }
+.info-block h3 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #9ca3af;
+    margin: 0 0 8px;
+}
 
-.items-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
-.items-table th { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #9ca3af; padding: 8px 12px; border-bottom: 2px solid #e5e7eb; }
-.items-table td { font-size: 14px; padding: 12px; color: #374151; border-bottom: 1px solid #f3f4f6; }
-.text-left { text-align: left; }
-.text-center { text-align: center; }
-.text-right { text-align: right; }
+.info-block p {
+    font-size: 14px;
+    color: #374151;
+    margin: 2px 0;
+    font-weight: 500;
+}
 
-.totals { max-width: 280px; margin-left: auto; margin-bottom: 32px; }
-.total-row { display: flex; justify-content: space-between; font-size: 14px; padding: 5px 0; color: #6b7280; font-weight: 500; }
-.total-final { font-size: 18px; font-weight: 800; color: #1c180d; padding-top: 10px; border-top: 2px solid #1c180d; }
+.info-block .address {
+    color: #6b7280;
+    font-size: 13px;
+    margin-top: 4px;
+}
 
-.invoice-footer { text-align: center; color: #9ca3af; }
-.invoice-footer p { margin: 2px 0; font-size: 13px; }
-.footer-note { font-size: 11px; color: #d1d5db; margin-top: 4px; }
+.info-block.text-right {
+    text-align: right;
+}
+
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 8px;
+}
+
+.items-table th {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #9ca3af;
+    padding: 8px 12px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.items-table td {
+    font-size: 14px;
+    padding: 12px;
+    color: #374151;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.totals {
+    max-width: 280px;
+    margin-left: auto;
+    margin-bottom: 32px;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    padding: 5px 0;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.total-final {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1c180d;
+    padding-top: 10px;
+    border-top: 2px solid #1c180d;
+}
+
+.invoice-footer {
+    text-align: center;
+    color: #9ca3af;
+}
+
+.invoice-footer p {
+    margin: 2px 0;
+    font-size: 13px;
+}
+
+.footer-note {
+    font-size: 11px;
+    color: #d1d5db;
+    margin-top: 4px;
+}
 
 /* 列印樣式 */
 @media print {
-    body { background: #fff !important; }
-    .no-print { display: none !important; }
-    .invoice-wrapper { background: #fff; padding: 0; }
-    .invoice-body { box-shadow: none; border: none; border-radius: 0; padding: 20px; max-width: 100%; }
+    body {
+        background: #fff !important;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .invoice-wrapper {
+        background: #fff;
+        padding: 0;
+    }
+
+    .invoice-body {
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+        padding: 20px;
+        max-width: 100%;
+    }
 }
 </style>

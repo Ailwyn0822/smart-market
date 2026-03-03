@@ -45,8 +45,7 @@
                                     class="flex items-center gap-3 cursor-pointer bg-white/60 px-4 py-2 rounded-xl border-2 border-dashed border-gray-300 hover:border-content transition-colors group"
                                     :class="{ 'border-accent-blue bg-accent-blue/10': cartStore.selectedSellerId === group.sellerId }">
                                     <!-- Checkbox -->
-                                    <input type="checkbox"
-                                        :checked="cartStore.selectedSellerId === group.sellerId"
+                                    <input type="checkbox" :checked="cartStore.selectedSellerId === group.sellerId"
                                         @change="toggleSellerSelection(group.sellerId)"
                                         class="w-5 h-5 rounded border-2 border-content accent-accent-blue cursor-pointer" />
                                     <Icon name="material-symbols:storefront" class="text-lg text-gray-500" />
@@ -95,7 +94,8 @@
                                                     class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-content rounded hover:bg-gray-200 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
                                                     <Icon name="material-symbols:remove" class="text-sm" />
                                                 </button>
-                                                <span class="font-bold text-sm w-4 text-center">{{ item.quantity }}</span>
+                                                <span class="font-bold text-sm w-4 text-center">{{ item.quantity
+                                                    }}</span>
                                                 <button
                                                     @click="cartStore.updateQuantity(item.product.id, Math.min(item.quantity + 1, item.product.stock ?? 999))"
                                                     :disabled="item.product.stock !== undefined && item.quantity >= item.product.stock"
@@ -207,7 +207,7 @@
                                 <div class="flex justify-between items-end border-t-2 border-content pt-4 mb-8">
                                     <span class="font-bold text-lg text-content">{{ $t('cart.total') }}</span>
                                     <span class="font-black text-3xl text-content">${{ cartStore.total.toFixed(2)
-                                    }}</span>
+                                        }}</span>
                                 </div>
 
                                 <!-- 結帳按鈕 -->
@@ -326,12 +326,6 @@ const crayonBorderClass = (index: number) => crayonBorderClasses[index % crayonB
 const priceColorClass = (index: number) => priceColorClasses[index % priceColorClasses.length]
 
 // ===== 賣家分組 =====
-interface SellerGroup {
-    sellerId: string
-    sellerName: string
-    items: typeof cartStore.items
-}
-
 const groupedBySeller = computed<SellerGroup[]>(() => {
     const groups = new Map<string, SellerGroup>()
     for (const item of cartStore.items) {
