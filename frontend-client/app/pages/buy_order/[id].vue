@@ -363,7 +363,11 @@ async function fetchOrder() {
     if (!authStore.isAuthenticated) return
     isLoading.value = true
     try {
-        const data = await ordersApi.getById(route.params.id as string) as AppOrder
+        const data = await ordersApi.getById(route.params.id as string) as AppOrder & { userId?: string }
+        if (data.userId && authStore.user?.id && data.userId !== authStore.user.id) {
+            await navigateTo('/buy_order')
+            return
+        }
         order.value = data
         if (data && data.status === 'delivered') {
             await checkReviewStatus(data.id)

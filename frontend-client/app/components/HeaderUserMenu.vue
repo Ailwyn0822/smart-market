@@ -269,7 +269,9 @@ async function handleNotificationClick(notif: any) {
         }
     }
     closeMenu();
-    if (notif.type === 'order_update' && notif.referenceId) {
+    if (notif.type === 'sell_order_update' && notif.referenceId) {
+        router.push(`/sell_order/${notif.referenceId}`);
+    } else if (notif.type === 'order_update' && notif.referenceId) {
         router.push(`/buy_order/${notif.referenceId}`);
     } else if (notif.type === 'new_review') {
         router.push(`/sell_order`);

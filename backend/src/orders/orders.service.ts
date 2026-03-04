@@ -49,7 +49,7 @@ export class OrdersService {
                 this.notificationsService.createNotification(
                     sellerId,
                     `您有一筆新訂單 (${orderNumber})，請盡快處理！`,
-                    'order_update',
+                    'sell_order_update',
                     savedOrder.id.toString()
                 ).catch(e => console.error('Failed to notify seller for new COD order:', e));
             }
@@ -82,7 +82,7 @@ export class OrdersService {
                     this.notificationsService.createNotification(
                         sellerId,
                         `您有一筆新訂單 (${order.orderNumber})，買家已完成付款，請盡快處理！`,
-                        'order_update',
+                        'sell_order_update',
                         order.id.toString()
                     ).catch(e => console.error('Failed to notify seller for payment success:', e));
                 }
@@ -171,7 +171,7 @@ export class OrdersService {
                     await this.notificationsService.createNotification(
                         sellerId,
                         `買家已確認收貨您的訂單 (${targetOrder.orderNumber})`,
-                        'order_update',
+                        'sell_order_update',
                         targetOrder.id.toString()
                     );
                 }
@@ -208,7 +208,7 @@ export class OrdersService {
             await this.notificationsService.createNotification(
                 sellerId,
                 `買家申請取消訂單 (${order.orderNumber})，請進入訂單頁確認。`,
-                'order_update',
+                'sell_order_update',
                 order.id.toString()
             ).catch(() => { });
         }

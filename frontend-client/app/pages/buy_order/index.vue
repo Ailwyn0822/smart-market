@@ -123,7 +123,7 @@
             <div v-if="showReviewModal"
                 class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
                 <div
-                    class="bg-white rounded-3xl border-4 border-content shadow-[8px_8px_0px_#f4c025] w-full max-w-md p-6 relative">
+                    class="bg-white rounded-3xl border-4 border-content shadow-[8px_8px_0px_#f4c025] w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
                     <button @click="showReviewModal = false"
                         class="absolute top-4 right-4 text-gray-400 hover:text-content">
                         <Icon name="material-symbols:close" class="text-3xl" />
@@ -134,19 +134,47 @@
                         {{ $t('buy_order.review_modal_title') }}
                     </h2>
 
-                    <!-- 評分星級 -->
-                    <div class="flex justify-center gap-2 mb-6">
-                        <button v-for="star in 5" :key="star" @click="reviewForm.rating = star"
-                            class="text-4xl transition-colors hover:scale-110"
-                            :class="star <= reviewForm.rating ? 'text-accent-red' : 'text-gray-300'">
-                            <Icon name="material-symbols:star-rounded" />
-                        </button>
+                    <!-- 每個商品的評分 -->
+                    <div v-for="(item, idx) in productReviews" :key="idx"
+                        class="mb-5 pb-5 border-b-2 border-dashed border-gray-100">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div
+                                class="w-10 h-10 rounded-full border-2 border-content bg-gray-100 overflow-hidden shrink-0 flex items-center justify-center">
+                                <NuxtImg v-if="item.productImageUrl" :src="item.productImageUrl"
+                                    class="w-full h-full object-cover" loading="lazy" />
+                                <Icon v-else name="material-symbols:image" class="text-gray-300 text-xl" />
+                            </div>
+                            <p class="font-black text-sm text-content flex-1 truncate">{{ item.productName }}</p>
+                        </div>
+                        <div class="flex gap-1 mb-2">
+                            <button v-for="star in 5" :key="star" @click="item.rating = star"
+                                class="text-3xl transition-transform hover:scale-110"
+                                :class="star <= item.rating ? 'text-accent-red' : 'text-gray-300'">
+                                <Icon name="material-symbols:star-rounded" />
+                            </button>
+                        </div>
+                        <textarea v-model="item.comment" rows="2"
+                            class="w-full bg-[#fdfcf0] rounded-xl border-2 border-content p-3 font-bold text-sm focus:outline-none focus:bg-white transition-colors resize-none placeholder-gray-400"
+                            :placeholder="$t('buy_order.write_review')"></textarea>
                     </div>
 
-                    <!-- 評價內容 -->
-                    <textarea v-model="reviewForm.comment" rows="4"
-                        class="w-full bg-[#fdfcf0] rounded-xl border-2 border-content p-4 font-bold text-sm focus:outline-none focus:bg-white transition-colors resize-none placeholder-gray-400 mb-6"
-                        :placeholder="$t('buy_order.write_review')"></textarea>
+                    <!-- 賣家整體評分 -->
+                    <div class="mb-6 bg-accent-blue/5 rounded-2xl border-2 border-dashed border-accent-blue/30 p-4">
+                        <h3 class="flex items-center gap-2 font-black text-content mb-3 text-sm">
+                            <Icon name="material-symbols:storefront-outline" class="text-accent-blue text-base" />
+                            {{ $t('buy_order.seller_review_title') }}
+                        </h3>
+                        <div class="flex gap-1 mb-2">
+                            <button v-for="star in 5" :key="star" @click="sellerReview.rating = star"
+                                class="text-3xl transition-transform hover:scale-110"
+                                :class="star <= sellerReview.rating ? 'text-accent-red' : 'text-gray-300'">
+                                <Icon name="material-symbols:star-rounded" />
+                            </button>
+                        </div>
+                        <textarea v-model="sellerReview.comment" rows="2"
+                            class="w-full bg-white rounded-xl border-2 border-content p-3 font-bold text-sm focus:outline-none transition-colors resize-none placeholder-gray-400"
+                            :placeholder="$t('buy_order.seller_review_placeholder')"></textarea>
+                    </div>
 
                     <div class="flex flex-col gap-3">
                         <button @click="submitReview" :disabled="isSubmittingReview"
@@ -185,10 +213,8 @@ const isLoading = shallowRef(false)
 const showReviewModal = shallowRef(false)
 const isSubmittingReview = shallowRef(false)
 const selectedOrderId = ref<number | null>(null)
-const reviewForm = ref({
-    rating: 5,
-    comment: ''
-})
+const productReviews = ref<ProductReviewItem[]>([])
+const sellerReview = ref({ rating: 5, comment: '' })
 
 const firstItem = (order: AppOrder) => order.items?.[0] ?? null
 
@@ -257,7 +283,14 @@ async function updateStatus(orderId: number, status: string) {
 
 function openReviewModal(order: AppOrder) {
     selectedOrderId.value = order.id
-    reviewForm.value = { rating: 5, comment: '' }
+    productReviews.value = (order.items ?? []).map(item => ({
+        productId: item.productId,
+        productName: item.productName,
+        productImageUrl: item.productImageUrl,
+        rating: 5,
+        comment: ''
+    }))
+    sellerReview.value = { rating: 5, comment: '' }
     showReviewModal.value = true
 }
 
@@ -265,12 +298,19 @@ async function submitReview() {
     if (!selectedOrderId.value || isSubmittingReview.value) return
     isSubmittingReview.value = true
     try {
-        await reviewsApi.create({
-            orderId: selectedOrderId.value,
-            rating: reviewForm.value.rating,
-            comment: reviewForm.value.comment || '讚！'
-        })
-        // 成功後更新訂單物件狀態
+        const items = [
+            ...productReviews.value.map(r => ({
+                productId: r.productId,
+                rating: r.rating,
+                comment: r.comment || '讚！',
+            })),
+            {
+                productId: undefined,
+                rating: sellerReview.value.rating,
+                comment: sellerReview.value.comment || '很棒的賣家！',
+            },
+        ]
+        await reviewsApi.createBulk({ orderId: selectedOrderId.value, items })
         const order = orders.value.find(o => o.id === selectedOrderId.value)
         if (order) order.isReviewed = true
         showReviewModal.value = false

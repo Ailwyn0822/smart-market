@@ -19,6 +19,7 @@
         </header>
         <slot />
         <Footer />
+        <AppToast />
     </div>
 </template>
 
