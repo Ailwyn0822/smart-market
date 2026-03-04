@@ -12,7 +12,7 @@
                 <div class="flex items-center gap-3">
                     <LanguageSwitcher />
 
-                    <!-- 購物車按鈕 -->
+                    <!-- 購物車按鈕  -->
                     <NuxtLink to="/cart"
                         class="relative flex items-center justify-center size-10 rounded-full border-2 border-transparent hover:bg-gray-100 transition-colors group">
                         <Icon name="material-symbols:shopping-cart-outline"
