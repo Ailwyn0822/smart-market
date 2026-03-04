@@ -174,26 +174,3 @@ smart-market/
 
 ---
 
-## ⚠️ 已知規則（Blood Written Rules）
-
-1. **NestJS 路由順序**：固定路由（`admin/all`）**必須**排在動態路由（`/:id`）之前
-2. **Port 衝突**：重啟前先 `Stop-Process` 殺掉舊 PID（8080）
-3. **AppToast 已存在**：不要另建 Toast 組件，直接用 `useToast()`
-4. **useI18n 不需手動 import**：Nuxt i18n 是 auto-import，直接 `const { t } = useI18n()`
-5. **shared 套件已有完整共用型別**：新增 DTO 優先放 `shared/src/types/`
-
----
-
-## ❌ 尚未完成（對照 14 天衝刺計畫）
-
-| 項目                                                   | 優先度    |
-| ------------------------------------------------------ | --------- |
-| frontend-client 測試（useToast、cart store、表單驗證） | 🔴 高     |
-| GTM / GA4 電商事件埋碼                                 | 🟡 中     |
-| LINE Pay V3 HMAC 簽章                                  | 🟡 中     |
-| Vite Manual Chunks + Bundle 分析                       | 🟡 中     |
-| Lighthouse Core Web Vitals > 90                        | 🟡 中     |
-| Docker Multi-stage Build                               | 🟠 待部署 |
-| Nginx 反向代理                                         | 🟠 待部署 |
-| README 文件完善                                        | 🔵 低     |
-| Demo  影片錄製                                          | 🔵 低     |
