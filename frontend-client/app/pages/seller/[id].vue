@@ -275,7 +275,7 @@ useIntersectionObserver(
             fetchReviews(true)
         }
     },
-    { rootMargin: '100px' }
+    { rootMargin: '800px' }
 )
 
 async function fetchMoreProducts() {
@@ -302,7 +302,7 @@ useIntersectionObserver(
             fetchMoreProducts()
         }
     },
-    { rootMargin: '100px' }
+    { rootMargin: '800px' }
 )
 
 useHead({ title: computed(() => storeData.value ? t('seller.store_page_title', { name: storeData.value.seller.name }) : t('seller.loading')) })

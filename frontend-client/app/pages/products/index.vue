@@ -214,7 +214,7 @@ const virtualState = computed(() => {
 const handleWindowScroll = () => {
     const scrolled = window.scrollY + window.innerHeight
     const docHeight = document.documentElement.scrollHeight
-    if (docHeight - scrolled < 300) loadMore()
+    if (docHeight - scrolled < 1200) loadMore()
 }
 
 onMounted(() => {
