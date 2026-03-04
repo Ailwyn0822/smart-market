@@ -331,7 +331,9 @@ const groupedBySeller = computed<SellerGroup[]>(() => {
     for (const item of cartStore.items) {
         const sellerId = item.product.userId || 'unknown'
         if (!groups.has(sellerId)) {
-            groups.set(sellerId, { sellerId, sellerName: '', items: [] })
+            const p = item.product as any
+            const sellerName = p.seller?.username || p.seller?.name || p.user?.username || p.user?.name || ''
+            groups.set(sellerId, { sellerId, sellerName, items: [] })
         }
         groups.get(sellerId)!.items.push(item)
     }
