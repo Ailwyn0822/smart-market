@@ -8,6 +8,7 @@
     "sell": "Sell",
     "about": "About",
     "cart": "Cart",
+    "browse_products": "Browse Products",
     "search_placeholder": "Search for toys, books..."
   },
   "auth": {
@@ -189,6 +190,7 @@
     "discount": "Discount",
     "total": "Total",
     "checkout_now": "Checkout Now",
+    "login_to_checkout": "Login to Checkout",
     "secure_checkout": "Secure checkout for happy parents",
     "order_complete_title": "Project Complete!",
     "order_number_prefix": "Order",

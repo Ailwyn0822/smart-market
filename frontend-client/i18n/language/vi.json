@@ -8,6 +8,7 @@
     "sell": "Bán",
     "about": "Giới thiệu",
     "cart": "Giỏ hàng",
+    "browse_products": "Duyệt sản phẩm",
     "search_placeholder": "Tìm kiếm đồ chơi, sách..."
   },
   "auth": {
@@ -189,6 +190,7 @@
     "discount": "Giảm giá",
     "total": "Tổng cộng",
     "checkout_now": "Thanh toán ngay",
+    "login_to_checkout": "Đăng nhập để thanh toán",
     "secure_checkout": "Thanh toán an toàn cho phụ huynh",
     "order_complete_title": "Đã hoàn tất đơn hàng!",
     "order_number_prefix": "Mã đơn hàng",

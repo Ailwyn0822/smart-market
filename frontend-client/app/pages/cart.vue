@@ -215,7 +215,7 @@
                                     class="w-full bg-accent-blue hover:bg-blue-600 text-white text-lg font-black py-4 rounded-xl shadow-stitch border-2 border-content active:shadow-none active:translate-y-1 transition-all flex items-center justify-center gap-3 relative overflow-hidden group">
                                     <Icon name="material-symbols:login"
                                         class="relative z-10 text-xl" />
-                                    <span class="relative z-10">請先登入</span>
+                                    <span class="relative z-10">{{ $t('cart.login_to_checkout') }}</span>
                                 </button>
                                 <button v-else @click="checkout"
                                     :disabled="cartStore.items.length === 0 || !cartStore.selectedSellerId"

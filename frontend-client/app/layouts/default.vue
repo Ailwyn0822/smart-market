@@ -7,7 +7,7 @@
                 <NuxtLink to="/products"
                     class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-content font-bold text-sm text-content bg-white hover:bg-primary shadow-[3px_3px_0px_#1c180d] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all">
                     <Icon name="material-symbols:storefront" class="text-lg" />
-                    逛逛商品
+                    {{ $t('nav.browse_products') }}
                 </NuxtLink>
                 <div class="flex items-center gap-3">
                     <LanguageSwitcher />
