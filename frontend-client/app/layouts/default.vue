@@ -3,6 +3,12 @@
         <header class="relative w-full z-50 pt-6 px-4 sm:px-8 lg:px-12 pb-4">
             <div class="layout-container max-w-7xl mx-auto flex items-center justify-between gap-6">
                 <HeaderLogo />
+                <!-- 商品頁導覽 -->
+                <NuxtLink to="/products"
+                    class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-content font-bold text-sm text-content bg-white hover:bg-primary shadow-[3px_3px_0px_#1c180d] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all">
+                    <Icon name="material-symbols:storefront" class="text-lg" />
+                    逛逛商品
+                </NuxtLink>
                 <div class="flex items-center gap-3">
                     <LanguageSwitcher />
 

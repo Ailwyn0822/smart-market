@@ -210,8 +210,14 @@
                                         }}</span>
                                 </div>
 
-                                <!-- 結帳按鈕 -->
-                                <button @click="checkout"
+                                <!-- 結帳按鈕 / 請先登入 -->
+                                <button v-if="!authStore.isAuthenticated" @click="navigateTo('/login')"
+                                    class="w-full bg-accent-blue hover:bg-blue-600 text-white text-lg font-black py-4 rounded-xl shadow-stitch border-2 border-content active:shadow-none active:translate-y-1 transition-all flex items-center justify-center gap-3 relative overflow-hidden group">
+                                    <Icon name="material-symbols:login"
+                                        class="relative z-10 text-xl" />
+                                    <span class="relative z-10">請先登入</span>
+                                </button>
+                                <button v-else @click="checkout"
                                     :disabled="cartStore.items.length === 0 || !cartStore.selectedSellerId"
                                     class="w-full bg-primary hover:bg-yellow-400 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none text-content text-lg font-black py-4 rounded-xl shadow-stitch border-2 border-content active:shadow-none active:translate-y-1 transition-all flex items-center justify-center gap-3 relative overflow-hidden group">
                                     <span class="relative z-10">{{ $t('cart.checkout_now') }}</span>
@@ -305,6 +311,7 @@ const { t } = useI18n()
 useHead({ title: computed(() => t('cart.title')) })
 
 const cartStore = useCartStore()
+const authStore = useAuthStore()
 const toast = useToast()
 
 const discountCodesApi = useDiscountCodesApi()
