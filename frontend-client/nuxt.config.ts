@@ -21,7 +21,7 @@ export default defineNuxtConfig({
   },
   css: ['~/assets/css/main.css'],
   image: {
-    domains: ['lh3.googleusercontent.com']
+    domains: ['lh3.googleusercontent.com', 'panda-map.com', 'api.panda-map.com']
   },
   runtimeConfig: {
     public: {

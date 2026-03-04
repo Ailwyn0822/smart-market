@@ -7,7 +7,7 @@
                 {{ categoryName }}</div>
             <NuxtImg :alt="item.title"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                :src="item.image" format="webp" />
+                :src="item.image" loading="lazy" width="400" height="400" fit="cover" densities="x1 x2" format="webp" />
         </div>
         <div class="flex flex-col gap-1">
             <div class="flex justify-between items-start">
