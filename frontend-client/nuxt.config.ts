@@ -3,7 +3,21 @@ import { visualizer } from 'rollup-plugin-visualizer'
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ['@nuxtjs/tailwindcss', '@nuxt/image', '@nuxt/icon', '@pinia/nuxt', '@nuxtjs/i18n', '@nuxtjs/sitemap', '@nuxt/test-utils/module'],
+  modules: ['@nuxtjs/tailwindcss', '@nuxt/image', '@nuxt/icon', '@pinia/nuxt', '@nuxtjs/i18n', '@nuxtjs/sitemap', '@nuxt/test-utils/module', '@nuxtjs/google-fonts'],
+  googleFonts: {
+    families: {
+      'Spline Sans': [300, 400, 500, 600, 700],
+      'Noto Sans TC': [400, 500, 700],
+      'Permanent Marker': true,
+      'Courier Prime': true
+    },
+    display: 'swap',
+    prefetch: true,
+    preconnect: true,
+    preload: true,
+    download: true,
+    inject: true
+  },
   sitemap: {
     sitemaps: true,
   },
@@ -61,8 +75,7 @@ export default defineNuxtConfig({
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }
+        { rel: 'preconnect', href: 'https://lh3.googleusercontent.com' }
       ]
     }
   },
