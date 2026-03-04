@@ -421,13 +421,6 @@
     "deactivate": "Hủy kích hoạt",
     "edit_title": "Chỉnh sửa sản phẩm",
     "active": "Đang bán",
-    "upload": "đăng bán",
-    "uploading": "Đang tải lên...",
-    "saving": "Đang lưu...",
-    "inactive": "Chưa duyệt",
-    "validation_error": "Vui lòng nhập các trường bắt buộc: Tên, Phân loại, Giá",
-    "update_success": "Cập nhật sản phẩm thành công",
-    "update_error": "Cập nhật sản phẩm thất bại, vui lòng thử lại",
     "listing_details": "Chi tiết sản phẩm",
     "title_of_work": "Tên sản phẩm",
     "category": "Danh mục",
@@ -446,7 +439,14 @@
     "relist": "Đăng lại",
     "deactivate_success": "Đã hủy kích hoạt sản phẩm",
     "relist_success": "Đã đăng lại sản phẩm thành công",
-    "status_update_error": "Cập nhật trạng thái thất bại, vui lòng thử lại"
+    "status_update_error": "Cập nhật trạng thái thất bại, vui lòng thử lại",
+    "upload": "đăng bán",
+    "uploading": "Đang tải lên...",
+    "saving": "Đang lưu...",
+    "inactive": "Chưa duyệt",
+    "validation_error": "Vui lòng nhập các trường bắt buộc: Tên, Phân loại, Giá",
+    "update_success": "Cập nhật sản phẩm thành công",
+    "update_error": "Cập nhật sản phẩm thất bại, vui lòng thử lại"
   },
   "faq": {
     "title": "Các câu hỏi thường gặp",
@@ -533,9 +533,7 @@
     "shipment_confirmed": "Đơn hàng đã được đánh dấu là đã gửi hàng!",
     "upload_success": "Đăng sản phẩm thành công!",
     "upload_error": "Đăng sản phẩm thất bại, vui lòng thử lại",
-    "content_violation": "Phát hiện nội dung bị cấm hoặc không phù hợp. Vui lòng không tải lên hình ảnh này.",
-    "upload_invalid_image": "Vui lòng tải lên tệp hình ảnh",
-    "upload_analyzing": "Đang phân tích mặt hàng, vui lòng chờ..."
+    "content_violation": "Phát hiện nội dung bị cấm hoặc không phù hợp. Vui lòng không tải lên hình ảnh này."
   },
   "menu": {
     "notifications": "Thông báo",

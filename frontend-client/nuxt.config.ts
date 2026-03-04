@@ -3,21 +3,7 @@ import { visualizer } from 'rollup-plugin-visualizer'
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ['@nuxtjs/tailwindcss', '@nuxt/image', '@nuxt/icon', '@pinia/nuxt', '@nuxtjs/i18n', '@nuxtjs/sitemap', '@nuxt/test-utils/module', '@nuxtjs/google-fonts'],
-  googleFonts: {
-    families: {
-      'Spline Sans': [300, 400, 500, 600, 700],
-      'Noto Sans TC': [400, 500, 700],
-      'Permanent Marker': true,
-      'Courier Prime': true
-    },
-    display: 'swap',
-    prefetch: true,
-    preconnect: true,
-    preload: true,
-    download: true,
-    inject: true
-  },
+  modules: ['@nuxtjs/tailwindcss', '@nuxt/image', '@nuxt/icon', '@pinia/nuxt', '@nuxtjs/i18n', '@nuxtjs/sitemap', '@nuxt/test-utils/module'],
   sitemap: {
     sitemaps: true,
   },
@@ -75,16 +61,21 @@ export default defineNuxtConfig({
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-        { rel: 'preconnect', href: 'https://lh3.googleusercontent.com' }
+        { rel: 'preload', as: 'image', href: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDXLcieLcgLm6DKGq9M-t4SdKUmyFKVce_mrJ0Ks00z8qJMrinJtppYKN6QNCyHLeBN7i8hwsKIseQbT9AF6fItEf43UejpuirKEF_vy6M8nAoKhSxQ2rsewKiwyYHG3coQsZDXplbk0Bv56G7y5467HZFxwpBMUNeXKfZu8qU20gbziRKA2Iovf9ZLPQ_ljuHY0B82waI3FqKNyZ0Yx_xvc9JpEXR9YPQt1y5IoaAx6MYkjaNu-pOk5PLj8OWeSWiz01YYoOj6K0kt=w800-h600-rw', fetchpriority: 'high' },
+        { rel: 'preconnect', href: 'https://lh3.googleusercontent.com' },
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+        // 刻意使用 media="print" 讓瀏覽器非同步載入字體，載入完成後轉為 "all"
+        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Spline+Sans:wght@300;400;500;600;700&family=Permanent+Marker&family=Courier+Prime&display=swap', media: 'print', onload: "this.media='all'" }
       ]
     }
   },
   routeRules: {
+    // 全站靜態資源設定 Cache-Control (一年)，解決 Lighthouse 的 Leverage Browser Caching 警告
+    '/_nuxt/**': { headers: { 'Cache-Control': 'public, max-age=31536000, immutable' } },
+
     // SSG：FAQ 內容幾乎不變，build 時預渲染放 CDN
     '/faq': { prerender: true },
-
-    // ISR：優惠券由後台 CRUD 管理，可能隨時更新，最多延遲 60 秒
-    '/coupons': { swr: 60 },
 
     // CSR：需要登入的個人化頁面，SEO 沒意義
     '/cart': { ssr: false },
