@@ -159,7 +159,7 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth';
-import { validateProductForm } from '@/utils/validation';
+import { createProductSchema } from '@smart-market/shared';
 
 const { t } = useI18n();
 useHead({ title: computed(() => t('upload.title')) })
@@ -262,16 +262,17 @@ const processFile = async (file: File) => {
 };
 
 const submitForm = async () => {
-    const { isValid } = validateProductForm({
+    const result = createProductSchema.safeParse({
         name: formData.name,
         description: formData.description,
-        categoryId: formData.categoryId,
-        price: formData.price,
+        categoryId: Number(formData.categoryId),
+        price: Number(formData.price),
+        stock: formData.stock ? Number(formData.stock) : undefined,
         imageUrl: formData.imageUrl
     });
 
-    if (!isValid) {
-        toast.error(t('toast.error_generic'));
+    if (!result.success) {
+        toast.error(result.error.errors[0]?.message ?? t('toast.error_generic'));
         return;
     }
 

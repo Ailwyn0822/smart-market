@@ -3,7 +3,7 @@ export function useFavoritesApi() {
 
   return {
     getAll: () =>
-      $api('/favorites'),
+      $api('/favorites/my'),
 
     check: (productId: number | string) =>
       $api(`/favorites/check/${productId}`),
