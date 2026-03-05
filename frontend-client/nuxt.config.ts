@@ -93,7 +93,7 @@ export default defineNuxtConfig({
   vite: {
     resolve: {
       alias: {
-        '@smart-market/shared': fileURLToPath(new URL('../../shared/src/index.ts', import.meta.url))
+        '@smart-market/shared': fileURLToPath(new URL('../shared/src/index.ts', import.meta.url))
       }
     },
     plugins: [
