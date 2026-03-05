@@ -322,7 +322,7 @@ onMounted(() => {
     document.addEventListener('click', handleClickOutside);
     if (authStore.isAuthenticated) {
         fetchNotifications();
-        setupSSE();
+        setTimeout(() => setupSSE(), 2000);
     }
 });
 

@@ -53,7 +53,8 @@
                 }">
                     <div v-for="(row, idx) in virtualState.visibleRows" :key="virtualState.startIdx + idx"
                         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                        <ProductCard v-for="product in row" :key="product.id || product.title" :item="product" />
+                        <ProductCard v-for="product in row" :key="product.id || product.title" :item="product"
+                            :eager="virtualState.startIdx === 0 && idx === 0" />
                     </div>
                 </div>
 

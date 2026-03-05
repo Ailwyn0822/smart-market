@@ -67,7 +67,7 @@ export default defineNuxtConfig({
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         // 刻意使用 media="print" 讓瀏覽器非同步載入字體，載入完成後轉為 "all"
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Spline+Sans:wght@300;400;500;600;700&family=Permanent+Marker&family=Courier+Prime&display=swap', media: 'print', onload: "this.media='all'" }
+        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Spline+Sans:wght@300;400;500;600;700&family=Permanent+Marker&family=Courier+Prime&display=optional', media: 'print', onload: "this.media='all'" }
       ]
     }
   },

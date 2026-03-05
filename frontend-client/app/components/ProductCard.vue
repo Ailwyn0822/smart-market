@@ -7,7 +7,9 @@
                 {{ categoryName }}</div>
             <NuxtImg :alt="item.title"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                :src="item.image" loading="lazy" width="400" height="400" fit="cover" densities="x1 x2" format="webp" />
+                :src="item.image" :loading="eager ? 'eager' : 'lazy'" :fetchpriority="eager ? 'high' : 'auto'"
+                width="400" height="400" fit="cover" densities="x1 x2" format="webp"
+                sizes="xs:100vw sm:50vw lg:33vw" />
         </div>
         <div class="flex flex-col gap-1">
             <div class="flex justify-between items-start">
@@ -31,6 +33,7 @@ import type { ProductItem } from '~/types'
 
 const props = defineProps<{
     item: ProductItem
+    eager?: boolean
 }>()
 
 const categoryName = computed(() => {
