@@ -64,7 +64,7 @@ export class FavoritesService {
   async getMyFavorites(userId: string) {
     const favorites = await this.favoriteRepo.find({
       where: { user: { id: userId } },
-      relations: ['product'],
+      relations: ['product', 'product.seller'],
       order: { createdAt: 'DESC' },
     });
 
