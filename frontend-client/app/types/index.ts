@@ -103,7 +103,7 @@ export interface AppNotification {
     referenceId?: string | number;
 }
 
-export interface FavoriteProduct extends Omit<ApiProduct, 'categoryId' | 'category' | 'userId' | 'createdAt'> {
+export interface FavoriteProduct extends Omit<ApiProduct, 'categoryId' | 'category' | 'createdAt'> {
     categoryId: number;
 }
 

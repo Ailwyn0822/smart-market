@@ -267,7 +267,7 @@ const submitForm = async () => {
         description: formData.description,
         categoryId: Number(formData.categoryId),
         price: Number(formData.price),
-        stock: formData.stock ? Number(formData.stock) : undefined,
+        stock: Number(formData.stock),
         imageUrl: formData.imageUrl
     });
 

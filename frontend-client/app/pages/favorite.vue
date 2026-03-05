@@ -171,7 +171,8 @@ function addToCart(product: FavoriteProduct) {
         name: product.name,
         price: Number(product.price),
         imageUrl: product.imageUrl,
-        stock: product.stock
+        stock: product.stock,
+        userId: product.userId
     } as unknown as import('~/types').ApiProduct, 1)
     toast.success(t('toast.add_to_cart'))
 }
