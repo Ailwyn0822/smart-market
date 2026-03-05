@@ -179,6 +179,7 @@
 import { ref, computed, shallowRef } from 'vue'
 import { useCartStore } from '~/stores/cart'
 import { useToast } from '#imports'
+import { createOrderSchema } from '@smart-market/shared'
 
 const { t } = useI18n()
 useHead({ title: computed(() => t('checkout.title')) })
@@ -201,11 +202,12 @@ const form = ref({
 const orderNumber = shallowRef('')
 const isSubmitting = shallowRef(false)
 
-const isFormValid = computed(() => {
-    return form.value.name.trim() !== '' &&
-        form.value.email.trim() !== '' &&
-        form.value.address.trim() !== ''
-})
+const formSchema = createOrderSchema.pick({ recipientName: true, recipientEmail: true, shippingAddress: true })
+const isFormValid = computed(() => formSchema.safeParse({
+    recipientName: form.value.name,
+    recipientEmail: form.value.email,
+    shippingAddress: form.value.address
+}).success)
 
 function buildOrderPayload(paymentMethod: string) {
     return {

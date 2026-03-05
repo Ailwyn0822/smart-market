@@ -76,7 +76,8 @@
 </template>
 
 <script setup lang="ts">
-import type { AuthUser } from '~/stores/auth'
+import type { AuthUser } from '~/types'
+import { loginSchema } from '@smart-market/shared'
 definePageMeta({
     layout: 'auth'
 })
@@ -97,8 +98,9 @@ const toast = useToast()
 const isLoggingIn = ref(false)
 
 const login = async () => {
-    if (!loginForm.value.username || !loginForm.value.password) {
-        toast.error(t('login.error_empty_fields'))
+    const result = loginSchema.safeParse({ email: loginForm.value.username, password: loginForm.value.password })
+    if (!result.success) {
+        toast.error(result.error?.issues[0]?.message ?? t('login.error_empty_fields'))
         return
     }
     isLoggingIn.value = true

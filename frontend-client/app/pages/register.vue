@@ -122,7 +122,8 @@
 </template>
 
 <script setup lang="ts">
-import type { AuthUser } from '~/stores/auth'
+import type { AuthUser } from '~/types'
+import { registerSchema } from '@smart-market/shared'
 definePageMeta({
     layout: 'auth'
 })
@@ -148,8 +149,13 @@ const errorMessage = shallowRef('')
 const register = async () => {
     errorMessage.value = ''
 
-    if (!registerForm.value.username || !registerForm.value.email || !registerForm.value.password) {
-        errorMessage.value = t('register.error_required_fields')
+    const result = registerSchema.safeParse({
+        username: registerForm.value.username,
+        email: registerForm.value.email,
+        password: registerForm.value.password
+    })
+    if (!result.success) {
+        errorMessage.value = result.error?.issues[0]?.message ?? t('register.error_required_fields')
         return
     }
 

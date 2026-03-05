@@ -88,6 +88,7 @@ import { useAuthStore } from '~/stores/auth';
 import { useToast } from '~/composables/useToast';
 import { useI18n } from '#imports';
 import type { UserProfile } from '~/types';
+import { updateProfileSchema } from '@smart-market/shared';
 
 const { t } = useI18n();
 
@@ -177,8 +178,9 @@ async function handleFileUpload(event: Event) {
 }
 
 async function saveProfile() {
-    if (!formData.name) {
-        toast.error(t('profile.name_required'));
+    const result = updateProfileSchema.safeParse({ name: formData.name })
+    if (!result.success) {
+        toast.error(result.error?.issues[0]?.message ?? t('profile.name_required'));
         return;
     }
 
