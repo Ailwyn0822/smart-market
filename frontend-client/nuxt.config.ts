@@ -1,4 +1,5 @@
 import { visualizer } from 'rollup-plugin-visualizer'
+import { fileURLToPath } from 'node:url'
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -90,6 +91,11 @@ export default defineNuxtConfig({
     '/dashboard': { ssr: false },
   },
   vite: {
+    resolve: {
+      alias: {
+        '@smart-market/shared': fileURLToPath(new URL('../../shared/src/index.ts', import.meta.url))
+      }
+    },
     plugins: [
       visualizer({
         open: false,
