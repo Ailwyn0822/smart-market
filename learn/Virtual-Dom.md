@@ -1,0 +1,316 @@
+# Virtual DOM 完整筆記
+
+---
+
+## 1. 什麼是 Virtual DOM
+
+真實 DOM 操作很慢，每次改動都會觸發瀏覽器 reflow/repaint。
+
+Virtual DOM 用一個普通的 **JavaScript 物件**來描述 DOM 結構，每次更新時先比較新舊兩棵 JS 物件樹的差異（diff），只把真正有變化的部分更新到真實 DOM。
+
+```js
+// 真實 DOM
+<div class="card">
+  <p>Hello</p>
+</div>
+
+// Virtual DOM（JS 物件）
+{
+  type: 'div',
+  props: { class: 'card' },
+  children: [
+    { type: 'p', props: {}, children: ['Hello'] }
+  ]
+}
+```
+
+---
+
+## 2. 運作流程
+
+```
+Template（你寫的）
+    ↓ 編譯（build time，npm run build）
+Render Function
+    ↓ 執行（runtime，使用者開網頁）
+Virtual DOM（JS 物件）
+    ↓ patch
+真實 DOM
+```
+
+**資料變動後：**
+
+```
+舊 vdom（存在記憶體）
+    ↓ diff
+新 vdom（render function 重新執行產生）
+    ↓ patch（只更新差異）
+真實 DOM
+```
+
+> 真實 DOM 從來不參與比較，它只是最後被更新的對象。
+
+---
+
+## 3. Diff 演算法
+
+### 規則
+
+**同層比較**：只比同一層的節點，不跨層。
+
+```
+第1層：app
+第2層：header、main（左到右）
+第3層：nav、h1、div、div（左到右）
+```
+
+**廣度優先**：同層全部比完再往下一層。
+
+---
+
+### 何時砍、何時移動、何時就地更新
+
+| 情況 | Vue 做什麼 | 例子 |
+|------|-----------|------|
+| type 不同 | **砍掉重建** | `<div>` 變 `<span>` |
+| type 相同，有 key，key 存在 | **移動節點** | k1 從位置1移到位置2 |
+| type 相同，有 key，key 不存在 | **砍掉重建** | 舊的沒有 k5，新的有 k5 |
+| type 相同，沒有 key | **就地更新內容** | 直接把內容改掉 |
+| 完全一樣 | **不動** | 什麼都不做 |
+
+**記憶方式：**
+
+```
+type 不同？→ 砍
+type 相同？→ 看 key
+    有 key，找得到？→ 移動
+    有 key，找不到？→ 砍
+    沒有 key？→ 就地更新
+```
+
+---
+
+## 4. Key 的作用
+
+### 沒有 key → 就地更新，狀態殘留
+
+```html
+<!-- 沒有 key -->
+<li v-for="item in list">{{ item.name }}</li>
+```
+
+```
+舊：li "蘋果"  li "香蕉"
+新：li "香蕉"  li "蘋果"（順序對調）
+
+Vue 按位置比：
+位置1：直接把"蘋果"改成"香蕉"
+位置2：直接把"香蕉"改成"蘋果"
+```
+
+**問題：**
+- input 的使用者輸入、focus 狀態、游標位置不會跟著走
+- 沒有 v-model 的 input 打的字會殘留在錯誤位置
+
+---
+
+### 有 key → 追蹤身份，正確移動
+
+```html
+<!-- 有 key -->
+<li v-for="item in list" :key="item.id">{{ item.name }}</li>
+```
+
+```
+舊：li(k1)"蘋果"  li(k2)"香蕉"
+新：li(k2)"香蕉"  li(k1)"蘋果"（順序對調）
+
+Vue 知道 k1 還是 k1，整個節點搬走，狀態跟著走 ✅
+```
+
+---
+
+### `:key="index"` 是錯的
+
+```html
+<!-- 錯誤寫法 -->
+<div v-for="(item, index) in list" :key="index">
+
+刪掉第2筆（index 1）後：
+index 0 → 不變
+index 1 → 就地更新（Vue 以為還在）
+index 4 → 消失（Vue 以為最後一個被刪）
+```
+
+看起來像刪最後一個，不是刪中間那個。
+
+**正確寫法：**
+
+```html
+<div v-for="item in list" :key="item.id">
+```
+
+---
+
+### key 與狀態
+
+| 情況 | 結果 |
+|------|------|
+| 有 v-model + 沒有 key | 值不會跑掉（v-model 追蹤），但 focus/游標可能錯 |
+| 沒有 v-model + 沒有 key | 使用者打的字殘留或消失 |
+| 有 key | 不管有沒有 v-model 都正確 ✅ |
+
+---
+
+## 5. Vue 2 vs Vue 3 Diff 差異
+
+### Vue 2：雙端交叉比對
+
+從頭尾同時比，逐步往中間夾：
+
+```
+舊：[A, B, C, D, E]
+新：[E, A, B, D, C]
+
+步驟：
+頭頭比：A vs E → 不同
+尾尾比：E vs C → 不同
+頭尾比：A vs C → 不同
+尾頭比：E vs E → 相同！移動 E 到最前面
+... 繼續
+```
+
+沒有特別優化，複雜列表移動次數多。
+
+---
+
+### Vue 3：最長遞增子序列（LIS）
+
+找出哪些節點不需要移動，只移動剩下的：
+
+```
+舊順序：1  2  3  4  5
+新順序：3  1  2  5  4
+
+新順序對應舊 index：2  0  1  4  3
+
+找最長遞增子序列：0  1  4（也就是 1、2、5）
+→ 這三個不用動
+
+只移動：3（移到最前面）、4（移到最後面）
+```
+
+**Vue 2 可能移動 4 次，Vue 3 只移動 2 次。**
+
+---
+
+## 6. Vue 3 編譯優化（Vue 2 沒有）
+
+### 靜態提升（Static Hoisting）
+
+```html
+<template>
+  <div>
+    <p>我永遠不會變</p>     <!-- 靜態 -->
+    <p>{{ message }}</p>    <!-- 動態 -->
+  </div>
+</template>
+```
+
+**Vue 2：** 每次 render 重新建立所有 vnode，包含靜態的。
+
+**Vue 3 編譯結果：**
+
+```js
+// 靜態節點提升到外面，只建立一次
+const static1 = h('p', {}, '我永遠不會變')
+
+function render() {
+  return h('div', {}, [
+    static1,                    // 直接複用，參考一樣 → diff 直接跳過
+    h('p', {}, message.value)   // 每次重新建立
+  ])
+}
+```
+
+---
+
+### Patch Flags（補丁標記）
+
+編譯時標記節點哪裡會動，diff 只比那個地方：
+
+```html
+<p class="title" :style="color">{{ message }}</p>
+```
+
+```js
+// Vue 3 編譯結果
+h('p',
+  { class: 'title', style: color },
+  message,
+  9  // PatchFlag：9 = TEXT + STYLE
+)
+```
+
+diff 時看到 `9`，只比 style 和文字，class 直接跳過。
+
+| 數字 | 意思 |
+|------|------|
+| 1 | 只有文字會變 |
+| 2 | 只有 class 會變 |
+| 4 | 只有 style 會變 |
+| 8 | 只有某個 prop 會變 |
+
+**Vue 2：** 每次比較所有屬性，沒有標記機制。
+
+---
+
+### Block Tree（區塊樹）
+
+**Vue 2：** 每次 diff 要走過整棵樹才能找到動態節點。
+
+**Vue 3：** 每個 Block 直接記錄底下有哪些動態節點：
+
+```js
+div (Block) {
+  dynamicChildren: [p {{ message }}]  // 直接記住動態節點
+}
+```
+
+diff 時不走整棵樹，直接跳到 dynamicChildren，靜態的完全不碰。
+
+---
+
+### 三個優化對比
+
+| 優化 | 做法 |
+|------|------|
+| 靜態提升 | 靜態節點只建立一次，參考相同直接跳過 |
+| Patch Flags | 進到節點只比會動的屬性 |
+| Block Tree | 直接跳到動態節點，不走整棵樹 |
+
+---
+
+## 7. 什麼時候 Virtual DOM 反而慢
+
+- 非常小的更新：建立 vnode + diff 的開銷比直接操作 DOM 還大
+- 大量節點同時更新：diff 10,000 個節點還是很慢
+
+**解法：虛擬列表（Virtual Scrolling）**
+
+```
+10,000 筆資料（ref 存著）
+    ↓
+畫面只顯示 20 筆
+    ↓
+只有 20 個 DOM 節點
+    ↓
+diff 永遠只比 20 個節點
+```
+
+使用者滾動時，不新增 DOM 節點，只把現有 20 個節點的內容換掉。
+
+**省的不是響應式，是 DOM 節點的數量。**
+
+---
+
